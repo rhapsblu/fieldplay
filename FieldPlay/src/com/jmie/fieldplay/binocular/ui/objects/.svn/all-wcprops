@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/143/trunk/src/com/jwetherell/augmented_reality/ui/objects
+END
+PaintableCircle.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableCircle.java
+END
+PaintablePosition.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintablePosition.java
+END
+PaintableText.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableText.java
+END
+PaintableRadarPoints.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/143/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableRadarPoints.java
+END
+PaintableBoxedText.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableBoxedText.java
+END
+PaintableObject.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableObject.java
+END
+PaintableLine.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableLine.java
+END
+PaintableIcon.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableIcon.java
+END
+PaintableBox.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableBox.java
+END
+PaintablePoint.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintablePoint.java
+END
+PaintableGps.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/ui/objects/PaintableGps.java
+END

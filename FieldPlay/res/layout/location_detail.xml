@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+    
+    <TextView android:id="@+id/location_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textStyle="bold"
+              android:textSize="60sp"
+              android:text="@string/empty" />
+    
+    <TextView android:id="@+id/location_description"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/location_name"
+              android:textSize="25sp"
+              android:text="@string/empty" />
+
+ 	 <fragment
+       	android:id="@+id/picture_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/location_description"
+        android:layout_alignParentRight="true"
+        android:name="com.jmie.fieldplay.PhotoViewFragment"/>
+ 	 <TextView android:id="@+id/photo_description"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/picture_nav"
+              android:textSize="20sp"
+              android:text="@string/empty" />
+ 	  <Button android:id="@+id/binocular_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/photo_description"
+            android:contentDescription="@string/binoculars"
+            android:drawableLeft="@drawable/binocular"
+            android:text="@string/binoculars" />
+
+</RelativeLayout>

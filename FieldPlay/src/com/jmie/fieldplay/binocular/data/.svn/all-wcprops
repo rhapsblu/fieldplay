@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/146/trunk/src/com/jwetherell/augmented_reality/data
+END
+GooglePlacesDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/146/trunk/src/com/jwetherell/augmented_reality/data/GooglePlacesDataSource.java
+END
+WikipediaDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/WikipediaDataSource.java
+END
+NetworkDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/data/NetworkDataSource.java
+END
+ScreenPosition.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/ScreenPosition.java
+END
+LocalDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/LocalDataSource.java
+END
+BuzzDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/145/trunk/src/com/jwetherell/augmented_reality/data/BuzzDataSource.java
+END
+PhysicalLocation.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/PhysicalLocation.java
+END
+DataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/DataSource.java
+END
+ARData.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/ARData.java
+END
+TwitterDataSource.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/data/TwitterDataSource.java
+END

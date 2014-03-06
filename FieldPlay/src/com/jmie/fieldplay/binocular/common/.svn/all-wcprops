@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/140/trunk/src/com/jwetherell/augmented_reality/common
+END
+Vector.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/130/trunk/src/com/jwetherell/augmented_reality/common/Vector.java
+END
+Matrix.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/common/Matrix.java
+END
+Calculator.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/140/trunk/src/com/jwetherell/augmented_reality/common/Calculator.java
+END
+LowPassFilter.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/131/trunk/src/com/jwetherell/augmented_reality/common/LowPassFilter.java
+END

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+        <item
+           android:id="@+id/service_control"
+           android:icon="@drawable/av_stop"
+           android:title="@string/service_toggle"
+           android:showAsAction="ifRoom"/>
+        <item
+           android:id="@+id/replay_last"
+           android:icon="@drawable/av_replay"
+           android:title="@string/replay_last"
+           android:showAsAction="ifRoom"/>
+        <item
+           android:id="@+id/get_details"
+           android:icon="@drawable/about"
+           android:title="@string/details"
+           android:showAsAction="ifRoom"/>
+
+           
+
+</menu>
