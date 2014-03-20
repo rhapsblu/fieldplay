@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.audioservice.AudioService;
 import com.jmie.fieldplay.audioservice.FPGeofence;
@@ -188,7 +189,7 @@ public class FPMapActivity extends
     	Log.d(TAG, "Setting up map");
         // Add lots of markers to the map.
         addMarkersToMap();
-
+        addRouteLineToMap();
         // Set listeners for marker events.  See the bottom of this class for their behavior.
         mMap.setOnMarkerClickListener(this);
 
@@ -230,7 +231,16 @@ public class FPMapActivity extends
     	}
 
     }
-
+    private void addRouteLineToMap(){
+    	Log.d(TAG, "Adding route lines to map");
+    	PolylineOptions routeLine = new PolylineOptions();
+    	for(FPLocation location: route.getLocationList()){
+    		if(!(location instanceof BinocularLocation))
+    			routeLine.add(new LatLng(location.getLatitude(), location.getLongitude()));
+    	}
+    
+    	mMap.addPolyline(routeLine);
+    }
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
