@@ -12,18 +12,18 @@ import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallback
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.ui.IconGenerator;
 import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.audioservice.AudioService;
 import com.jmie.fieldplay.audioservice.FPGeofence;
@@ -92,9 +92,9 @@ public class FPMapActivity extends
 	private GoogleMap mMap;
 	private MenuItem toggle;
 	private boolean bound = false;
-	private List<Marker> markerList = new ArrayList<Marker>();
+	private List<MarkerOptions> markerList = new ArrayList<MarkerOptions>();
 	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
-    private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
+    private Map<MarkerOptions, FPLocation> markerToLocation = new HashMap<MarkerOptions, FPLocation>();
 
 	
 	@Override
@@ -203,7 +203,7 @@ public class FPMapActivity extends
                 @Override
                 public void onGlobalLayout() {
                 	LatLngBounds.Builder  builder = new LatLngBounds.Builder();
-                	for(Marker m: markerList){
+                	for(MarkerOptions m: markerList){
                 		builder.include(m.getPosition());
                 	}
                     LatLngBounds bounds = builder.build();
@@ -220,17 +220,27 @@ public class FPMapActivity extends
     }
     private void addMarkersToMap() {
     	Log.d(TAG, "Adding markers to map");
+    	IconGenerator iconFactory = new IconGenerator(this);
     	for(FPLocation location: route.getLocationList()){
     		Log.d(TAG, "Adding marker for " + location.getName() + " lat: " + location.getLatitude() + " long: " + location.getLongitude());
-    		Marker m = mMap.addMarker(new MarkerOptions()
-            .position(new LatLng(location.getLatitude(), location.getLongitude()))
-            .title(location.getName())
-            .snippet(location.getDescription()));
-    		markerList.add(m);
-    		markerToLocation.put(m, location);
+    		//addIcon(iconFactory, "Blue style", new LatLng(location.getLatitude(), location.getLongitude()));
+            MarkerOptions markerOptions = new MarkerOptions().
+                    icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(Integer.toString(markerList.size())))).
+                    position(new LatLng(location.getLatitude(), location.getLongitude())).
+                    anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+    		markerList.add(markerOptions);
+    		markerToLocation.put(markerOptions, location);
+//    		Marker m = mMap.addMarker(new MarkerOptions()
+//            .position(new LatLng(location.getLatitude(), location.getLongitude()))
+//            .title(location.getName())
+//            .snippet(location.getDescription()));
+//    		markerList.add(m);
+//    		markerToLocation.put(m, location);
+    		
     	}
 
     }
+
     private void addRouteLineToMap(){
     	Log.d(TAG, "Adding route lines to map");
     	PolylineOptions routeLine = new PolylineOptions();
