@@ -27,8 +27,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.jmie.fieldplay.Route;
 
 public class StorageManager extends Observable{
@@ -178,65 +176,65 @@ public class StorageManager extends Observable{
 		return route;
 	}
 	public Route buildRouteByName(Context c, String name){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		String storageName = settings.getString(name, "N/A");
 		Log.e(TAG, "No Map for storage name found");
 		return buildRoute(c, storageName);
 	}
 	public static String getAudioPath(Context c, String routeName, String audioName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		String storageName = settings.getString(routeName, "N/A");
 		return ROUTES_DIR + storageName+"/"+AUDIO_DIR+audioName;
 	}
 	public static String getImagePath(Context c, String routeName, String imageName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		String storageName = settings.getString(routeName, "N/A");
 		return ROUTES_DIR + storageName+"/"+IMAGES_DIR+imageName;
 	}
 	public static String getVideoPath(Context c, String routeName, String videoName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		String storageName = settings.getString(routeName, "N/A");
 		return ROUTES_DIR + storageName+"/"+VIDEO_DIR+videoName;
 	}
 	public static void saveCurrentRoute(Context c, Route route){
-	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 	      SharedPreferences.Editor editor = settings.edit();
 	      editor.putString("CurrentRoute", route.getName());
 	      editor.commit();
 	}
 	public void setReadName(Context c, String storageName, String readName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(readName, storageName);
 		editor.commit();
 	}
 	public String getReadName(Context c, String readName){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		return settings.getString(readName, "N/A");
 	}
 	public boolean isFirstRun(Context c){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		Log.d(TAG, "First run is " + settings.getBoolean("FirstRun", true));
 		return settings.getBoolean("FirstRun", true);
 	}
 	public void setFirstRun(Context c){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("FirstRun", false);
 		editor.commit();
 	}
 	public static String getCurrentRoute(Context c){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		return settings.getString("CurrentRoute", "none");
 	}
 	public static void saveAudioTourStatus(Context c, boolean audioOn){
-	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 	      SharedPreferences.Editor editor = settings.edit();
 	      editor.putBoolean("AudioStatus", audioOn);
 	      editor.commit();
 	}
 	public static boolean getAudioTourStatus(Context c){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		return settings.getBoolean("AudioStatus", false);
 	}
 

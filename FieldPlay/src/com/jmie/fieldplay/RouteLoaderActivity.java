@@ -9,18 +9,16 @@ import com.jmie.fieldplay.storage.StorageManager;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class RouteLoaderActivity extends Activity{
 	private StorageManager storage;
@@ -32,7 +30,7 @@ public class RouteLoaderActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_loader);
-		SharedPreferences settings = this.getSharedPreferences("FPPrefsFile", Activity.MODE_PRIVATE);
+		SharedPreferences settings = this.getSharedPreferences("FPPrefsFile", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.clear();
 		editor.commit();

@@ -10,14 +10,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Typeface;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class LocationDetailsActivity extends Activity{
@@ -47,6 +42,7 @@ public class LocationDetailsActivity extends Activity{
 		
 
 	}
+	@Override
 	protected void onResume(){
 		super.onResume();
 		PhotoViewFragment photoFrag = (PhotoViewFragment)
@@ -62,7 +58,8 @@ public class LocationDetailsActivity extends Activity{
 		
 		Button button = (Button) findViewById(R.id.binocular_button);
 		button.setOnClickListener(new View.OnClickListener() {
-		    public void onClick(View v) {
+		    @Override
+			public void onClick(View v) {
 				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
 				//FPLocation location = markerToLocation.get(marker);
 				String[] routeLocPair = {route.getName(), location.getName()};

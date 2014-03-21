@@ -413,7 +413,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("connection error: " + connectionResult.getErrorCode())
                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int id) {
+                       @Override
+					public void onClick(DialogInterface dialog, int id) {
                     	   
                        }
                    });

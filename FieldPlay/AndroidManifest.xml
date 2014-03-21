@@ -43,9 +43,8 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity android:name="com.jmie.fieldplay.library.GooglePlayServices" />
-        <activity android:name="FPMapActivity"
-            	  android:label="@string/FPMap" >
-            	 
+        <activity android:name="com.jmie.fieldplay.FPMapActivity"
+            	  android:label="@string/FPMap" >   	 
         </activity>
         <activity android:name="LocationDetailsActivity"
             	  android:label="@string/location_details" >

@@ -19,8 +19,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
 import com.jmie.fieldplay.binocular.camera.CameraSurface;
 import com.jmie.fieldplay.binocular.data.ARData;
 import com.jmie.fieldplay.binocular.ui.Marker;
@@ -79,7 +77,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         addContentView(augmentedView, augLayout);
 
         zoomLayout = new LinearLayout(this);
-        zoomLayout.setVisibility((showZoomBar) ? LinearLayout.VISIBLE : LinearLayout.GONE);
+        zoomLayout.setVisibility((showZoomBar) ? View.VISIBLE : View.GONE);
         zoomLayout.setOrientation(LinearLayout.VERTICAL);
         zoomLayout.setPadding(5, 5, 5, 5);
         zoomLayout.setBackgroundColor(ZOOMBAR_BACKGROUND_COLOR);

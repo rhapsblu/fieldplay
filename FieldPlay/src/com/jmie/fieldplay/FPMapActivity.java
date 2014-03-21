@@ -92,9 +92,9 @@ public class FPMapActivity extends
 	private GoogleMap mMap;
 	private MenuItem toggle;
 	private boolean bound = false;
-	private List<MarkerOptions> markerList = new ArrayList<MarkerOptions>();
+	private List<Marker> markerList = new ArrayList<Marker>();
 	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
-    private Map<MarkerOptions, FPLocation> markerToLocation = new HashMap<MarkerOptions, FPLocation>();
+    private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
 
 	
 	@Override
@@ -203,7 +203,7 @@ public class FPMapActivity extends
                 @Override
                 public void onGlobalLayout() {
                 	LatLngBounds.Builder  builder = new LatLngBounds.Builder();
-                	for(MarkerOptions m: markerList){
+                	for(Marker m: markerList){
                 		builder.include(m.getPosition());
                 	}
                     LatLngBounds bounds = builder.build();
@@ -221,15 +221,30 @@ public class FPMapActivity extends
     private void addMarkersToMap() {
     	Log.d(TAG, "Adding markers to map");
     	IconGenerator iconFactory = new IconGenerator(this);
+    	int locationCount = 1;
     	for(FPLocation location: route.getLocationList()){
     		Log.d(TAG, "Adding marker for " + location.getName() + " lat: " + location.getLatitude() + " long: " + location.getLongitude());
     		//addIcon(iconFactory, "Blue style", new LatLng(location.getLatitude(), location.getLongitude()));
+    		String iconText = "";
+    		if(location instanceof BinocularLocation){
+    			iconFactory.setStyle(IconGenerator.STYLE_BLUE);
+    			iconText = "B";
+    		}
+    		else{
+    			iconText = Integer.toString(locationCount);
+    			locationCount++;
+    			if(location instanceof StopLocation) iconFactory.setStyle(IconGenerator.STYLE_GREEN);
+    			else iconFactory.setStyle(IconGenerator.STYLE_RED);
+    		}
             MarkerOptions markerOptions = new MarkerOptions().
-                    icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(Integer.toString(markerList.size())))).
+                    icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(iconText))).
                     position(new LatLng(location.getLatitude(), location.getLongitude())).
                     anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-    		markerList.add(markerOptions);
-    		markerToLocation.put(markerOptions, location);
+
+    		Marker marker = mMap.addMarker(markerOptions);
+    		markerList.add(marker);
+    		markerToLocation.put(marker, location);
+    	
 //    		Marker m = mMap.addMarker(new MarkerOptions()
 //            .position(new LatLng(location.getLatitude(), location.getLongitude()))
 //            .title(location.getName())

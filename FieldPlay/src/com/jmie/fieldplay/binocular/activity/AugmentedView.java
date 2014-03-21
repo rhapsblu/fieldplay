@@ -8,8 +8,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.view.Display;
 import android.view.View;
 
 import com.jmie.fieldplay.binocular.data.ARData;
