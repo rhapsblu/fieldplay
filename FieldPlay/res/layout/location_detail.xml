@@ -32,14 +32,5 @@
               android:layout_below="@id/picture_nav"
               android:textSize="20sp"
               android:text="@string/empty" />
- 	 <!--  
- 	  <Button android:id="@+id/binocular_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/photo_description"
-            android:contentDescription="@string/binoculars"
-            android:drawableLeft="@drawable/binocular"
-            android:text="@string/binoculars" />
-            -->
 
 </RelativeLayout>

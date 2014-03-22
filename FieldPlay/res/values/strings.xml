@@ -42,5 +42,7 @@
     <string name="geofence_transition_unknown">geofence transition unknown</string>
     <string name="view_videos">View Videos</string>
     <string name="view_photos">View Photos</string>
+    <string name="start">Start</string>
+    <string name="no_route_selected">No Route Selected</string>
 
 </resources>

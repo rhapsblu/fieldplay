@@ -20,12 +20,14 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-public class RouteLoaderActivity extends Activity{
+public class RouteLoaderActivity extends Activity
+	implements RouteDetailsFragment.OnRouteSelectedListener{
 	private StorageManager storage;
 	private List<Map<String, String>> routeList = new ArrayList<Map<String, String>>();
 	//private Map<String, String> nameToStorage= new HashMap<String, String>();
 	private SimpleAdapter simpleAdpt;
 	static final String TAG = "Route Load Activity";
+	private String selectedRoute;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,7 +43,7 @@ public class RouteLoaderActivity extends Activity{
 			storage.setFirstRun(this);
 		}
 		List<String> routeNames = storage.getRouteNames(this);
-
+		
 		for(String s : routeNames){
 			Route r = storage.buildRoute(this, s);
 			routeList.add(createRouteItem("routeItem", r.getName()));
@@ -50,6 +52,7 @@ public class RouteLoaderActivity extends Activity{
 		}
 	
 		ListView lv = (ListView) findViewById(R.id.list);
+	
 		simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.simple_list_item_1, new String[]{"routeItem"}, new int[] {android.R.id.text1});
 
 		//simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.activity_list_item, new String[]{"routeItem"}, new int[] {android.R.id.text1});
@@ -59,16 +62,25 @@ public class RouteLoaderActivity extends Activity{
 			@Override
 			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
 					long id) {
-				Intent i = new Intent(RouteLoaderActivity.this, FPMapActivity.class);
+
 				TextView clickedView = (TextView) view;
-			//	String name = nameToStorage.get(clickedView.getText());
-				String name = storage.getReadName(RouteLoaderActivity.this, clickedView.getText().toString());
-				i.putExtra("com.jmie.fieldplay.routeName", name);
-				startActivity(i);			
+				selectedRoute = storage.getReadName(RouteLoaderActivity.this, clickedView.getText().toString());
+				deliverToFragment();
+	
 			}
 		});
 	}
-
+	private void deliverToFragment(){
+        RouteDetailsFragment routeDetailFrag = (RouteDetailsFragment)
+                getFragmentManager().findFragmentById(R.id.details_fragment);
+        routeDetailFrag.displayRouteDetails(selectedRoute);
+        
+	}
+	@Override
+	public void onResume(){
+		super.onResume();
+		
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -79,5 +91,13 @@ public class RouteLoaderActivity extends Activity{
 		HashMap<String, String> routeItem = new HashMap<String, String>();
 		routeItem.put(key, name);
 		return routeItem;
+	}
+
+	@Override
+	public void onRouteSelected() {
+		Intent i = new Intent(RouteLoaderActivity.this, FPMapActivity.class);
+		i.putExtra("com.jmie.fieldplay.routeName", selectedRoute);
+		startActivity(i);
+		
 	}
 }
