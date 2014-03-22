@@ -40,5 +40,7 @@
     <string name="geofence_transition_entered">geofence transition entered</string>
     <string name="geofence_transition_exited">geofence transition exited</string>
     <string name="geofence_transition_unknown">geofence transition unknown</string>
+    <string name="view_videos">View Videos</string>
+    <string name="view_photos">View Photos</string>
 
 </resources>

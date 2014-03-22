@@ -11,6 +11,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,12 +44,26 @@ public class LocationDetailsActivity extends Activity{
 
 		
 
+	}	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.location_detail, menu);
+		MenuItem binocularActionButton = menu.findItem(R.id.augmented_binoculars);
+		if(location instanceof StopLocation){
+			StopLocation stopLocation = (StopLocation)location;
+			if(!stopLocation.getBinocularPointIterator().hasNext()) binocularActionButton.setVisible(false);
+		}
+		else binocularActionButton.setVisible(false);
+		return true;
 	}
 	@Override
 	protected void onResume(){
 		super.onResume();
 		PhotoViewFragment photoFrag = (PhotoViewFragment)
                 getFragmentManager().findFragmentById(R.id.picture_nav);
+		
 		if(location instanceof StopLocation){
 			StopLocation stopLocation = (StopLocation)location;
 			for(FPPicture image: stopLocation.getImageList()){
@@ -54,19 +71,40 @@ public class LocationDetailsActivity extends Activity{
 				Bitmap bm = BitmapFactory.decodeFile(inputFile.getAbsolutePath());
 				photoFrag.addImage(bm);
 			}
+			
 		}
 		
-		Button button = (Button) findViewById(R.id.binocular_button);
-		button.setOnClickListener(new View.OnClickListener() {
-		    @Override
-			public void onClick(View v) {
+//		Button button = (Button) findViewById(R.id.binocular_button);
+//		button.setOnClickListener(new View.OnClickListener() {
+//		    @Override
+//			public void onClick(View v) {
+//				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
+//				//FPLocation location = markerToLocation.get(marker);
+//				String[] routeLocPair = {route.getName(), location.getName()};
+//				i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
+//				startActivity(i);
+//		    }
+//		});
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.photo_viewer:
+	            //load photo viewer activity here
+	            return true;
+	        case R.id.augmented_binoculars:
 				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
-				//FPLocation location = markerToLocation.get(marker);
 				String[] routeLocPair = {route.getName(), location.getName()};
 				i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
 				startActivity(i);
-		    }
-		});
+	            return true;
+	        case R.id.video_viewer:
+	        	//load video viewer activity here
+	        	return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
 	}
 
 }
