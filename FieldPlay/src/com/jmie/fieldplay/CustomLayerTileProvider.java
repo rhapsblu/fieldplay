@@ -7,9 +7,7 @@ import com.google.android.gms.maps.model.TileProvider;
 
 public class CustomLayerTileProvider implements TileProvider {
 	private MapLayer mapLayer;
-	public CustomLayerTileProvider(Context c, String routeName, MapLayer mapLayer){
-		this.mapLayer = mapLayer;
-		this.mapLayer.setUpRoute(c, routeName);
+	public CustomLayerTileProvider(){
 	}
 	public void setMapLayer(Context c, String routeName, MapLayer ml){
 		mapLayer = ml;
@@ -17,7 +15,8 @@ public class CustomLayerTileProvider implements TileProvider {
 	}
 	@Override
 	public Tile getTile(int x, int y, int zoom) {
-		return mapLayer.getTile(x, y, zoom);
+		Tile t = mapLayer.getTile(x, y, zoom);
+		return t==null?CustomLayerTileProvider.NO_TILE:t;
 	}
 
 }

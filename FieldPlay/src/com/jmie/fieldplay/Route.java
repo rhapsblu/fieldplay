@@ -34,6 +34,9 @@ public class Route {
 	public void addMapLayer(MapLayer mapLayer){
 		mapLayers.add(mapLayer);
 	}
+	public List<MapLayer> getMapLayers(){
+		return mapLayers;
+	}
 	public void addLocation(FPLocation loc){
 		locations.add(loc);
 		nameToLocation.put(loc.getName(), loc);

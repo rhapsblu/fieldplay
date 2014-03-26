@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.projection.Point;
 import com.google.maps.android.ui.IconGenerator;
 import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.audioservice.AudioService;
@@ -55,6 +58,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
 
 public class FPMapActivity extends 
@@ -95,12 +100,16 @@ public class FPMapActivity extends
 	private List<Marker> markerList = new ArrayList<Marker>();
 	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
     private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
-
+    private PopupMenu layerMenu;
+    private CustomLayerTileProvider tileProvider = new CustomLayerTileProvider();
+    private TileOverlay tileOverlay;
+    private Context c;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
+		c = this;
 		String routeName = b.getString("com.jmie.fieldplay.routeName");
 		storage = new StorageManager();
 		mPrefs = new FPGeofenceStore(this);
@@ -120,6 +129,15 @@ public class FPMapActivity extends
 		startService(intent);
         bindService(new Intent(this, AudioService.class), this,
                 Context.BIND_AUTO_CREATE);
+     
+        layerMenu = new PopupMenu(this, findViewById(R.id.popupAnchor));
+        List<MapLayer> mapLayers = route.getMapLayers();
+        layerMenu.getMenu().add(Menu.NONE, 1, Menu.NONE, "No layers");
+        	
+        for(int i = 2; i<=mapLayers.size()+1; i++){
+        	layerMenu.getMenu().add(Menu.NONE, i, Menu.NONE, mapLayers.get(i).getName());
+        }
+        layerMenu.setOnMenuItemClickListener(new LayerMenuItemClickListener());
 
 	}
 	@Override
@@ -129,6 +147,7 @@ public class FPMapActivity extends
 		if(mPrefs.getFenceCount() >0){
 			for(int i = 0; i<mPrefs.getFenceCount(); i++) fenceList.add(mPrefs.getGeofence(String.valueOf(i)));
 		}
+
 		//mLocationClient.connect();
 	}
     @Override
@@ -547,4 +566,32 @@ public class FPMapActivity extends
                         Toast.LENGTH_LONG).show();
         }
     }
+    private class LayerMenuItemClickListener implements OnMenuItemClickListener{
+
+		@Override
+		public boolean onMenuItemClick(MenuItem item) {
+			List<MapLayer> layers = route.getMapLayers();
+			
+			int i = item.getItemId()-2;
+			
+			if(i == -1){
+				if(tileOverlay != null)tileOverlay.remove();
+				return false;
+			}
+			tileProvider.setMapLayer(c, route.getName(), layers.get(i));
+			tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
+			return false;
+		}
+    	
+    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.layer_options:
+	        	layerMenu.show();
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 }
