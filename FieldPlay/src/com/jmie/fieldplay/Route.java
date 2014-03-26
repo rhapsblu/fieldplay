@@ -12,6 +12,7 @@ public class Route {
 	private double _length;
 	private Boundry _boundry;
 	private Map<String, FPLocation> nameToLocation = new HashMap<String, FPLocation>();
+	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
 	
 	public Route(){
 		locations = new ArrayList<FPLocation>();
@@ -29,6 +30,9 @@ public class Route {
 
 	public void setDescription(String description) {
 		this._description = description;
+	}
+	public void addMapLayer(MapLayer mapLayer){
+		mapLayers.add(mapLayer);
 	}
 	public void addLocation(FPLocation loc){
 		locations.add(loc);

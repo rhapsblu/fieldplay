@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.jmie.fieldplay.BinocularLocation;
 import com.jmie.fieldplay.FPLocation;
 import com.jmie.fieldplay.InterestLocation;
+import com.jmie.fieldplay.MapLayer;
 import com.jmie.fieldplay.Route;
 import com.jmie.fieldplay.StopLocation;
 import com.jmie.fieldplay.details.FPPicture;
@@ -59,6 +60,12 @@ public class XMLManager {
                 route.addLocation(readLocation(parser, type));
                 Log.d(TAG, "Found Location");
             } 
+            else if (name.equals("map_layer")){
+            	Log.d(TAG, "Start Map layer parse");
+            	String type = parser.getAttributeValue(null, "type");
+            	route.addMapLayer(readMapLayer(parser, type));
+            	Log.d(TAG, "Found map layer ");
+            }
             else if (name.equals("name")){
             	route.setName(readName(parser));
             	Log.d(TAG, "Found Name "+ route.getName());
@@ -78,7 +85,29 @@ public class XMLManager {
         }  
         return route;
     }
-
+    private MapLayer readMapLayer(XmlPullParser parser, String type) throws XmlPullParserException, IOException {
+    	parser.require(XmlPullParser.START_TAG, ns, "map_layer");
+    	String layerName = null; 
+    	String description = null;
+    	String layerPath = null;
+    	Log.d(TAG, "Setup done for mapLayer, parsing members");
+    	 while (parser.next() != XmlPullParser.END_TAG) {
+             if (parser.getEventType() != XmlPullParser.START_TAG) {
+                 continue;
+             }
+             String name = parser.getName();
+	    	if (name.equals("name")) {
+	            name = readName(parser);
+	            Log.d(TAG, "Layer name: "+ layerName);
+	        } else if (name.equals("description")) {
+	            description = readDescription(parser);
+	            Log.d(TAG, "Description: "+ description);
+	        } else if(name.equals("file")){
+	        	layerPath = readFile(parser);
+	        }
+    	 }
+    	 return new MapLayer(layerName, description, layerPath);
+    }
     private FPLocation readLocation(XmlPullParser parser, String type) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "location");
         FPLocation location = null;

@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
 import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +22,14 @@ import java.util.zip.ZipFile;
 import org.xmlpull.v1.XmlPullParserException;
 
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+
+
 import com.jmie.fieldplay.Route;
 
 public class StorageManager extends Observable{
@@ -37,6 +40,7 @@ public class StorageManager extends Observable{
 	public static final String IMAGES_DIR= "images/";
 	public static final String AUDIO_DIR="audio/";
 	public static final String VIDEO_DIR="video/";
+	public static final String LAYERS_DIR="layers/";
 	public static final String ROUTE_XML="route.xml";
 	
 
@@ -175,11 +179,17 @@ public class StorageManager extends Observable{
 		}
 		return route;
 	}
+
 	public Route buildRouteByName(Context c, String name){
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		String storageName = settings.getString(name, "N/A");
 		Log.e(TAG, "No Map for storage name found");
 		return buildRoute(c, storageName);
+	}
+	public static String getTilePath(Context c, String routeName, String layerName){
+		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+		String storageName = settings.getString(routeName, "N/A");
+		return ROUTES_DIR + storageName+"/" + LAYERS_DIR +"/"+layerName;
 	}
 	public static String getAudioPath(Context c, String routeName, String audioName) {
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
