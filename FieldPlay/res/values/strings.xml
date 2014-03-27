@@ -44,6 +44,6 @@
     <string name="view_photos">View Photos</string>
     <string name="start">Start</string>
     <string name="no_route_selected">No Route Selected</string>
-    <string name="layers">Layers...</string>
+    <string name="layers">Layers</string>
 
 </resources>

@@ -25,7 +25,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.maps.android.projection.Point;
 import com.google.maps.android.ui.IconGenerator;
 import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.audioservice.AudioService;
@@ -135,7 +134,7 @@ public class FPMapActivity extends
         layerMenu.getMenu().add(Menu.NONE, 1, Menu.NONE, "No layers");
         	
         for(int i = 2; i<=mapLayers.size()+1; i++){
-        	layerMenu.getMenu().add(Menu.NONE, i, Menu.NONE, mapLayers.get(i).getName());
+        	layerMenu.getMenu().add(Menu.NONE, i, Menu.NONE, mapLayers.get(i-2).getName());
         }
         layerMenu.setOnMenuItemClickListener(new LayerMenuItemClickListener());
 

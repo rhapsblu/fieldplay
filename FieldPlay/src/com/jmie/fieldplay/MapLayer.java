@@ -91,7 +91,7 @@ public class MapLayer {
     }
 
     private String getTileFilename(int x, int y, int zoom) {
-        return layerPath + zoom + '/' + x + '/' + y + ".png";
+        return layerPath + "/" + zoom + '/' + x + '/' + y + ".png";
     }
 	
 }

@@ -97,7 +97,7 @@ public class XMLManager {
              }
              String name = parser.getName();
 	    	if (name.equals("name")) {
-	            name = readName(parser);
+	            layerName = readName(parser);
 	            Log.d(TAG, "Layer name: "+ layerName);
 	        } else if (name.equals("description")) {
 	            description = readDescription(parser);
