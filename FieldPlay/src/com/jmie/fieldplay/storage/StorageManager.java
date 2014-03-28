@@ -60,6 +60,7 @@ public class StorageManager extends Observable{
 			Log.e(TAG, "External media not available ");
 		}
 	}
+
 	public void transferDefaultRoute(Context c) {
 		Log.d(TAG, "Transfering default route");
 		String state = Environment.getExternalStorageState();
@@ -284,12 +285,14 @@ public class StorageManager extends Observable{
 	                String outputDir) throws IOException {
 
 	            if (entry.isDirectory()) {
+	            	Log.d(TAG, "Is directory " + entry.getName());
 	                createDir(new File(outputDir, entry.getName()));
 	                return;
 	            }
 
 	            File outputFile = new File(outputDir, entry.getName());
 	            if (!outputFile.getParentFile().exists()) {
+	            	Log.d(TAG, "Creating directory from png path" + entry.getName());
 	                createDir(outputFile.getParentFile());
 	            }
 
@@ -310,6 +313,7 @@ public class StorageManager extends Observable{
 
 	        private void createDir(File dir) {
 	            if (dir.exists()) {
+	            	Log.v(TAG, "Directory exists " + dir.getName());
 	                return;
 	            }
 	            Log.v(TAG, "Creating dir " + dir.getName());

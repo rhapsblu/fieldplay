@@ -10,7 +10,7 @@
     <!-- permission
         android:name="com.jmie.fieldplay.MAPS_RECEIVE"
         android:protectionLevel="signature"/-->
-    
+            <!--  -->
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
@@ -24,8 +24,9 @@
         android:required="true"/>
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_launcher"
         android:label="@string/app_name"
+		android:logo="@drawable/ic_action_boot"
         android:theme="@style/AppTheme" >
         <service
     		android:name="com.jmie.fieldplay.audioservice.ReceiveTransitionsIntentService"
