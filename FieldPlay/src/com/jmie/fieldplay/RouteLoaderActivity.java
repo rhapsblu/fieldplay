@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import com.jmie.fieldplay.storage.StorageManager;
 
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -24,43 +27,35 @@ import android.widget.TextView;
 public class RouteLoaderActivity extends Activity
 	implements RouteDetailsFragment.OnRouteSelectedListener{
 	private StorageManager storage;
-	private List<Map<String, String>> routeList = new ArrayList<Map<String, String>>();
-	private Map<String, String> routeDescriptions = new HashMap<String, String>();
+	//private List<Map<String, String>> routeList = new ArrayList<Map<String, String>>();
+	//private Map<String, String> routeDescriptions = new HashMap<String, String>();
 	//private Map<String, String> nameToStorage= new HashMap<String, String>();
-	private SimpleAdapter simpleAdpt;
+	//private SimpleAdapter simpleAdpt;
+	private ArrayAdapter<StorageNameMeta> arrayAdapter;
 	static final String TAG = "Route Load Activity";
 	private String selectedRoute;
+	private List<StorageNameMeta> routeMeta = new ArrayList<StorageNameMeta>();
+	private Context c;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_loader);
-		SharedPreferences settings = this.getSharedPreferences("FPPrefsFile", Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.clear();
-		editor.commit();
-		storage = new StorageManager();
-		if(storage.isFirstRun(this)){
-			storage.transferDefaultRoute(this);
-			storage.loadDownloadedZips(this);
-			storage.setFirstRun(this);
-		}
-		List<String> routeNames = storage.getRouteNames(this);
+		c = this;
+		if(StorageManager.isFirstRun(this)) StorageManager.firstRunSetup(this);
 		
-		for(String s : routeNames){
-			Route r = storage.buildRoute(this, s);
-			routeDescriptions.put(r.getName(), r.getDescription());
-			Log.d("Adding Route description", r.getName() + " " + r.getDescription());
-			routeList.add(createRouteItem("routeItem", r.getName()));
-			storage.setReadName(this, s, r.getName());
-			Log.d(TAG, "Found route " + s);
+		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
+			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
 		}
+
 	
 		ListView lv = (ListView) findViewById(R.id.list);
 	
-		simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.simple_list_item_1, new String[]{"routeItem"}, new int[] {android.R.id.text1});
-
+		//simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.simple_list_item_1, new String[]{"routeItem"}, new int[] {android.R.id.text1});
+		
 		//simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.activity_list_item, new String[]{"routeItem"}, new int[] {android.R.id.text1});
-		lv.setAdapter(simpleAdpt);
+		arrayAdapter = new ArrayAdapter<StorageNameMeta>(this, android.R.layout.simple_list_item_1, routeMeta);
+		lv.setAdapter(arrayAdapter);
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -72,8 +67,10 @@ public class RouteLoaderActivity extends Activity
 	            // change the background color of the selected element
 	            view.setBackgroundColor(Color.LTGRAY);
 				TextView clickedView = (TextView) view;
-				selectedRoute = storage.getReadName(RouteLoaderActivity.this, clickedView.getText().toString());
-				deliverToFragment(routeDescriptions.get(clickedView.getText().toString()));
+
+				//selectedRoute = storage.getReadName(RouteLoaderActivity.this, clickedView.getText().toString());
+				selectedRoute = routeMeta.get(position).getStorageName();
+				deliverToFragment(StorageManager.getRouteDescription(c, selectedRoute));
 	
 			}
 		});
@@ -95,11 +92,11 @@ public class RouteLoaderActivity extends Activity
 		getMenuInflater().inflate(R.menu.route_loader, menu);
 		return true;
 	}
-	private HashMap<String, String> createRouteItem(String key, String name){
-		HashMap<String, String> routeItem = new HashMap<String, String>();
-		routeItem.put(key, name);
-		return routeItem;
-	}
+//	private HashMap<String, String> createRouteItem(String key, String name){
+//		HashMap<String, String> routeItem = new HashMap<String, String>();
+//		routeItem.put(key, name);
+//		return routeItem;
+//	}
 
 	@Override
 	public void onRouteSelected() {
@@ -107,5 +104,28 @@ public class RouteLoaderActivity extends Activity
 		i.putExtra("com.jmie.fieldplay.routeName", selectedRoute);
 		startActivity(i);
 		
+	}
+
+	public void updateNames() {
+		routeMeta.clear();
+		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
+			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
+		}
+		arrayAdapter.notifyDataSetChanged();
+	}
+	private class StorageNameMeta{
+		private String routeName;
+		private String routeStorageName;
+		private StorageNameMeta(String routeName, String routeStorageName){
+			this.routeName = routeName;
+			this.routeStorageName = routeStorageName;
+		}
+		private String getStorageName(){
+			return routeStorageName;
+		}
+		@Override
+		public String toString(){
+			return routeName;
+		}
 	}
 }

@@ -36,7 +36,7 @@ public class FPBinocularActivity extends AugmentedReality {
 		Bundle b = getIntent().getExtras();
 		String[] routeAndLocation = b.getStringArray("com.jmie.fieldplay.locationID");
 		//routeStorageName = routeAndLocation[0];
-		route = storage.buildRouteByName(this, routeAndLocation[0]);
+		route = storage.buildRoute(this, routeAndLocation[0]);
 		location = route.getLocationByName(routeAndLocation[1]);
 		Log.d(TAG, "Location= " + location.getName());
 		//setContentView(R.layout.activity_main);

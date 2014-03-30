@@ -13,6 +13,7 @@ public class Route {
 	private Boundry _boundry;
 	private Map<String, FPLocation> nameToLocation = new HashMap<String, FPLocation>();
 	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
+	private String storageName;
 	
 	public Route(){
 		locations = new ArrayList<FPLocation>();
@@ -23,6 +24,12 @@ public class Route {
 
 	public void setName(String name){
 		this._name = name;
+	}
+	public void setStorageName(String storageName){
+		this.storageName = storageName;
+	}
+	public String getStorageName(){
+		return this.storageName;
 	}
 	public String getDescription() {
 		return _description;

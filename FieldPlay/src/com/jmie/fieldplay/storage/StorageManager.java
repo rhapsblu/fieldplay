@@ -1,23 +1,17 @@
 package com.jmie.fieldplay.storage;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
-import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -28,11 +22,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import com.jmie.fieldplay.Route;
+import com.jmie.fieldplay.RouteLoaderActivity;
 
-public class StorageManager extends Observable{
+public class StorageManager {
 	static final String TAG = "Storage Manager";
 	public static final String PREFS_NAME = "FPPrefsFile";
 	//public static final String ROUTES_DIR= "/Android/data/com.jmie.fieldplay/routes/";
@@ -42,115 +38,65 @@ public class StorageManager extends Observable{
 	public static final String VIDEO_DIR="video/";
 	public static final String LAYERS_DIR="layers/";
 	public static final String ROUTE_XML="route.xml";
-	
+	public static final String ROUTE_NAMES="routenames";
 
-
-	public void loadDownloadedZips(Context c) {
-		String state = Environment.getExternalStorageState();
-
-
-		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-			
-			File applicationDirectory = c.getExternalFilesDir(ROUTES_DIR);
-			List<File> zips = findDownloads(downloadDirectory);
-			unzipAndSave(zips, applicationDirectory);
-		} 
-		else {
-			Log.e(TAG, "External media not available ");
-		}
+	public static void firstRunSetup(RouteLoaderActivity loader){
+		transferDefaultRoute(loader);
+		setFirstRun(loader);
 	}
-
-	public void transferDefaultRoute(Context c) {
-		Log.d(TAG, "Transfering default route");
+	public static List<String> getRouteStorageNames(Context c){
+		loadRouteNames(c);
 		String state = Environment.getExternalStorageState();
+		List<String> routeNames = new ArrayList<String>();
+	     if (Environment.MEDIA_MOUNTED.equals(state)) {	
+				Log.d(TAG, "Getting external Route");
+				File routeDirectory = c.getExternalFilesDir(ROUTES_DIR);
+				File[] contents = routeDirectory.listFiles();
+				for(File f: contents) {
+					if(f.getName().startsWith("fp")){
+						routeNames.add(f.getName());
+					}
+				}
+			} 
+			else {
+				Log.e(TAG, "External media not available ");
+			}
+	     return routeNames;
+
+	}
+	public static String getRouteDescription(Context c, String routeStorageName){
+		Log.d(TAG, "Route description retrival " + routeStorageName);
+		String routeName = null;
 		
+		String routeXMLPath = ROUTES_DIR + routeStorageName+"/"+ROUTE_XML;
+		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			byte[] readData = new byte[1024];
-			File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-			InputStream is = c.getResources().openRawResource(com.jmie.fieldplay.R.raw.fp_test_route);
-			File destination = new File(downloadDirectory.getPath() + "/" + "fp_test_route.zip");
-			File destination2 = new File(downloadDirectory.getPath() + "/" + "fp_crest_route.zip");
-
+			Log.d(TAG, "Media Mounted");
+			InputStream inputStream;
 			try {
-				FileOutputStream fos = new FileOutputStream(destination);
-	               int i = is.read(readData);
-
-	                while (i != -1) {
-	                    fos.write(readData, 0, i);
-	                    i = is.read(readData);
-	                }
-
-	                fos.close();
-	    			InputStream is2 = c.getResources().openRawResource(com.jmie.fieldplay.R.raw.fp_crest_route);
-	                FileOutputStream fos2 = new FileOutputStream(destination2);
-	                int  j = is2.read(readData);
-	                while(j!=-1){
-	                	fos2.write(readData, 0, j);
-	                	j=is2.read(readData);
-	                }
-	                fos2.close();
-	                Log.d(TAG, "Transfered resource " + destination.getName());
+				Log.d(TAG, "Accessing " + routeXMLPath);
+				File inputFile = c.getExternalFilesDir(routeXMLPath);
+				inputStream = new FileInputStream(inputFile);
+	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+	            Log.d(TAG, "Starting name parse of " + inputFile.getName());
+	            XMLManager xmlManager = new XMLManager();
+	            routeName = xmlManager.parseDescriptionOnly(bufferedInputStream);
+	            inputStream.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+			} catch (XmlPullParserException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} 
-		else {
-			Log.e(TAG, "External media not available ");
-		}
-	}
-	public List<String> getRouteNames(Context c){
-		Log.d(TAG, "Fetching Route names");
-		List<String> routes = new ArrayList<String>();
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			Log.d(TAG, "Getting external Route");
-			File routeDirectory = c.getExternalFilesDir(ROUTES_DIR);
-			File[] contents = routeDirectory.listFiles();
-			for(File f: contents) {
-				if(f.getName().startsWith("fp"))
-					routes.add(f.getName());
-			}
-			Log.d(TAG, "Fetched " + routes.size() + " routes");
-		} 
-		else {
-			Log.e(TAG, "External media not available ");
-		}
-		return routes;
-	}
-	public List<File> findDownloads(File downloadDirectory){
-		List<File> fpZips = new ArrayList<File>();
-
-		File[] contents = downloadDirectory.listFiles();
-		for(File f: contents) {
-			if(f.getName().startsWith("fp")&&f.getName().endsWith("zip"))
-				fpZips.add(f);
-		}
 	
-		return fpZips;
-	}
-	private void unzipAndSave(List<File> zipFiles, File applicationDirectory){
-		for(File f: zipFiles){
-			Log.d(TAG, "unzipping " + f.getPath() + " to " + applicationDirectory.getPath());
-	        AsyncTask uzdst = new UnZipTask().execute(f, applicationDirectory);
-	        try {
-				uzdst.get(5, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} 
+		else {
+			Log.e(TAG, "External media not available ");
 		}
+		return routeName;
 	}
-	public Route buildRoute(Context c, String routeStorageName){
+	public static Route buildRoute(Context c, String routeStorageName){
 		
 		Log.d(TAG, "Building route " + routeStorageName);
 		Route route = null;
@@ -166,7 +112,8 @@ public class StorageManager extends Observable{
 	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 	            Log.d(TAG, "Starting parse of " + inputFile.getName());
 	            XMLManager xmlManager = new XMLManager();
-	            route = xmlManager.parse(bufferedInputStream);
+	            route = xmlManager.parse(bufferedInputStream, routeStorageName);
+	            bufferedInputStream.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (XmlPullParserException e) {
@@ -181,31 +128,131 @@ public class StorageManager extends Observable{
 		return route;
 	}
 
-	public Route buildRouteByName(Context c, String name){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String storageName = settings.getString(name, "N/A");
-		Log.e(TAG, "No Map for storage name found");
-		return buildRoute(c, storageName);
+	public static void loadDownloadedZips(RouteLoaderActivity loader) {
+		String state = Environment.getExternalStorageState();
+
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {	
+			File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			
+			File applicationDirectory = loader.getExternalFilesDir(ROUTES_DIR);
+			List<File> zips = StorageManager.findDownloads(downloadDirectory);
+			unzipAndSave(zips, applicationDirectory, loader);
+		} 
+		else {
+			Log.e(TAG, "External media not available ");
+		}
 	}
-	public static String getTilePath(Context c, String routeName, String layerName){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String storageName = settings.getString(routeName, "N/A");
-		return ROUTES_DIR + storageName+"/" + LAYERS_DIR +"/"+layerName;
+
+	private static void transferDefaultRoute(RouteLoaderActivity loader) {
+		
+		AsyncTask uzdst = new LoadDefaultRoute(loader).execute();
+		Log.d(TAG, "Transfering default route");
+		Toast.makeText(loader, "Loading default routes", Toast.LENGTH_LONG).show();
+		StorageManager.loadDownloadedZips(loader);
 	}
-	public static String getAudioPath(Context c, String routeName, String audioName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String storageName = settings.getString(routeName, "N/A");
-		return ROUTES_DIR + storageName+"/"+AUDIO_DIR+audioName;
+	private static void loadRouteNames(Context c){
+		 SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+	     SharedPreferences.Editor editor = settings.edit();
+	     
+	     String state = Environment.getExternalStorageState();
+	     if (Environment.MEDIA_MOUNTED.equals(state)) {	
+				Log.d(TAG, "Getting external Route");
+				File routeDirectory = c.getExternalFilesDir(ROUTES_DIR);
+				File[] contents = routeDirectory.listFiles();
+				for(File f: contents) {
+					if(f.getName().startsWith("fp")){
+						String routeName = getRouteNameFromXML(c, f.getName());
+						editor.putString(f.getName(), routeName);
+					}
+				}
+			} 
+			else {
+				Log.e(TAG, "External media not available ");
+			}
+	     
+	      editor.commit();
 	}
-	public static String getImagePath(Context c, String routeName, String imageName) {
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String storageName = settings.getString(routeName, "N/A");
-		return ROUTES_DIR + storageName+"/"+IMAGES_DIR+imageName;
+
+	private static List<File> findDownloads(File downloadDirectory){
+		List<File> fpZips = new ArrayList<File>();
+
+		File[] contents = downloadDirectory.listFiles();
+		for(File f: contents) {
+			if(f.getName().startsWith("fp")&&f.getName().endsWith("zip"))
+				fpZips.add(f);
+		}
+	
+		return fpZips;
 	}
-	public static String getVideoPath(Context c, String routeName, String videoName) {
+	private static void unzipAndSave(List<File> zipFiles, File applicationDirectory, RouteLoaderActivity loader){
+		for(File f: zipFiles){
+			Log.d(TAG, "unzipping " + f.getPath() + " to " + applicationDirectory.getPath());
+	        AsyncTask uzdst = new UnZipTask(loader).execute(f, applicationDirectory);
+	        try {
+				uzdst.get(5, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	public static String storageNameToRouteName(Context c, String routeStorageName){
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		String storageName = settings.getString(routeName, "N/A");
-		return ROUTES_DIR + storageName+"/"+VIDEO_DIR+videoName;
+		String routeName = settings.getString(routeStorageName, "");
+		return routeName;
+	}
+	private static String getRouteNameFromXML(Context c, String routeStorageName){
+		Log.d(TAG, "Route name retrival " + routeStorageName);
+		String routeName = null;
+		
+		String routeXMLPath = ROUTES_DIR + routeStorageName+"/"+ROUTE_XML;
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {	
+			Log.d(TAG, "Media Mounted");
+			InputStream inputStream;
+			try {
+				Log.d(TAG, "Accessing " + routeXMLPath);
+				File inputFile = c.getExternalFilesDir(routeXMLPath);
+				inputStream = new FileInputStream(inputFile);
+	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+	            Log.d(TAG, "Starting name parse of " + inputFile.getName());
+	            XMLManager xmlManager = new XMLManager();
+	            routeName = xmlManager.parseNameOnly(bufferedInputStream);
+	            inputStream.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (XmlPullParserException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+		} 
+		else {
+			Log.e(TAG, "External media not available ");
+		}
+		return routeName;
+	}
+	
+
+	public static String getTilePath(Context c, String routeStorageName, String layerName){
+		return ROUTES_DIR + routeStorageName+"/" + LAYERS_DIR +"/"+layerName;
+	}
+	public static String getAudioPath(Context c, String routeStorageName, String audioName) {
+		return ROUTES_DIR + routeStorageName+"/"+AUDIO_DIR+audioName;
+	}
+	public static String getImagePath(Context c, String routeStorageName, String imageName) {
+		return ROUTES_DIR + routeStorageName+"/"+IMAGES_DIR+imageName;
+	}
+	public static String getVideoPath(Context c, String routeStorageName, String videoName) {
+		return ROUTES_DIR + routeStorageName+"/"+VIDEO_DIR+videoName;
 	}
 	public static void saveCurrentRoute(Context c, Route route){
 	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -213,22 +260,19 @@ public class StorageManager extends Observable{
 	      editor.putString("CurrentRoute", route.getName());
 	      editor.commit();
 	}
-	public void setReadName(Context c, String storageName, String readName) {
+	private static void setReadName(Context c, String storageName, String readName) {
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(readName, storageName);
 		editor.commit();
 	}
-	public String getReadName(Context c, String readName){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		return settings.getString(readName, "N/A");
-	}
-	public boolean isFirstRun(Context c){
+
+	public static boolean isFirstRun(Context c){
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		Log.d(TAG, "First run is " + settings.getBoolean("FirstRun", true));
 		return settings.getBoolean("FirstRun", true);
 	}
-	public void setFirstRun(Context c){
+	private static void setFirstRun(Context c){
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("FirstRun", false);
@@ -249,77 +293,5 @@ public class StorageManager extends Observable{
 		return settings.getBoolean("AudioStatus", false);
 	}
 
-	public void update(Observable observable, Object data){
-		//Toast.makeText(context, data.toString(), Toast.LENGTH_SHORT).show();
-	}
-	 private class UnZipTask extends AsyncTask<File, Void, Boolean> {
-		 private String routeName;
-//	        @SuppressWarnings("rawtypes")
-	        @Override
-	        protected Boolean doInBackground(File... params) {
-	
-	            String destinationPath = params[1].getPath();
-	            File archive = params[0];
-	            routeName = archive.getName();
-	            try {
-	                ZipFile zipfile = new ZipFile(archive);
-	                for (Enumeration<?> e = zipfile.entries(); e.hasMoreElements();) {
-	                    ZipEntry entry = (ZipEntry) e.nextElement();
-	                    unzipEntry(zipfile, entry, destinationPath);
-	                }
-	            } catch (Exception e) {
-	                Log.e(TAG, "Error while extracting file " + archive, e);
-	                return false;
-	            }
 
-	            return true;
-	        }
-
-	        @Override
-	        protected void onPostExecute(Boolean result) {
-	            setChanged();
-	            notifyObservers(routeName);
-	        }
-
-	        private void unzipEntry(ZipFile zipfile, ZipEntry entry,
-	                String outputDir) throws IOException {
-
-	            if (entry.isDirectory()) {
-	            	Log.d(TAG, "Is directory " + entry.getName());
-	                createDir(new File(outputDir, entry.getName()));
-	                return;
-	            }
-
-	            File outputFile = new File(outputDir, entry.getName());
-	            if (!outputFile.getParentFile().exists()) {
-	            	Log.d(TAG, "Creating directory from png path" + entry.getName());
-	                createDir(outputFile.getParentFile());
-	            }
-
-	            Log.v(TAG, "Extracting: " + entry);
-	            BufferedInputStream inputStream = new BufferedInputStream(zipfile.getInputStream(entry));
-	            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-
-	            try {
-	                IOUtils.copy(inputStream, outputStream);
-	            } catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-	                outputStream.close();
-	                inputStream.close();
-	            }
-	        }
-
-	        private void createDir(File dir) {
-	            if (dir.exists()) {
-	            	Log.v(TAG, "Directory exists " + dir.getName());
-	                return;
-	            }
-	            Log.v(TAG, "Creating dir " + dir.getName());
-	            if (!dir.mkdirs()) {
-	                throw new RuntimeException("Can not create dir " + dir);
-	            }
-	        }
-	    }
 }

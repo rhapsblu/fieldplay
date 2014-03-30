@@ -89,7 +89,6 @@ public class FPMapActivity extends
     
     private List<String> mGeofenceIdsToRemove;
     
-	private StorageManager storage;
 	private Route route;
 	private AudioService audioService;
 	public static String TAG = "FP Map";
@@ -110,7 +109,7 @@ public class FPMapActivity extends
 		Bundle b = getIntent().getExtras();
 		c = this;
 		String routeName = b.getString("com.jmie.fieldplay.routeName");
-		storage = new StorageManager();
+
 		mPrefs = new FPGeofenceStore(this);
         // Instantiate the current List of geofences
         mCurrentGeofences = new ArrayList<Geofence>();
@@ -121,7 +120,7 @@ public class FPMapActivity extends
         // Instantiate a Geofence remover
         mGeofenceRemover = new GeofenceRemover(this);
 		Log.d(TAG, "Recieved Route " + routeName);
-		route = storage.buildRoute(this, routeName);
+		route = StorageManager.buildRoute(this, routeName);
 		setContentView(R.layout.activity_fpmap);
 		setUpMapIfNeeded();
 		Intent intent = new Intent(this, AudioService.class);
@@ -288,7 +287,7 @@ public class FPMapActivity extends
 	public boolean onMarkerClick(Marker marker) {
 		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
 		FPLocation location = markerToLocation.get(marker);
-		String[] routeLocPair = {route.getName(), location.getName()};
+		String[] routeLocPair = {route.getStorageName(), location.getName()};
 		i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
 		startActivity(i);	
 		return false;
@@ -577,7 +576,7 @@ public class FPMapActivity extends
 				if(tileOverlay != null)tileOverlay.remove();
 				return false;
 			}
-			tileProvider.setMapLayer(c, route.getName(), layers.get(i));
+			tileProvider.setMapLayer(c, route.getStorageName(), layers.get(i));
 			tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
 			return false;
 		}

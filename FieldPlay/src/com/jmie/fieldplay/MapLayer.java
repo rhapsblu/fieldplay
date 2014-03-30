@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import com.google.android.gms.maps.model.Tile;
+import com.google.android.gms.maps.model.TileProvider;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.content.Context;
@@ -35,8 +36,8 @@ public class MapLayer {
 		this.description = description;
 
 	}
-	public void setUpRoute(Context c, String routeName){
-		layerPath = StorageManager.getTilePath(c, routeName, layerName);
+	public void setUpRoute(Context c, String routeStorageName){
+		layerPath = StorageManager.getTilePath(c, routeStorageName, layerName);
 		this.c = c;
 	}
 	public String getName(){
@@ -49,6 +50,7 @@ public class MapLayer {
     public Tile getTile(int x, int y, int zoom) {
 
         byte[] image = readTileImage(c, x, y, zoom);
+        if(image== null) return TileProvider.NO_TILE;
         return image == null ? null : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
     }
     
@@ -60,7 +62,13 @@ public class MapLayer {
 			InputStream inputStream = null;
 			ByteArrayOutputStream buffer = null;
 			try {
+				
 				File inputFile = c.getExternalFilesDir(getTileFilename(x, y, zoom));
+				if(inputFile.isDirectory()){
+					//silly hack.  Why does getExternalFileDir create the directory?
+					inputFile.delete();
+					return null;
+				}
 				inputStream = new FileInputStream(inputFile);
 				buffer = new ByteArrayOutputStream();
 

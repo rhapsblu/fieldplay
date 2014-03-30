@@ -9,9 +9,9 @@ public class CustomLayerTileProvider implements TileProvider {
 	private MapLayer mapLayer;
 	public CustomLayerTileProvider(){
 	}
-	public void setMapLayer(Context c, String routeName, MapLayer ml){
+	public void setMapLayer(Context c, String routeStorageName, MapLayer ml){
 		mapLayer = ml;
-		mapLayer.setUpRoute(c, routeName);
+		mapLayer.setUpRoute(c, routeStorageName);
 	}
 	@Override
 	public Tile getTile(int x, int y, int zoom) {

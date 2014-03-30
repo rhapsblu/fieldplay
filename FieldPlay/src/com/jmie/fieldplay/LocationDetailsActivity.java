@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class LocationDetailsActivity extends Activity{
-	private StorageManager storage = new StorageManager();
+
 	private Route route;
 	private FPLocation location;
 	private String routeStorageName;
@@ -28,7 +28,7 @@ public class LocationDetailsActivity extends Activity{
 		Bundle b = getIntent().getExtras();
 		String[] routeAndLocation = b.getStringArray("com.jmie.fieldplay.locationID");
 		routeStorageName = routeAndLocation[0];
-		route = storage.buildRouteByName(this, routeAndLocation[0]);
+		route = StorageManager.buildRoute(this, routeAndLocation[0]);
 		location = route.getLocationByName(routeAndLocation[1]);
 		setContentView(R.layout.location_detail);
 		TextView name = (TextView)findViewById(R.id.location_name);
@@ -38,10 +38,8 @@ public class LocationDetailsActivity extends Activity{
 		TextView description = (TextView)findViewById(R.id.location_description);
 
 		description.setText(location.getDescription());
-		
-		TextView txt = (TextView) findViewById(R.id.location_name);
 		Typeface font = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
-		txt.setTypeface(font);
+		name.setTypeface(font);
 
 
 
@@ -86,7 +84,7 @@ public class LocationDetailsActivity extends Activity{
 	            return true;
 	        case R.id.augmented_binoculars:
 				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
-				String[] routeLocPair = {route.getName(), location.getName()};
+				String[] routeLocPair = {route.getStorageName(), location.getName()};
 				i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
 				startActivity(i);
 	            return true;
