@@ -1,6 +1,9 @@
 package com.jmie.fieldplay.details;
 
-public class FPPicture {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class FPPicture implements Parcelable{
 	private String _name;
 	private String _description;
 	private String _resource;
@@ -8,6 +11,9 @@ public class FPPicture {
 		this._name = name;
 		this._description = description;
 		this._resource = resource;
+	}
+	public FPPicture(Parcel in){
+		readFromParcel(in);
 	}
 	public String getName() {
 		return _name;
@@ -20,7 +26,29 @@ public class FPPicture {
 	public String getResource() {
 		return _resource;
 	}
-
-
-
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(_name);
+		dest.writeString(_description);
+		dest.writeString(_resource);
+		
+	}
+	private void readFromParcel(Parcel in){
+		_name = in.readString();
+		_description = in.readString();
+		_resource = in.readString();
+	}
+	public static final Parcelable.Creator<FPPicture> CREATOR = new Parcelable.Creator<FPPicture>() {
+		public FPPicture createFromParcel (Parcel in){
+			return new FPPicture(in);
+		}
+		public FPPicture[] newArray(int size) {
+			return new FPPicture[size];
+		}
+	};
 }

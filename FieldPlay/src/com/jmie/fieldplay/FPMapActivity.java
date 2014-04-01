@@ -67,36 +67,36 @@ public class FPMapActivity extends
 								OnMarkerClickListener,        
 								ConnectionCallbacks,
 								OnConnectionFailedListener,
-								LocationListener,
-								ServiceConnection
+								LocationListener
+								//ServiceConnection
 {
 	
-    private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
-    private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
-            GEOFENCE_EXPIRATION_IN_HOURS * DateUtils.HOUR_IN_MILLIS;
-    private REQUEST_TYPE mRequestType;
+//    private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
+//    private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
+//            GEOFENCE_EXPIRATION_IN_HOURS * DateUtils.HOUR_IN_MILLIS;
+//    private REQUEST_TYPE mRequestType;
 
     // Store the current type of removal
-    private REMOVE_TYPE mRemoveType;
+   // private REMOVE_TYPE mRemoveType;
 
     // Persistent storage for geofences
-    private FPGeofenceStore mPrefs;
-    List<Geofence> mCurrentGeofences;
+//    private FPGeofenceStore mPrefs;
+//    List<Geofence> mCurrentGeofences;
     // Add geofences handler
-    private GeofenceRequester mGeofenceRequester;
+//    private GeofenceRequester mGeofenceRequester;
     // Remove geofences handler
-    private GeofenceRemover mGeofenceRemover;
-    
-    private List<String> mGeofenceIdsToRemove;
+//    private GeofenceRemover mGeofenceRemover;
+//    
+//    private List<String> mGeofenceIdsToRemove;
     
 	private Route route;
-	private AudioService audioService;
+//	private AudioService audioService;
 	public static String TAG = "FP Map";
 	private GoogleMap mMap;
 	private MenuItem toggle;
 	private boolean bound = false;
 	private List<Marker> markerList = new ArrayList<Marker>();
-	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
+//	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
     private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
     private PopupMenu layerMenu;
     private CustomLayerTileProvider tileProvider = new CustomLayerTileProvider();
@@ -110,23 +110,27 @@ public class FPMapActivity extends
 		c = this;
 		String routeName = b.getString("com.jmie.fieldplay.routeName");
 
-		mPrefs = new FPGeofenceStore(this);
+//		mPrefs = new FPGeofenceStore(this);
         // Instantiate the current List of geofences
-        mCurrentGeofences = new ArrayList<Geofence>();
+//        mCurrentGeofences = new ArrayList<Geofence>();
 
         // Instantiate a Geofence requester
-        mGeofenceRequester = new GeofenceRequester(this);
+//        mGeofenceRequester = new GeofenceRequester(this);
 
         // Instantiate a Geofence remover
-        mGeofenceRemover = new GeofenceRemover(this);
+//        mGeofenceRemover = new GeofenceRemover(this);
 		Log.d(TAG, "Recieved Route " + routeName);
-		route = StorageManager.buildRoute(this, routeName);
+		route = StorageManager.getCachedRoute(c);
+		if((route == null)||(route.getStorageName().compareTo(routeName)!=0)){
+			route = StorageManager.buildRoute(this, routeName);
+			StorageManager.cacheRoute(c, route);
+		}
 		setContentView(R.layout.activity_fpmap);
 		setUpMapIfNeeded();
-		Intent intent = new Intent(this, AudioService.class);
-		startService(intent);
-        bindService(new Intent(this, AudioService.class), this,
-                Context.BIND_AUTO_CREATE);
+//		Intent intent = new Intent(this, AudioService.class);
+//		startService(intent);
+//        bindService(new Intent(this, AudioService.class), this,
+//                Context.BIND_AUTO_CREATE);
      
         layerMenu = new PopupMenu(this, findViewById(R.id.popupAnchor));
         List<MapLayer> mapLayers = route.getMapLayers();
@@ -142,9 +146,9 @@ public class FPMapActivity extends
 	protected void onResume(){
 		super.onResume();
 		setUpMapIfNeeded();
-		if(mPrefs.getFenceCount() >0){
-			for(int i = 0; i<mPrefs.getFenceCount(); i++) fenceList.add(mPrefs.getGeofence(String.valueOf(i)));
-		}
+//		if(mPrefs.getFenceCount() >0){
+//			for(int i = 0; i<mPrefs.getFenceCount(); i++) fenceList.add(mPrefs.getGeofence(String.valueOf(i)));
+//		}
 
 		//mLocationClient.connect();
 	}
@@ -156,12 +160,12 @@ public class FPMapActivity extends
 
 //        }
     }
-    @Override
-    public void onDestroy(){
-    	super.onDestroy();
-    	if(bound) unbindService(this);
-    	bound = false;
-    }
+//    @Override
+//    public void onDestroy(){
+//    	super.onDestroy();
+//    	if(bound) unbindService(this);
+//    	bound = false;
+//    }
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -261,14 +265,7 @@ public class FPMapActivity extends
     		Marker marker = mMap.addMarker(markerOptions);
     		markerList.add(marker);
     		markerToLocation.put(marker, location);
-    	
-//    		Marker m = mMap.addMarker(new MarkerOptions()
-//            .position(new LatLng(location.getLatitude(), location.getLongitude()))
-//            .title(location.getName())
-//            .snippet(location.getDescription()));
-//    		markerList.add(m);
-//    		markerToLocation.put(m, location);
-    		
+
     	}
 
     }
@@ -287,8 +284,8 @@ public class FPMapActivity extends
 	public boolean onMarkerClick(Marker marker) {
 		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
 		FPLocation location = markerToLocation.get(marker);
-		String[] routeLocPair = {route.getStorageName(), location.getName()};
-		i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
+		i.putExtra("com.jmie.fieldplay.route", route);
+		i.putExtra("com.jmie.fieldplay.locationID", location.getName());
 		startActivity(i);	
 		return false;
 	}
@@ -314,201 +311,201 @@ public class FPMapActivity extends
 		// TODO Auto-generated method stub
 		
 	}
-	@Override
-	public void onServiceConnected(ComponentName name, IBinder service) {
-		LocalBinder localBinder = (LocalBinder)service;
-		audioService = localBinder.getService();
-		bound = true;
-		
-	}
-	@Override
-	public void onServiceDisconnected(ComponentName name) {
-		// TODO Auto-generated method stub
-		
-	}
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // Choose what to do based on the request code
-        switch (requestCode) {
-
-            // If the request code matches the code sent in onConnectionFailed
-            case GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST :
-
-                switch (resultCode) {
-                    // If Google Play services resolved the problem
-                    case Activity.RESULT_OK:
-
-                        // If the request was to add geofences
-                        if (GeofenceUtils.REQUEST_TYPE.ADD == mRequestType) {
-
-                            // Toggle the request flag and send a new request
-                            mGeofenceRequester.setInProgressFlag(false);
-
-                            // Restart the process of adding the current geofences
-                            mGeofenceRequester.addGeofences(mCurrentGeofences);
-
-                        // If the request was to remove geofences
-                        } else if (GeofenceUtils.REQUEST_TYPE.REMOVE == mRequestType ){
-
-                            // Toggle the removal flag and send a new removal request
-                            mGeofenceRemover.setInProgressFlag(false);
-
-                            // If the removal was by Intent
-                            if (GeofenceUtils.REMOVE_TYPE.INTENT == mRemoveType) {
-
-                                // Restart the removal of all geofences for the PendingIntent
-                                mGeofenceRemover.removeGeofencesByIntent(
-                                    mGeofenceRequester.getRequestPendingIntent());
-
-                            // If the removal was by a List of geofence IDs
-                            } else {
-
-                                // Restart the removal of the geofence list
-                                mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
-                            }
-                        }
-                    break;
-
-                    // If any other result was returned by Google Play services
-                    default:
-
-                        // Report that Google Play services was unable to resolve the problem.
-                        Log.d(GeofenceUtils.APPTAG, "google play services reports a problem");
-                }
-
-            // If any other request code was received
-            default:
-               // Report that this Activity received an unknown requestCode
-               Log.d(GeofenceUtils.APPTAG,
-                       "unknown code: ");
-
-               break;
-        }
-    }
+//	@Override
+//	public void onServiceConnected(ComponentName name, IBinder service) {
+//		LocalBinder localBinder = (LocalBinder)service;
+//		audioService = localBinder.getService();
+//		bound = true;
+//		
+//	}
+//	@Override
+//	public void onServiceDisconnected(ComponentName name) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//        // Choose what to do based on the request code
+//        switch (requestCode) {
+//
+//            // If the request code matches the code sent in onConnectionFailed
+//            case GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST :
+//
+//                switch (resultCode) {
+//                    // If Google Play services resolved the problem
+//                    case Activity.RESULT_OK:
+//
+//                        // If the request was to add geofences
+//                        if (GeofenceUtils.REQUEST_TYPE.ADD == mRequestType) {
+//
+//                            // Toggle the request flag and send a new request
+//                            mGeofenceRequester.setInProgressFlag(false);
+//
+//                            // Restart the process of adding the current geofences
+//                            mGeofenceRequester.addGeofences(mCurrentGeofences);
+//
+//                        // If the request was to remove geofences
+//                        } else if (GeofenceUtils.REQUEST_TYPE.REMOVE == mRequestType ){
+//
+//                            // Toggle the removal flag and send a new removal request
+//                            mGeofenceRemover.setInProgressFlag(false);
+//
+//                            // If the removal was by Intent
+//                            if (GeofenceUtils.REMOVE_TYPE.INTENT == mRemoveType) {
+//
+//                                // Restart the removal of all geofences for the PendingIntent
+//                                mGeofenceRemover.removeGeofencesByIntent(
+//                                    mGeofenceRequester.getRequestPendingIntent());
+//
+//                            // If the removal was by a List of geofence IDs
+//                            } else {
+//
+//                                // Restart the removal of the geofence list
+//                                mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
+//                            }
+//                        }
+//                    break;
+//
+//                    // If any other result was returned by Google Play services
+//                    default:
+//
+//                        // Report that Google Play services was unable to resolve the problem.
+//                        Log.d(GeofenceUtils.APPTAG, "google play services reports a problem");
+//                }
+//
+//            // If any other request code was received
+//            default:
+//               // Report that this Activity received an unknown requestCode
+//               Log.d(GeofenceUtils.APPTAG,
+//                       "unknown code: ");
+//
+//               break;
+//        }
+//    }
     /**
      * Verify that Google Play services is available before making a request.
      *
      * @return true if Google Play services is available, otherwise false
      */
-    private boolean servicesConnected() {
-
-        // Check that Google Play services is available
-        int resultCode =
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-
-            // In debug mode, log the status
-            Log.d(GeofenceUtils.APPTAG, "play services available");
-
-            registerGeofences();
-            return true;
-
-        // Google Play services was not available for some reason
-        } else {
-
-            // Display an error dialog
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
-            if (dialog != null) {
-                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-                errorFragment.setDialog(dialog);
-                errorFragment.show(getFragmentManager(), GeofenceUtils.APPTAG);
-            }
-            return false;
-        }
-    }
+//    private boolean servicesConnected() {
+//
+//        // Check that Google Play services is available
+//        int resultCode =
+//                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+//
+//        // If Google Play services is available
+//        if (ConnectionResult.SUCCESS == resultCode) {
+//
+//            // In debug mode, log the status
+//            Log.d(GeofenceUtils.APPTAG, "play services available");
+//
+//            registerGeofences();
+//            return true;
+//
+//        // Google Play services was not available for some reason
+//        } else {
+//
+//            // Display an error dialog
+//            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
+//            if (dialog != null) {
+//                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+//                errorFragment.setDialog(dialog);
+//                errorFragment.show(getFragmentManager(), GeofenceUtils.APPTAG);
+//            }
+//            return false;
+//        }
+//    }
     
-    public void onUnregisterByPendingIntent() {
-        /*
-         * Remove all geofences set by this app. To do this, get the
-         * PendingIntent that was added when the geofences were added
-         * and use it as an argument to removeGeofences(). The removal
-         * happens asynchronously; Location Services calls
-         * onRemoveGeofencesByPendingIntentResult() (implemented in
-         * the current Activity) when the removal is done
-         */
-
-        /*
-         * Record the removal as remove by Intent. If a connection error occurs,
-         * the app can automatically restart the removal if Google Play services
-         * can fix the error
-         */
-        // Record the type of removal
-        mRemoveType = GeofenceUtils.REMOVE_TYPE.INTENT;
-
-        /*
-         * Check for Google Play services. Do this after
-         * setting the request type. If connecting to Google Play services
-         * fails, onActivityResult is eventually called, and it needs to
-         * know what type of request was in progress.
-         */
-        if (!servicesConnected()) {
-
-            return;
-        }
-
-        // Try to make a removal request
-        try {
-        /*
-         * Remove the geofences represented by the currently-active PendingIntent. If the
-         * PendingIntent was removed for some reason, re-create it; since it's always
-         * created with FLAG_UPDATE_CURRENT, an identical PendingIntent is always created.
-         */
-        mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
-        
-
-        } catch (UnsupportedOperationException e) {
-            // Notify user that previous request hasn't finished.
-            Toast.makeText(this, "Remove fences already requested",
-                        Toast.LENGTH_LONG).show();
-        }
-
-    }
-    
-    public void registerGeofences() {
-
-        /*
-         * Record the request as an ADD. If a connection error occurs,
-         * the app can automatically restart the add request if Google Play services
-         * can fix the error
-         */
-        mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
-
-        /*
-         * Check for Google Play services. Do this after
-         * setting the request type. If connecting to Google Play services
-         * fails, onActivityResult is eventually called, and it needs to
-         * know what type of request was in progress.
-         */
-        if (!servicesConnected()) {
-
-            return;
-        }
-
-        int id = 0;
-        for(FPLocation l : route.getLocationList()){
-        	if(l instanceof StopLocation){
-        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getAlertRadius(), 
-        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-        		id++;
-        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getContentRadius(), 
-        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-        		id++;
-        	}
-        	else if(l instanceof InterestLocation){
-        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-        				l.getLatitude(), l.getLongitude(),(long) ((InterestLocation) l).getContentRadius(), 
-        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-        		id++;
-        	}
-        }
-        for(FPGeofence fence: fenceList){
-        	mPrefs.setGeofence(fence.getId(), fence);
-        	mCurrentGeofences.add(fence.toGeofence());
-        }
+//    public void onUnregisterByPendingIntent() {
+//        /*
+//         * Remove all geofences set by this app. To do this, get the
+//         * PendingIntent that was added when the geofences were added
+//         * and use it as an argument to removeGeofences(). The removal
+//         * happens asynchronously; Location Services calls
+//         * onRemoveGeofencesByPendingIntentResult() (implemented in
+//         * the current Activity) when the removal is done
+//         */
+//
+//        /*
+//         * Record the removal as remove by Intent. If a connection error occurs,
+//         * the app can automatically restart the removal if Google Play services
+//         * can fix the error
+//         */
+//        // Record the type of removal
+//        mRemoveType = GeofenceUtils.REMOVE_TYPE.INTENT;
+//
+//        /*
+//         * Check for Google Play services. Do this after
+//         * setting the request type. If connecting to Google Play services
+//         * fails, onActivityResult is eventually called, and it needs to
+//         * know what type of request was in progress.
+//         */
+//        if (!servicesConnected()) {
+//
+//            return;
+//        }
+//
+//        // Try to make a removal request
+//        try {
+//        /*
+//         * Remove the geofences represented by the currently-active PendingIntent. If the
+//         * PendingIntent was removed for some reason, re-create it; since it's always
+//         * created with FLAG_UPDATE_CURRENT, an identical PendingIntent is always created.
+//         */
+//        mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
+//        
+//
+//        } catch (UnsupportedOperationException e) {
+//            // Notify user that previous request hasn't finished.
+//            Toast.makeText(this, "Remove fences already requested",
+//                        Toast.LENGTH_LONG).show();
+//        }
+//
+//    }
+//    
+//    public void registerGeofences() {
+//
+//        /*
+//         * Record the request as an ADD. If a connection error occurs,
+//         * the app can automatically restart the add request if Google Play services
+//         * can fix the error
+//         */
+//        mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
+//
+//        /*
+//         * Check for Google Play services. Do this after
+//         * setting the request type. If connecting to Google Play services
+//         * fails, onActivityResult is eventually called, and it needs to
+//         * know what type of request was in progress.
+//         */
+//        if (!servicesConnected()) {
+//
+//            return;
+//        }
+//
+//        int id = 0;
+//        for(FPLocation l : route.getLocationList()){
+//        	if(l instanceof StopLocation){
+//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
+//        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getAlertRadius(), 
+//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
+//        		id++;
+//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
+//        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getContentRadius(), 
+//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
+//        		id++;
+//        	}
+//        	else if(l instanceof InterestLocation){
+//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
+//        				l.getLatitude(), l.getLongitude(),(long) ((InterestLocation) l).getContentRadius(), 
+//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
+//        		id++;
+//        	}
+//        }
+//        for(FPGeofence fence: fenceList){
+//        	mPrefs.setGeofence(fence.getId(), fence);
+//        	mCurrentGeofences.add(fence.toGeofence());
+//        }
         /*
          * Create a version of geofence 1 that is "flattened" into individual fields. This
          * allows it to be stored in SharedPreferences.
@@ -555,15 +552,15 @@ public class FPMapActivity extends
 //        mCurrentGeofences.add(mUIGeofence2.toGeofence());
 
         // Start the request. Fail if there's already a request in progress
-        try {
-            // Try to add geofences
-            mGeofenceRequester.addGeofences(mCurrentGeofences);
-        } catch (UnsupportedOperationException e) {
-            // Notify user that previous request hasn't finished.
-            Toast.makeText(this, "Adding geofence already requested",
-                        Toast.LENGTH_LONG).show();
-        }
-    }
+//        try {
+//            // Try to add geofences
+//            mGeofenceRequester.addGeofences(mCurrentGeofences);
+//        } catch (UnsupportedOperationException e) {
+//            // Notify user that previous request hasn't finished.
+//            Toast.makeText(this, "Adding geofence already requested",
+//                        Toast.LENGTH_LONG).show();
+//        }
+//    }
     private class LayerMenuItemClickListener implements OnMenuItemClickListener{
 
 		@Override

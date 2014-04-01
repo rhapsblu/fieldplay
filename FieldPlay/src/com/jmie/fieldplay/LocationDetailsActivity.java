@@ -26,10 +26,9 @@ public class LocationDetailsActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
-		String[] routeAndLocation = b.getStringArray("com.jmie.fieldplay.locationID");
-		routeStorageName = routeAndLocation[0];
-		route = StorageManager.buildRoute(this, routeAndLocation[0]);
-		location = route.getLocationByName(routeAndLocation[1]);
+		String location_id = b.getString("com.jmie.fieldplay.locationID");
+		route = b.getParcelable("com.jmie.fieldplay.route");
+		location = route.getLocationByName(location_id);
 		setContentView(R.layout.location_detail);
 		TextView name = (TextView)findViewById(R.id.location_name);
 

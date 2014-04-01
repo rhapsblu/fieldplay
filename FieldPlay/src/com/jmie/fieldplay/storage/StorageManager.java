@@ -4,8 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +43,7 @@ public class StorageManager {
 	public static final String LAYERS_DIR="layers/";
 	public static final String ROUTE_XML="route.xml";
 	public static final String ROUTE_NAMES="routenames";
+	public static final String ROUTE_CACHE="route_cache";
 
 	public static void firstRunSetup(RouteLoaderActivity loader){
 		transferDefaultRoute(loader);
@@ -254,12 +259,12 @@ public class StorageManager {
 	public static String getVideoPath(Context c, String routeStorageName, String videoName) {
 		return ROUTES_DIR + routeStorageName+"/"+VIDEO_DIR+videoName;
 	}
-	public static void saveCurrentRoute(Context c, Route route){
-	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-	      SharedPreferences.Editor editor = settings.edit();
-	      editor.putString("CurrentRoute", route.getName());
-	      editor.commit();
-	}
+//	public static void saveCurrentRoute(Context c, Route route){
+//	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+//	      SharedPreferences.Editor editor = settings.edit();
+//	      editor.putString("CurrentRoute", route.getName());
+//	      editor.commit();
+//	}
 	private static void setReadName(Context c, String storageName, String readName) {
 		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
@@ -278,10 +283,10 @@ public class StorageManager {
 		editor.putBoolean("FirstRun", false);
 		editor.commit();
 	}
-	public static String getCurrentRoute(Context c){
-		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		return settings.getString("CurrentRoute", "none");
-	}
+//	public static String getCurrentRoute(Context c){
+//		SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+//		return settings.getString("CurrentRoute", "none");
+//	}
 	public static void saveAudioTourStatus(Context c, boolean audioOn){
 	      SharedPreferences settings = c.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 	      SharedPreferences.Editor editor = settings.edit();
@@ -293,5 +298,46 @@ public class StorageManager {
 		return settings.getBoolean("AudioStatus", false);
 	}
 
-
+	public static Route getCachedRoute(Context c){
+		String routeCachePath = c.getCacheDir().getAbsolutePath()+"/"+ROUTE_CACHE;
+		File routeFile = new File(routeCachePath);
+		Route route = null;
+		if(!routeFile.exists()) return null;
+		try {
+			FileInputStream fis = c.openFileInput(routeCachePath);
+			ObjectInputStream is = new ObjectInputStream(fis);
+			route = (Route) is.readObject();
+			is.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (StreamCorruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return route;
+	}
+	public static void cacheRoute(Context c, Route route){
+		String routeCachePath = c.getCacheDir().getAbsolutePath()+"/"+ROUTE_CACHE;
+		
+		try {
+			FileOutputStream fos = c.openFileOutput(routeCachePath, Context.MODE_PRIVATE);
+			ObjectOutputStream os = new ObjectOutputStream(fos);
+			os.writeObject(route);
+			os.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

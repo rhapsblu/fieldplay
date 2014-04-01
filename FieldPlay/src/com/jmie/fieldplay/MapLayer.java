@@ -13,10 +13,12 @@ import com.jmie.fieldplay.storage.StorageManager;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 
-public class MapLayer {
+public class MapLayer implements Parcelable{
 	private static final int TILE_WIDTH = 256;
 	private static final int TILE_HEIGHT = 256;
 	private static final int BUFFER_SIZE = 16 * 1024;
@@ -35,6 +37,9 @@ public class MapLayer {
 		this.name = name;
 		this.description = description;
 
+	}
+	public MapLayer(Parcel in){
+		readFromParcel(in);
 	}
 	public void setUpRoute(Context c, String routeStorageName){
 		layerPath = StorageManager.getTilePath(c, routeStorageName, layerName);
@@ -101,5 +106,33 @@ public class MapLayer {
     private String getTileFilename(int x, int y, int zoom) {
         return layerPath + "/" + zoom + '/' + x + '/' + y + ".png";
     }
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(layerPath);
+		dest.writeString(name);
+		dest.writeString(description);
+		dest.writeString(layerName);
+	}
+	private void readFromParcel (Parcel in) {
+		layerPath = in.readString();
+		name = in.readString();
+		description = in.readString();
+		layerName = in.readString();
+	}
 	
+	public static final Parcelable.Creator<MapLayer> CREATOR = new Parcelable.Creator<MapLayer>() {
+		public MapLayer createFromParcel(Parcel in){
+			return new MapLayer(in);
+		}
+		public MapLayer[] newArray(int size) {
+			return new MapLayer[size];
+		}
+	};
+
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
