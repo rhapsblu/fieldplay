@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.map;
 
 
 
@@ -27,6 +27,10 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.ui.IconGenerator;
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.R.drawable;
+import com.jmie.fieldplay.R.id;
+import com.jmie.fieldplay.R.layout;
+import com.jmie.fieldplay.R.menu;
 import com.jmie.fieldplay.audioservice.AudioService;
 import com.jmie.fieldplay.audioservice.FPGeofence;
 import com.jmie.fieldplay.audioservice.FPGeofenceStore;
@@ -37,6 +41,11 @@ import com.jmie.fieldplay.audioservice.AudioService.LocalBinder;
 import com.jmie.fieldplay.audioservice.GeofenceUtils.REMOVE_TYPE;
 import com.jmie.fieldplay.audioservice.GeofenceUtils.REQUEST_TYPE;
 import com.jmie.fieldplay.binocular.activity.SensorsActivity.ErrorDialogFragment;
+import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.location.LocationDetailsActivity;
+import com.jmie.fieldplay.route.BinocularLocation;
+import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.StopLocation;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.annotation.SuppressLint;

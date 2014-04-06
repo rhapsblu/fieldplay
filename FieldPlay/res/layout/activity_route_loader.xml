@@ -12,7 +12,7 @@
    <ListView android:id="@+id/list"
              android:layout_width="wrap_content"
         	 android:layout_height="wrap_content" />
-   <fragment android:name="com.jmie.fieldplay.RouteDetailsFragment"
+   <fragment android:name="com.jmie.fieldplay.route.RouteDetailsFragment"
        		 android:id="@+id/details_fragment"
        		 android:layout_width="wrap_content"
         	 android:layout_height="wrap_content" 

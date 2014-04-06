@@ -44,16 +44,16 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity android:name="com.jmie.fieldplay.library.GooglePlayServices" />
-        <activity android:name="com.jmie.fieldplay.FPMapActivity"
+        <activity android:name="com.jmie.fieldplay.map.FPMapActivity"
             	  android:label="@string/FPMap" >   	 
         </activity>
-        <activity android:name="com.jmie.fieldplay.FullScreenViewActivity"/>
+        <activity android:name="com.jmie.fieldplay.location.FullScreenViewActivity"/>
         <activity android:name="LocationDetailsActivity"
             	  android:label="@string/location_details" >
             	 
         </activity>
         <activity
-            android:name="com.jmie.fieldplay.RouteLoaderActivity"
+            android:name="com.jmie.fieldplay.route.RouteLoaderActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

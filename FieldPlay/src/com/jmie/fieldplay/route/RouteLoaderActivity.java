@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,12 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.R.id;
+import com.jmie.fieldplay.R.layout;
+import com.jmie.fieldplay.R.menu;
+import com.jmie.fieldplay.map.FPMapActivity;
+import com.jmie.fieldplay.route.RouteDetailsFragment.OnRouteSelectedListener;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.os.Bundle;

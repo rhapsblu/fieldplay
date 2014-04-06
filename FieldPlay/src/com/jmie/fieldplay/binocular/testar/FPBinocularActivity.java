@@ -1,13 +1,13 @@
 package com.jmie.fieldplay.binocular.testar;
 
 
-import com.jmie.fieldplay.FPLocation;
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.Route;
 import com.jmie.fieldplay.binocular.activity.AugmentedReality;
 import com.jmie.fieldplay.binocular.data.ARData;
 import com.jmie.fieldplay.binocular.ui.Marker;
 import com.jmie.fieldplay.binocular.widget.VerticalTextView;
+import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.os.Bundle;

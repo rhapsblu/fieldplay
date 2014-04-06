@@ -1,9 +1,12 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.location;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jmie.fieldplay.details.FPPicture;
+import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.R.id;
+import com.jmie.fieldplay.R.layout;
+import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.app.Activity;

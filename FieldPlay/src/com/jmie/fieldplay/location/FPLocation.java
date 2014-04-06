@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.location;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,7 +8,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.jmie.fieldplay.details.FPPicture;
+import com.jmie.fieldplay.route.BinocularLocation;
+import com.jmie.fieldplay.route.FPPicture;
+import com.jmie.fieldplay.route.InterestLocation;
+import com.jmie.fieldplay.route.StopLocation;
 
 public abstract class FPLocation implements Parcelable{
 	private String _type = "abstract";

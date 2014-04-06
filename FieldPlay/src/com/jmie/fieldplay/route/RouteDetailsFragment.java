@@ -1,4 +1,8 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
+
+import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.R.id;
+import com.jmie.fieldplay.R.layout;
 
 import android.app.Activity;
 import android.app.Fragment;

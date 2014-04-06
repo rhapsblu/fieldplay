@@ -1,7 +1,8 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.location;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

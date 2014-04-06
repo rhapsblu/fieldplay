@@ -9,15 +9,15 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 
-import com.jmie.fieldplay.BinocularLocation;
-import com.jmie.fieldplay.FPLocation;
-import com.jmie.fieldplay.InterestLocation;
-import com.jmie.fieldplay.MapLayer;
-import com.jmie.fieldplay.Route;
-import com.jmie.fieldplay.StopLocation;
-import com.jmie.fieldplay.details.FPPicture;
-import com.jmie.fieldplay.media.FPAudio;
-import com.jmie.fieldplay.media.FPVideo;
+import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.map.MapLayer;
+import com.jmie.fieldplay.route.BinocularLocation;
+import com.jmie.fieldplay.route.FPAudio;
+import com.jmie.fieldplay.route.FPPicture;
+import com.jmie.fieldplay.route.FPVideo;
+import com.jmie.fieldplay.route.InterestLocation;
+import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.StopLocation;
 
 import android.util.Log;
 import android.util.Xml;

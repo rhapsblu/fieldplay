@@ -1,6 +1,8 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.location;
 
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.R.id;
+import com.jmie.fieldplay.R.layout;
  
 import java.util.ArrayList;
  

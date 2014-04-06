@@ -1,4 +1,6 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
+
+import com.jmie.fieldplay.location.FPLocation;
 
 import android.os.Parcel;
 import android.os.Parcelable;

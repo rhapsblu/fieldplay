@@ -29,8 +29,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-import com.jmie.fieldplay.Route;
-import com.jmie.fieldplay.RouteLoaderActivity;
+import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.RouteLoaderActivity;
 
 public class StorageManager {
 	static final String TAG = "Storage Manager";

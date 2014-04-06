@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.map;
 
 import android.content.Context;
 

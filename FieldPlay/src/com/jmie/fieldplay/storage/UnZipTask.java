@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.jmie.fieldplay.RouteLoaderActivity;
+import com.jmie.fieldplay.route.RouteLoaderActivity;
 
 import android.os.AsyncTask;
 import android.util.Log;

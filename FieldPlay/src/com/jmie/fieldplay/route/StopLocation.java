@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 
-import com.jmie.fieldplay.media.FPVideo;
 
 public class StopLocation extends InterestLocation {
 	private double _alert_radius = 100;

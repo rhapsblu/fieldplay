@@ -8,11 +8,11 @@ import java.util.List;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.jmie.fieldplay.FPLocation;
-import com.jmie.fieldplay.Route;
-import com.jmie.fieldplay.StopLocation;
 import com.jmie.fieldplay.binocular.data.DataSource;
 import com.jmie.fieldplay.binocular.ui.Marker;
+import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.StopLocation;
 
 public class FPBinocularSource extends DataSource{
 	protected List<Marker> markersCache = null;

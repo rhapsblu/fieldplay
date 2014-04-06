@@ -1,9 +1,12 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.map.MapLayer;
 
 
 import android.os.Parcel;

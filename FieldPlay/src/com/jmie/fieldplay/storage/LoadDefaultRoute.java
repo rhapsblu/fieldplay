@@ -6,7 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.jmie.fieldplay.RouteLoaderActivity;
+import com.jmie.fieldplay.route.RouteLoaderActivity;
+
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;

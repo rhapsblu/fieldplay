@@ -1,4 +1,4 @@
-package com.jmie.fieldplay;
+package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.jmie.fieldplay.media.FPAudio;
+import com.jmie.fieldplay.location.FPLocation;
 
 
 public class InterestLocation extends FPLocation{
