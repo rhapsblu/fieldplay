@@ -65,7 +65,7 @@ public class XMLManager {
         }
     }
     private String readNameOnly(XmlPullParser parser) throws XmlPullParserException, IOException {
-    	Log.d(TAG, "Reading name and description only");
+    	//Log.d(TAG, "Reading name and description only");
     	String routeName=null;
     	 parser.require(XmlPullParser.START_TAG, ns, "route");
     	
@@ -77,7 +77,7 @@ public class XMLManager {
              
              if (name.equals("name")){
              	routeName = readName(parser);
-             	Log.d(TAG, "Found Name "+ routeName);
+             	//Log.d(TAG, "Found Name "+ routeName);
              }
              else {
                  skip(parser);
@@ -86,7 +86,7 @@ public class XMLManager {
     	 return routeName;
     }
     private String readDescriptionOnly(XmlPullParser parser) throws XmlPullParserException, IOException {
-    	Log.d(TAG, "Reading name and description only");
+    	//Log.d(TAG, "Reading name and description only");
     	String routeDescription=null;
     	 parser.require(XmlPullParser.START_TAG, ns, "route");
     	
@@ -98,7 +98,7 @@ public class XMLManager {
              
              if (name.equals("description")){
              	routeDescription = readDescription(parser);
-             	Log.d(TAG, "Found description "+ routeDescription);
+             	//Log.d(TAG, "Found description "+ routeDescription);
              }
              else {
                  skip(parser);
@@ -107,7 +107,7 @@ public class XMLManager {
     	 return routeDescription;
     }
     private Route readRoute(XmlPullParser parser, String routeStorageName) throws XmlPullParserException, IOException {
-    	Log.d(TAG, "Top Level");
+    	//Log.d(TAG, "Top Level");
     	Route route = new Route();
     	route.setStorageName(routeStorageName);
         parser.require(XmlPullParser.START_TAG, ns, "route");
@@ -119,30 +119,30 @@ public class XMLManager {
  
             // Starts by looking for the entry tag
             if (name.equals("location")) {
-            	Log.d(TAG, "Start location parse");
+            	//Log.d(TAG, "Start location parse");
             	String type = parser.getAttributeValue(null, "type");
-            	Log.d(TAG, "Found attribute " + type);
+            	//Log.d(TAG, "Found attribute " + type);
                 route.addLocation(readLocation(parser, type));
-                Log.d(TAG, "Found Location");
+                //Log.d(TAG, "Found Location");
             } 
             else if (name.equals("map_layer")){
-            	Log.d(TAG, "Start Map layer parse");
+            	//Log.d(TAG, "Start Map layer parse");
             	String type = parser.getAttributeValue(null, "type");
             	route.addMapLayer(readMapLayer(parser, type));
-            	Log.d(TAG, "Found map layer ");
+            	//Log.d(TAG, "Found map layer ");
             }
             else if (name.equals("name")){
             	route.setName(readName(parser));
-            	Log.d(TAG, "Found Name "+ route.getName());
+            	//Log.d(TAG, "Found Name "+ route.getName());
             }
             else if (name.equals("description")){
 
             	route.setDescription(readDescription(parser));
-            	Log.d(TAG, "Found description " + route.getDescription());
+            	//Log.d(TAG, "Found description " + route.getDescription());
             }
             else if (name.equals("length")){
             	route.setLength(readLength(parser));
-            	Log.d(TAG, "Found length "+ route.getLength());
+            	//Log.d(TAG, "Found length "+ route.getLength());
             }
             else {
                 skip(parser);
@@ -155,7 +155,7 @@ public class XMLManager {
     	String layerName = null; 
     	String description = null;
     	String layerPath = null;
-    	Log.d(TAG, "Setup done for mapLayer, parsing members");
+    	//Log.d(TAG, "Setup done for mapLayer, parsing members");
     	 while (parser.next() != XmlPullParser.END_TAG) {
              if (parser.getEventType() != XmlPullParser.START_TAG) {
                  continue;
@@ -163,10 +163,10 @@ public class XMLManager {
              String name = parser.getName();
 	    	if (name.equals("name")) {
 	            layerName = readName(parser);
-	            Log.d(TAG, "Layer name: "+ layerName);
+	            //Log.d(TAG, "Layer name: "+ layerName);
 	        } else if (name.equals("description")) {
 	            description = readDescription(parser);
-	            Log.d(TAG, "Description: "+ description);
+	            //Log.d(TAG, "Description: "+ description);
 	        } else if(name.equals("file")){
 	        	layerPath = readFile(parser);
 	        }
@@ -187,7 +187,7 @@ public class XMLManager {
         List<FPAudio> audioList = new ArrayList<FPAudio>();
         List<FPVideo> videoList = new ArrayList<FPVideo>();
         List<String> binocularPoints = new ArrayList<String>();
-        Log.d(TAG, "Setup done for location, parsing members");
+        //Log.d(TAG, "Setup done for location, parsing members");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -195,16 +195,16 @@ public class XMLManager {
             String name = parser.getName();
             if (name.equals("name")) {
                 locationName = readName(parser);
-                Log.d(TAG, "Location name: "+ locationName);
+                //Log.d(TAG, "Location name: "+ locationName);
             } else if (name.equals("description")) {
                 description = readDescription(parser);
-                Log.d(TAG, "Description: "+ description);
+               // Log.d(TAG, "Description: "+ description);
             } else if (name.equals("lat")) {
                 latitude = readLatitude(parser);
-                Log.d(TAG, "Latitude: "+ latitude);
+                //Log.d(TAG, "Latitude: "+ latitude);
             } else if (name.equals("long")) {
                 longitude = readLongitude(parser);
-                Log.d(TAG, "Longitude: "+ longitude);
+                //Log.d(TAG, "Longitude: "+ longitude);
             }else if (name.equals("elevation")) {
                 elevation = readElevation(parser);
                 Log.d(TAG, "Elevation: "+ elevation);
@@ -213,19 +213,19 @@ public class XMLManager {
                 Log.d(TAG, "Alert Radius: "+ alertRadius);
             }else if (name.equals("content_radius")) {
                 contentRadius = readContentRadius(parser);
-                Log.d(TAG, "Content Radius: "+ contentRadius);
+                //Log.d(TAG, "Content Radius: "+ contentRadius);
             }else if (name.equals("audio")) {
                 audioList.add(readAudio(parser));
-                Log.d(TAG, "Audio: "+ audioList.get(audioList.size()-1).getName());
+                //Log.d(TAG, "Audio: "+ audioList.get(audioList.size()-1).getName());
             }else if (name.equals("image")) {
                 imageList.add(readImage(parser));
-                Log.d(TAG, "Image: "+ imageList.get(imageList.size()-1).getName());
+               // Log.d(TAG, "Image: "+ imageList.get(imageList.size()-1).getName());
             }else if (name.equals("video")) {
                 videoList.add(readVideo(parser));
-                Log.d(TAG, "Video: "+ videoList.get(videoList.size()-1).getName());
+                //Log.d(TAG, "Video: "+ videoList.get(videoList.size()-1).getName());
             }else if (name.equals("binocularView")) {
                 binocularPoints.add(readBinocularPoint(parser));
-                Log.d(TAG, "BinocularView: "+ binocularPoints.get(binocularPoints.size()-1));
+                //Log.d(TAG, "BinocularView: "+ binocularPoints.get(binocularPoints.size()-1));
             }else {
                 skip(parser);
             }
@@ -242,7 +242,7 @@ public class XMLManager {
             
         }
         else if(type.contains("interest")){
-        	Log.d(TAG, "Processing interest location");
+        	//Log.d(TAG, "Processing interest location");
         	InterestLocation interest = new InterestLocation(latitude, longitude, elevation, locationName, description);
         	interest.setContentRadius(contentRadius);
         	for(FPAudio audio: audioList) interest.addAudio(audio);
@@ -357,6 +357,7 @@ public class XMLManager {
     private Integer readPriority(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "priority");
         Integer priority = readInteger(parser);
+        Log.d(TAG, "priority= " + priority);
         parser.require(XmlPullParser.END_TAG, ns, "priority");
         return priority;
     }
@@ -379,7 +380,7 @@ public class XMLManager {
         return description;
     }
     private Double readLatitude(XmlPullParser parser) throws IOException, XmlPullParserException {
-    	Log.d(TAG, "Parsing latitude");
+    	//Log.d(TAG, "Parsing latitude");
         parser.require(XmlPullParser.START_TAG, ns, "lat");
         Double latitude = readDouble(parser);
         parser.require(XmlPullParser.END_TAG, ns, "lat");
@@ -392,14 +393,14 @@ public class XMLManager {
         return elevation;
     }
     private Double readLongitude(XmlPullParser parser) throws IOException, XmlPullParserException {
-    	Log.d(TAG, "Parsing longitude");
+    	//Log.d(TAG, "Parsing longitude");
         parser.require(XmlPullParser.START_TAG, ns, "long");
         Double longitude = readDouble(parser);
         parser.require(XmlPullParser.END_TAG, ns, "long");
         return longitude;
     }
     private Double readLength(XmlPullParser parser) throws IOException, XmlPullParserException {
-    	Log.d(TAG, "Parsing legnth");
+    	//Log.d(TAG, "Parsing legnth");
         parser.require(XmlPullParser.START_TAG, ns, "length");
         Double length = readDouble(parser);
         parser.require(XmlPullParser.END_TAG, ns, "length");
@@ -416,7 +417,7 @@ public class XMLManager {
     private Double readDouble(XmlPullParser parser) throws IOException, XmlPullParserException {
         Double result = null;
         if (parser.next() == XmlPullParser.TEXT) {
-        	Log.d(TAG, "Processing long value of " + parser.getText());
+        	//Log.d(TAG, "Processing long value of " + parser.getText());
             result = Double.valueOf(parser.getText());
             parser.nextTag();
         }

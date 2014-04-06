@@ -79,11 +79,11 @@ public class StorageManager {
 			Log.d(TAG, "Media Mounted");
 			InputStream inputStream;
 			try {
-				Log.d(TAG, "Accessing " + routeXMLPath);
+				//Log.d(TAG, "Accessing " + routeXMLPath);
 				File inputFile = c.getExternalFilesDir(routeXMLPath);
 				inputStream = new FileInputStream(inputFile);
 	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-	            Log.d(TAG, "Starting name parse of " + inputFile.getName());
+	            //Log.d(TAG, "Starting name parse of " + inputFile.getName());
 	            XMLManager xmlManager = new XMLManager();
 	            routeName = xmlManager.parseDescriptionOnly(bufferedInputStream);
 	            inputStream.close();
@@ -108,14 +108,14 @@ public class StorageManager {
 		String routeXMLPath = ROUTES_DIR + routeStorageName+"/"+ROUTE_XML;
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			Log.d(TAG, "Media Mounted");
+			//Log.d(TAG, "Media Mounted");
 			InputStream inputStream;
 			try {
-				Log.d(TAG, "Accessing " + routeXMLPath);
+				//Log.d(TAG, "Accessing " + routeXMLPath);
 				File inputFile = c.getExternalFilesDir(routeXMLPath);
 				inputStream = new FileInputStream(inputFile);
 	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-	            Log.d(TAG, "Starting parse of " + inputFile.getName());
+	            //Log.d(TAG, "Starting parse of " + inputFile.getName());
 	            XMLManager xmlManager = new XMLManager();
 	            route = xmlManager.parse(bufferedInputStream, routeStorageName);
 	            bufferedInputStream.close();

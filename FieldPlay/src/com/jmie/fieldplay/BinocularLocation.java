@@ -2,6 +2,7 @@ package com.jmie.fieldplay;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 
 
@@ -14,9 +15,11 @@ public class BinocularLocation extends FPLocation {
 	}
 	public BinocularLocation(Parcel in){
 		super(in);
+		setType("binocular_location");
 	}
 	public void writeToParcel(Parcel dest, int flags){
 		super.writeToParcel(dest, flags);
+//		Log.d("Binocular Write", "no write: ");
 	}
 
 	public static final Parcelable.Creator<BinocularLocation> CREATOR = new Parcelable.Creator<BinocularLocation>() {

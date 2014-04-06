@@ -60,10 +60,10 @@ public class MapLayer implements Parcelable{
     }
     
     public byte[] readTileImage(Context c, int x, int y, int zoom) {
-		Log.d(TAG, "Reading tile file");
+		//Log.d(TAG, "Reading tile file");
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			Log.d(TAG, "Media Mounted");
+			//Log.d(TAG, "Media Mounted");
 			InputStream inputStream = null;
 			ByteArrayOutputStream buffer = null;
 			try {

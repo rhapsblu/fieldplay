@@ -119,12 +119,13 @@ public class FPMapActivity extends
 
         // Instantiate a Geofence remover
 //        mGeofenceRemover = new GeofenceRemover(this);
-		Log.d(TAG, "Recieved Route " + routeName);
-		route = StorageManager.getCachedRoute(c);
-		if((route == null)||(route.getStorageName().compareTo(routeName)!=0)){
+		//Log.d(TAG, "Recieved Route " + routeName);
+		//route = StorageManager.getCachedRoute(c);
+		route = b.getParcelable("com.jmie.fieldplay.route");
+//		if((route == null)||(route.getStorageName().compareTo(routeName)!=0)){
 			route = StorageManager.buildRoute(this, routeName);
-			StorageManager.cacheRoute(c, route);
-		}
+//			StorageManager.cacheRoute(c, route);
+//		}
 		setContentView(R.layout.activity_fpmap);
 		setUpMapIfNeeded();
 //		Intent intent = new Intent(this, AudioService.class);
@@ -285,7 +286,12 @@ public class FPMapActivity extends
 		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
 		FPLocation location = markerToLocation.get(marker);
 		i.putExtra("com.jmie.fieldplay.route", route);
-		i.putExtra("com.jmie.fieldplay.locationID", location.getName());
+		i.putExtra("com.jmie.fieldplay.location", location.getName());
+
+		for(String key: i.getExtras().keySet()){
+			Log.d(TAG, "Keys before: "+ key);
+		}
+		
 		startActivity(i);	
 		return false;
 	}

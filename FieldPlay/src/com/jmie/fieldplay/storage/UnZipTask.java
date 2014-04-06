@@ -52,18 +52,18 @@ public class UnZipTask extends AsyncTask<File, Void, Boolean> {
                String outputDir) throws IOException {
 
            if (entry.isDirectory()) {
-           	Log.d(TAG, "Is directory " + entry.getName());
+           //	Log.d(TAG, "Is directory " + entry.getName());
                createDir(new File(outputDir, entry.getName()));
                return;
            }
 
            File outputFile = new File(outputDir, entry.getName());
            if (!outputFile.getParentFile().exists()) {
-           	Log.d(TAG, "Creating directory from png path" + entry.getName());
+           	//Log.d(TAG, "Creating directory from png path" + entry.getName());
                createDir(outputFile.getParentFile());
            }
 
-           Log.v(TAG, "Extracting: " + entry);
+           //Log.v(TAG, "Extracting: " + entry);
            BufferedInputStream inputStream = new BufferedInputStream(zipfile.getInputStream(entry));
            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
 
@@ -80,10 +80,10 @@ public class UnZipTask extends AsyncTask<File, Void, Boolean> {
 
        private void createDir(File dir) {
            if (dir.exists()) {
-           	Log.v(TAG, "Directory exists " + dir.getName());
+           	//Log.v(TAG, "Directory exists " + dir.getName());
                return;
            }
-           Log.v(TAG, "Creating dir " + dir.getName());
+           //Log.v(TAG, "Creating dir " + dir.getName());
            if (!dir.mkdirs()) {
                throw new RuntimeException("Can not create dir " + dir);
            }

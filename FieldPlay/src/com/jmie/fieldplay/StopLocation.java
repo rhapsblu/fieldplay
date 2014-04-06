@@ -6,11 +6,12 @@ import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 
 import com.jmie.fieldplay.media.FPVideo;
 
-public class StopLocation extends InterestLocation implements Parcelable{
+public class StopLocation extends InterestLocation {
 	private double _alert_radius = 100;
 
 	private List<String> binocularPoints = new ArrayList<String>();
@@ -25,7 +26,8 @@ public class StopLocation extends InterestLocation implements Parcelable{
 	}
 	public StopLocation(Parcel in){
 		super(in);
-		readFromParcel(in);
+		//readFromParcel(in);
+		setType("stop_location");
 	}
 	public void setAlertRadius(double radius){
 		_alert_radius = radius;
@@ -50,29 +52,40 @@ public class StopLocation extends InterestLocation implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags){
 		super.writeToParcel(dest, flags);
+		//Log.d("Stop Write", "alert radius: "+ _alert_radius);
 		dest.writeDouble(_alert_radius);
-		dest.writeStringList(binocularPoints);
+		//Log.d("Stop Write", "binocular points: ");
+		dest.writeStringList(binocularPoints);	
+		//Log.d("Stop Write", "videos: ");
 		dest.writeTypedList(videos);
 	
 	}
 	@Override
 	protected void readFromParcel(Parcel in){
 		super.readFromParcel(in);
+		
 		_alert_radius = in.readDouble();
+		//Log.d("StopLocation read", "radius: " + _alert_radius);
+		List<String> binocularPoints = new ArrayList<String>();
+		//Log.d("StopLocation read", "Binocular Points: ");
 		in.readStringList(binocularPoints);
+		this.binocularPoints = binocularPoints;
+		
+		List<FPVideo> videos = new ArrayList<FPVideo>();
 		in.readTypedList(videos, FPVideo.CREATOR);
+		this.videos = videos;
 	
 	}
 	
-	public static final Parcelable.Creator<StopLocation> CREATOR = new Parcelable.Creator<StopLocation>() {
-		@Override
-		public StopLocation createFromParcel(Parcel in){
-			return new StopLocation(in);
-		}
-		@Override
-		public StopLocation[] newArray(int size){
-			return new StopLocation[size];
-		}
-	};
+//	public static final Parcelable.Creator<StopLocation> CREATOR = new Parcelable.Creator<StopLocation>() {
+//		@Override
+//		public StopLocation createFromParcel(Parcel in){
+//			return new StopLocation(in);
+//		}
+//		@Override
+//		public StopLocation[] newArray(int size){
+//			return new StopLocation[size];
+//		}
+//	};
 	
 }

@@ -13,6 +13,8 @@ public class RouteDetailsFragment extends Fragment{
 	OnRouteSelectedListener mCallback;
 	View view;
 	Button button;
+	
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {

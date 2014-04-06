@@ -8,17 +8,20 @@ import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class Route implements Parcelable{
 	private String _name = "default";
 	private String _description = "none";
-	private List<FPLocation> locations;
+	private List<FPLocation> locations = new ArrayList<FPLocation>();
 	private double _length;
 	private Boundry _boundry = new Boundry();
-	private Map<String, FPLocation> nameToLocation = new HashMap<String, FPLocation>();
+	private Map<String, Integer> nameToLocation = new HashMap<String, Integer>();
 	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
 	private String storageName;
 	
+	
+
 	public Route(){
 		locations = new ArrayList<FPLocation>();
 	}
@@ -53,10 +56,10 @@ public class Route implements Parcelable{
 	}
 	public void addLocation(FPLocation loc){
 		locations.add(loc);
-		nameToLocation.put(loc.getName(), loc);
+		nameToLocation.put(loc.getName(), locations.size()-1);
 	}
 	public FPLocation getLocationByName(String name){
-		return nameToLocation.get(name);
+		return locations.get(nameToLocation.get(name));
 	}
 	public double getLength() {
 		return _length;
@@ -86,6 +89,7 @@ public class Route implements Parcelable{
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		//Log.d("Route Write", "Start: "+ _name);
 		dest.writeString(_name);
 		dest.writeString(_description);
 		dest.writeTypedList(locations);
@@ -96,32 +100,46 @@ public class Route implements Parcelable{
 		dest.writeLong(_boundry._long2);
 		dest.writeInt(nameToLocation.size());
 		for(String key: nameToLocation.keySet()){
-			FPLocation location = nameToLocation.get(key);
+			Integer location = nameToLocation.get(key);
 			dest.writeString(key);
-			dest.writeParcelable(location, flags);
+			dest.writeInt(location);
 		}
 		dest.writeTypedList(mapLayers);
 		dest.writeString(storageName);
+		//Log.d("Route Write", "End: "+_name);
 		
 		
 	}
 	private void readFromParcel(Parcel in){
 		_name = in.readString();
+		//Log.d("Route read ", "name: "+ _name);
 		_description = in.readString();
+		//Log.d("Route read ", "description: "+ _description);
 		in.readTypedList(locations, FPLocation.CREATOR);
 		_length = in.readDouble();
+		//Log.d("Route read ", "length: "+ _length);
 		_boundry._lat1 = in.readLong();
+		//Log.d("Route read ", "boundry1: "+ _boundry._lat1);
 		_boundry._lat2 = in.readLong();
+		//Log.d("Route read ", "boundry2: "+ _boundry._lat2);
 		_boundry._long1 = in.readLong();
+		//Log.d("Route read ", "boundry3: "+ _boundry._long1);
 		_boundry._long2 = in.readLong();
+		//Log.d("Route read ", "boundry4: "+ _boundry._long2);
 		final int N = in.readInt();
+		//Log.d("Route read ", "map size: "+ N);
 		for(int i = 0; i<N; i++){
 			String key = in.readString();
-			FPLocation location = FPLocation.CREATOR.createFromParcel(in); 
+			//Log.d("Route read ", "map key: "+ key);
+			Integer location = in.readInt();
+			//Log.d("Route read ", "key map: " + location);
 			nameToLocation.put(key, location);
+			
 		}
 		in.readTypedList(mapLayers, MapLayer.CREATOR);
+		//Log.d("Route read ", "layers read: ");
 		storageName = in.readString();
+		//Log.d("Route read ", "storageName: "+ storageName);
 	}
 	public static final Parcelable.Creator<Route> CREATOR = new Parcelable.Creator<Route>() {
 		public Route createFromParcel(Parcel in){

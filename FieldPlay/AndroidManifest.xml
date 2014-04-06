@@ -47,6 +47,7 @@
         <activity android:name="com.jmie.fieldplay.FPMapActivity"
             	  android:label="@string/FPMap" >   	 
         </activity>
+        <activity android:name="com.jmie.fieldplay.FullScreenViewActivity"/>
         <activity android:name="LocationDetailsActivity"
             	  android:label="@string/location_details" >
             	 

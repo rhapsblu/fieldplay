@@ -5,16 +5,6 @@
         android:icon="@drawable/ic_action_binocular"
         android:title="@string/binoculars"
         android:showAsAction="ifRoom"/>
-	<item
-	    android:id="@+id/photo_viewer"
-        android:icon="@drawable/ic_action_picture"
-        android:title="@string/view_photos"
-        android:showAsAction="ifRoom"/>
-	<item
-	    android:id="@+id/video_viewer"
-        android:icon="@drawable/ic_action_video"
-        android:title="@string/view_videos"
-        android:showAsAction="ifRoom"/>
     
 
 </menu>

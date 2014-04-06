@@ -2,6 +2,7 @@ package com.jmie.fieldplay.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class FPAudio implements Comparable<FPAudio>, Parcelable{
 	private String _name;
@@ -35,13 +36,19 @@ public class FPAudio implements Comparable<FPAudio>, Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags){
 		dest.writeString(_name);
+		//Log.d("Audio write", "name: " + _name);
 		dest.writeString(_resourceLocation);
+		//Log.d("Audio write", "resource: " + _resourceLocation);
 		dest.writeInt(_priority);
+		//Log.d("Audio write", "priority: " + _priority);
 	}
 	private void readFromParcel(Parcel in){
 		_name = in.readString();
+		//Log.d("Audio read", "name: " + _name);
 		_resourceLocation = in.readString();
+		//Log.d("Audio read", "resource: " + _resourceLocation);
 		_priority = in.readInt();
+		//Log.d("Audio read", "priority: " + _priority);
 	}
 	
 	public static final Parcelable.Creator<FPAudio> CREATOR = new Parcelable.Creator<FPAudio>() {
