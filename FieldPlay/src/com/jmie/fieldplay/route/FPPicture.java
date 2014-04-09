@@ -2,7 +2,6 @@ package com.jmie.fieldplay.route;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class FPPicture implements Parcelable{
 	private String _name;
@@ -34,19 +33,19 @@ public class FPPicture implements Parcelable{
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		Log.d("Picture Write", "Start: "+ _name);
+//		Log.d("Picture Write", "Start: "+ _name);
 		dest.writeString(_name);
 		dest.writeString(_description);
 		dest.writeString(_resource);
-		Log.d("Picture Write", "End: "+ _name);
+//		Log.d("Picture Write", "End: "+ _name);
 		
 	}
 	private void readFromParcel(Parcel in){
-		Log.d("Picture Read", "Start: "+ _name);
+//		Log.d("Picture Read", "Start: "+ _name);
 		_name = in.readString();
 		_description = in.readString();
 		_resource = in.readString();
-		Log.d("Picture read", "End: "+ _name);
+//		Log.d("Picture read", "End: "+ _name);
 	}
 	public static final Parcelable.Creator<FPPicture> CREATOR = new Parcelable.Creator<FPPicture>() {
 		public FPPicture createFromParcel (Parcel in){

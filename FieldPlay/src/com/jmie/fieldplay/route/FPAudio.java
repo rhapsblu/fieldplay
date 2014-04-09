@@ -2,7 +2,6 @@ package com.jmie.fieldplay.route;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class FPAudio implements Comparable<FPAudio>, Parcelable{
 	private String _name;

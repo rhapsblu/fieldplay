@@ -7,8 +7,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.location.FPLocation;
 import com.jmie.fieldplay.route.FPAudio;
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.InterestLocation;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.storage.StorageManager;

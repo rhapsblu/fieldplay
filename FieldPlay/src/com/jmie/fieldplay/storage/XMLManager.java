@@ -9,10 +9,10 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 
-import com.jmie.fieldplay.location.FPLocation;
 import com.jmie.fieldplay.map.MapLayer;
 import com.jmie.fieldplay.route.BinocularLocation;
 import com.jmie.fieldplay.route.FPAudio;
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.route.FPVideo;
 import com.jmie.fieldplay.route.InterestLocation;

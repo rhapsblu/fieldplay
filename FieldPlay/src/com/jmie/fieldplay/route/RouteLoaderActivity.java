@@ -1,42 +1,29 @@
 package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.R.id;
-import com.jmie.fieldplay.R.layout;
-import com.jmie.fieldplay.R.menu;
+
 import com.jmie.fieldplay.map.FPMapActivity;
-import com.jmie.fieldplay.route.RouteDetailsFragment.OnRouteSelectedListener;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class RouteLoaderActivity extends Activity
 	implements RouteDetailsFragment.OnRouteSelectedListener{
-	private StorageManager storage;
-	//private List<Map<String, String>> routeList = new ArrayList<Map<String, String>>();
-	//private Map<String, String> routeDescriptions = new HashMap<String, String>();
-	//private Map<String, String> nameToStorage= new HashMap<String, String>();
-	//private SimpleAdapter simpleAdpt;
 	private ArrayAdapter<StorageNameMeta> arrayAdapter;
 	static final String TAG = "Route Load Activity";
 	private String selectedRoute;

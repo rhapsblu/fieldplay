@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jmie.fieldplay.location.FPLocation;
 import com.jmie.fieldplay.map.MapLayer;
+import com.jmie.fieldplay.route.FPLocation.LocationType;
 
 
 import android.os.Parcel;
@@ -22,8 +22,6 @@ public class Route implements Parcelable{
 	private Map<String, Integer> nameToLocation = new HashMap<String, Integer>();
 	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
 	private String storageName;
-	
-	
 
 	public Route(){
 		locations = new ArrayList<FPLocation>();
@@ -95,7 +93,13 @@ public class Route implements Parcelable{
 		//Log.d("Route Write", "Start: "+ _name);
 		dest.writeString(_name);
 		dest.writeString(_description);
-		dest.writeTypedList(locations);
+		dest.writeInt(locations.size());
+		for(FPLocation loc: locations){
+			
+			dest.writeInt(loc.getType().getTypeNumber());
+			dest.writeParcelable(loc, flags);
+		}
+		//dest.writeTypedList(locations);
 		dest.writeDouble(_length);
 		dest.writeLong(_boundry._lat1);
 		dest.writeLong(_boundry._lat2);
@@ -115,22 +119,41 @@ public class Route implements Parcelable{
 	}
 	private void readFromParcel(Parcel in){
 		_name = in.readString();
-		//Log.d("Route read ", "name: "+ _name);
+		Log.d("Route read ", "name: "+ _name);
 		_description = in.readString();
-		//Log.d("Route read ", "description: "+ _description);
-		in.readTypedList(locations, FPLocation.CREATOR);
+		Log.d("Route read ", "description: "+ _description);
+		int locationCount = in.readInt();
+		for(int i=0; i<locationCount; i++){
+			LocationType type = LocationType.getType(in.readInt());
+			switch(type){
+			case INTEREST_LOCATION:
+				locations.add((FPLocation)in.readParcelable(InterestLocation.class.getClassLoader()));
+				break;
+			case BINOCULAR_LOCATION:
+				locations.add((FPLocation)in.readParcelable(BinocularLocation.class.getClassLoader()));
+				break;
+			case STOP_LOCATION:
+				locations.add((FPLocation)in.readParcelable(StopLocation.class.getClassLoader()));
+				break;
+			case ABSTRACT://uh-oh's
+			default:
+			}
+			
+				
+		}
+		//in.readTypedList(locations, FPLocation.CREATOR);
 		_length = in.readDouble();
-		//Log.d("Route read ", "length: "+ _length);
+		Log.d("Route read ", "length: "+ _length);
 		_boundry._lat1 = in.readLong();
-		//Log.d("Route read ", "boundry1: "+ _boundry._lat1);
+		Log.d("Route read ", "boundry1: "+ _boundry._lat1);
 		_boundry._lat2 = in.readLong();
-		//Log.d("Route read ", "boundry2: "+ _boundry._lat2);
+		Log.d("Route read ", "boundry2: "+ _boundry._lat2);
 		_boundry._long1 = in.readLong();
-		//Log.d("Route read ", "boundry3: "+ _boundry._long1);
+		Log.d("Route read ", "boundry3: "+ _boundry._long1);
 		_boundry._long2 = in.readLong();
-		//Log.d("Route read ", "boundry4: "+ _boundry._long2);
+		Log.d("Route read ", "boundry4: "+ _boundry._long2);
 		final int N = in.readInt();
-		//Log.d("Route read ", "map size: "+ N);
+		Log.d("Route read ", "map size: "+ N);
 		for(int i = 0; i<N; i++){
 			String key = in.readString();
 			//Log.d("Route read ", "map key: "+ key);

@@ -14,7 +14,8 @@
         	 android:layout_height="wrap_content" />
    <fragment android:name="com.jmie.fieldplay.route.RouteDetailsFragment"
        		 android:id="@+id/details_fragment"
-       		 android:layout_width="wrap_content"
+       		 android:layout_alignParentBottom="true"
+       		 android:layout_width="fill_parent"
         	 android:layout_height="wrap_content" 
         	 android:layout_below="@id/list" />
 

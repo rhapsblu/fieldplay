@@ -6,9 +6,8 @@ import com.jmie.fieldplay.binocular.activity.AugmentedReality;
 import com.jmie.fieldplay.binocular.data.ARData;
 import com.jmie.fieldplay.binocular.ui.Marker;
 import com.jmie.fieldplay.binocular.widget.VerticalTextView;
-import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.Route;
-import com.jmie.fieldplay.storage.StorageManager;
 
 import android.os.Bundle;
 
@@ -23,7 +22,6 @@ import android.view.ViewGroup.LayoutParams;
 
 public class FPBinocularActivity extends AugmentedReality {
     private static final String TAG = "BinocularActivity";
-	private StorageManager storage = new StorageManager();
 	private Route route;
 	private FPLocation location;
 //	private String routeStorageName;
@@ -34,11 +32,15 @@ public class FPBinocularActivity extends AugmentedReality {
 		super.onCreate(savedInstanceState);
         Log.d(TAG, "create");
 		Bundle b = getIntent().getExtras();
-		String[] routeAndLocation = b.getStringArray("com.jmie.fieldplay.locationID");
+		
 		//routeStorageName = routeAndLocation[0];
-		route = storage.buildRoute(this, routeAndLocation[0]);
-		location = route.getLocationByName(routeAndLocation[1]);
-		Log.d(TAG, "Location= " + location.getName());
+		route = b.getParcelable("com.jmie.fieldplay.route");
+		String locationName = b.getString("com.jmie.fieldplay.locationName");
+		Log.d(TAG,  "Route= " + route.getName());
+		Log.d(TAG, "Location= " + locationName);
+		//Log.d(TAG, route.debugPrintMap());
+		location = route.getLocationByName(locationName);
+
 		//setContentView(R.layout.activity_main);
         // Create toast
         myToast = new Toast(getApplicationContext());

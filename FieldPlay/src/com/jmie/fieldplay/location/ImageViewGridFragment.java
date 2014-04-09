@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.R.id;
-import com.jmie.fieldplay.R.layout;
+
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.storage.StorageManager;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.location.Location;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
@@ -21,7 +20,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+
 import android.widget.GridView;
  
 public class ImageViewGridFragment extends Fragment {
@@ -44,20 +43,24 @@ public class ImageViewGridFragment extends Fragment {
     	return f;
     };
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-
+    public void onCreate(Bundle savedinstance){
+    	super.onCreate(savedinstance);
 		location = this.getArguments().getParcelable("com.jmie.fieldplay.location");
 		routeStorageName =  this.getArguments().getString("com.jmie.fieldplay.routeStorageName");
-        View rootView = inflater.inflate(R.layout.activity_image_grid, container, false);
-        gridView = (GridView) rootView.findViewById(R.id.grid_view);
-        InitilizeGridLayout();
+
         imageList = location.getImageList();
         pathList = new ArrayList<String>();
         for(FPPicture pic: imageList){
         	pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
         }
-        
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.activity_image_grid, container, false);
+        gridView = (GridView) rootView.findViewById(R.id.grid_view);
+        InitilizeGridLayout();
         
         // Gridview adapter
 

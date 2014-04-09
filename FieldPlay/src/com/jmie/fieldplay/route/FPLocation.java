@@ -1,4 +1,4 @@
-package com.jmie.fieldplay.location;
+package com.jmie.fieldplay.route;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,23 +6,26 @@ import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.jmie.fieldplay.route.BinocularLocation;
-import com.jmie.fieldplay.route.FPPicture;
-import com.jmie.fieldplay.route.InterestLocation;
-import com.jmie.fieldplay.route.StopLocation;
 
 public abstract class FPLocation implements Parcelable{
-	private String _type = "abstract";
+	private LocationType _type  = LocationType.ABSTRACT;
 	private double _lat;
 	private double _long;
 	private double _elevation;
 	private String _name;
 	private String _description;
-	private List<FPPicture> images= new ArrayList<FPPicture>();
+	private List<FPPicture> images;
 
-	
+	public FPLocation(){
+		_lat = 0;
+		_long = 0;
+		_elevation = 0;
+		_name ="";
+		_description = "";
+		images= new ArrayList<FPPicture>();
+	}
+
 	public FPLocation(double latitude, double longitude, double elevation, 
 			String name, String description){
 		this._lat = latitude;
@@ -30,12 +33,17 @@ public abstract class FPLocation implements Parcelable{
 		this._elevation = elevation;
 		this._name = name;
 		this._description = description;
+		images= new ArrayList<FPPicture>();
 		
 	}
-	protected void setType(String type){
+	protected void setType(LocationType type){
 		this._type = type;
 	}
+	public LocationType getType(){
+		return _type;
+	}
 	public FPLocation(Parcel in){
+		images= new ArrayList<FPPicture>();
 		readFromParcel(in);
 	}
 	public double getLatitude() {
@@ -66,7 +74,7 @@ public abstract class FPLocation implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags){
 //		Log.d("Location Write", "Start: "+ _name);
 //		Log.d("Location Write", "type: "+ _type);
-		dest.writeString(_type);
+		//dest.writeString(_type);
 //		Log.d("Location Write", "lat: "+ _lat);
 		dest.writeDouble(_lat);
 //		Log.d("Location Write", "long: "+ _long);
@@ -93,29 +101,26 @@ public abstract class FPLocation implements Parcelable{
 //		Log.d("FPLocation read", "name: " + _name);
 		_description = in.readString();
 //		Log.d("FPLocation read", "description: " + _description);
-		
-		List<FPPicture> images = new ArrayList<FPPicture>();
 		in.readTypedList(images, FPPicture.CREATOR);
-		this.images = images;
+
 	}
-	public static final Parcelable.Creator<FPLocation> CREATOR = new Parcelable.Creator<FPLocation>() {
-		public FPLocation createFromParcel(Parcel in){
-			String location_type = in.readString();
-//			Log.d("FP Location Creator", "read in type string " + location_type);
-			FPLocation location = null;
-			if(location_type.equals("binocular_location"))
-				location = (FPLocation) new BinocularLocation(in);
-				
-			else if(location_type.equals("interest_location"))
-				location = (FPLocation) new InterestLocation(in);
-			else if(location_type.equals("stop_location"))
-				location = (FPLocation) new StopLocation(in);
-			
-//			Log.d("FP Location loader", "done loading " + location.getName());
-			return location;
+
+	public enum LocationType{
+		ABSTRACT(0),
+		BINOCULAR_LOCATION(1),
+		INTEREST_LOCATION(2),
+		STOP_LOCATION(3);
+		private int typeNumber;
+		private LocationType(int i){
+			typeNumber = i;
 		}
-		public FPLocation[] newArray(int size){
-			return new FPLocation[size];
+		public int getTypeNumber(){
+			return typeNumber;
 		}
-	};
+		private static final LocationType[] types= {LocationType.ABSTRACT, LocationType.BINOCULAR_LOCATION,
+													LocationType.INTEREST_LOCATION, LocationType.STOP_LOCATION};
+		public static LocationType getType(int i){
+			return types[i];
+		}
+	}
 }

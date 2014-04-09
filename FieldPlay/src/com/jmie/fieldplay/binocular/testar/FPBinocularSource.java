@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.jmie.fieldplay.binocular.data.DataSource;
 import com.jmie.fieldplay.binocular.ui.Marker;
-import com.jmie.fieldplay.location.FPLocation;
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.route.StopLocation;
 

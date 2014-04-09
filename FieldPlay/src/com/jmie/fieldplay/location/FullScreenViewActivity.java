@@ -2,8 +2,6 @@ package com.jmie.fieldplay.location;
 import java.util.ArrayList;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.R.id;
-import com.jmie.fieldplay.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;

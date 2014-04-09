@@ -1,10 +1,9 @@
 package com.jmie.fieldplay.route;
 
-import com.jmie.fieldplay.location.FPLocation;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+
 
 
 
@@ -13,11 +12,13 @@ public class BinocularLocation extends FPLocation {
 	public BinocularLocation(double latitude, double longitude, double elevation, 
 			String name, String description){
 		super(latitude, longitude, elevation,name, description);
-		setType("binocular_location");
+		setType(LocationType.BINOCULAR_LOCATION);
 	}
 	public BinocularLocation(Parcel in){
-		super(in);
-		setType("binocular_location");
+		//super(in);
+		//setType("binocular_location");
+		setType(LocationType.BINOCULAR_LOCATION);
+		readFromParcel(in);
 	}
 	public void writeToParcel(Parcel dest, int flags){
 		super.writeToParcel(dest, flags);

@@ -1,8 +1,7 @@
 package com.jmie.fieldplay.location;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.R.id;
-import com.jmie.fieldplay.R.layout;
+
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
@@ -28,6 +27,7 @@ public class PhotoViewFragment extends Fragment{
     GridView gridView;
     RelativeLayout r;
     LinearLayout l;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {

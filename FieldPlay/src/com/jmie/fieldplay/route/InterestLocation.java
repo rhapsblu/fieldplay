@@ -6,25 +6,32 @@ import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.jmie.fieldplay.location.FPLocation;
+
 
 
 public class InterestLocation extends FPLocation{
 	private double _content_radius = 0;
-	private List<FPAudio> _audioList = new ArrayList<FPAudio>();
+	private List<FPAudio> _audioList;
 
 
+	public InterestLocation(){
+		super();
+		_audioList = new ArrayList<FPAudio>();
+		setType(LocationType.INTEREST_LOCATION);
+	}
 
 	public InterestLocation(double latitude, double longitude, double elevation,
 			String name, String description) {
 		super(latitude, longitude, elevation, name, description);
-		setType("interest_location");
+		_audioList =new ArrayList<FPAudio>();
+		setType(LocationType.INTEREST_LOCATION);
 	}
+
 	public InterestLocation(Parcel in){
-		super(in);
-		//readFromParcel(in);
+		_audioList =new ArrayList<FPAudio>();
+		setType(LocationType.INTEREST_LOCATION);
+		readFromParcel(in);
 	}
 	public void addAudio(FPAudio audio){
 		_audioList.add(audio);
@@ -50,25 +57,25 @@ public class InterestLocation extends FPLocation{
 		dest.writeDouble(_content_radius);
 		//Log.d("Interest Write", "audioList: ");
 		dest.writeTypedList(_audioList);
+		
 
 
 	}
 	@Override
 	protected void readFromParcel(Parcel in){
+		
 		super.readFromParcel(in);
-
 		_content_radius = in.readDouble();
 		//Log.d("StopLocation read", "radius: " + _content_radius);
-		List<FPAudio> _audioList = new ArrayList<FPAudio>();
 		in.readTypedList(_audioList, FPAudio.CREATOR);
-		this._audioList = _audioList;
+		
 	}
-//	public static final Parcelable.Creator<InterestLocation> CREATOR = new Parcelable.Creator<InterestLocation>() {
-//		public InterestLocation createFromParcel(Parcel in){
-//			return new InterestLocation(in);
-//		}
-//		public InterestLocation[] newArray(int size){
-//			return new InterestLocation[size];
-//		}
-//	};
+	public static final Parcelable.Creator<InterestLocation> CREATOR = new Parcelable.Creator<InterestLocation>() {
+		public InterestLocation createFromParcel(Parcel in){
+			return new InterestLocation(in);
+		}
+		public InterestLocation[] newArray(int size){
+			return new InterestLocation[size];
+		}
+	};
 }

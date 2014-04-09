@@ -3,13 +3,12 @@ package com.jmie.fieldplay.location;
 import java.util.ArrayList;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.R.id;
-import com.jmie.fieldplay.R.layout;
-import com.jmie.fieldplay.R.menu;
 import com.jmie.fieldplay.binocular.testar.FPBinocularActivity;
+import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.route.StopLocation;
+
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.app.ActionBar;
@@ -17,7 +16,6 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -25,14 +23,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+
 
 
 public class LocationDetailsActivity extends FragmentActivity implements TabListener{
 
 	private Route route;
 	private FPLocation location;
-	private String routeStorageName;
+
 	private String[] tabs = {"Description", "Photos", "Audio", "Video"};
 	private ViewPager viewPager;
 	private LocationDetailsTabsAdapter mAdapter;
@@ -45,14 +43,14 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 		super.onCreate(savedInstanceState);
 		
 		Bundle b = getIntent().getExtras();
-		for(String key: b.keySet()){
-			Log.d("Bundle keys", key);
-		}
+
 		route = (Route)b.getParcelable("com.jmie.fieldplay.route");
 		Log.d(TAG, "Route name: " +route.getName());
 		String location_id = b.getString("com.jmie.fieldplay.location");
 		Log.d(TAG, "location= " + location_id);
 		location = route.getLocationByName(location_id);
+		
+		
         for(FPPicture pic: location.getImageList()){
         	imagePathList.add(StorageManager.getImagePath(this, route.getStorageName(), pic.getResource()));
         }
@@ -84,7 +82,12 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 		MenuItem binocularActionButton = menu.findItem(R.id.augmented_binoculars);
 		if(location instanceof StopLocation){
 			StopLocation stopLocation = (StopLocation)location;
-			if(!stopLocation.getBinocularPointIterator().hasNext()) binocularActionButton.setVisible(false);
+			Log.d("Binoc Count", Integer.toString(stopLocation.getBinocPointCount()));
+			if(!stopLocation.getBinocularPointIterator().hasNext()){ 
+				
+				binocularActionButton.setVisible(false);
+			}
+			
 		}
 		else binocularActionButton.setVisible(false);
 		return true;
@@ -92,27 +95,16 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 	@Override
 	protected void onResume(){
 		super.onResume();
-//		PhotoViewFragment photoFrag = (PhotoViewFragment)
-//                getFragmentManager().findFragmentById(R.id.picture_nav);
-//		
-//		if(location instanceof StopLocation){
-//			StopLocation stopLocation = (StopLocation)location;
-//			for(FPPicture image: stopLocation.getImageList()){
-//				File inputFile = this.getExternalFilesDir(StorageManager.getImagePath(this, routeStorageName, image.getResource()));
-//				Bitmap bm = BitmapFactory.decodeFile(inputFile.getAbsolutePath());
-//				photoFrag.addImage(bm);
-//			}
-//			
-//		}
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
 	    switch (item.getItemId()) {
 	        case R.id.augmented_binoculars:
+	        	//Log.d(TAG, route.debugPrintMap());
 				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
-				String[] routeLocPair = {route.getStorageName(), location.getName()};
-				i.putExtra("com.jmie.fieldplay.locationID", routeLocPair);
+				i.putExtra("com.jmie.fieldplay.route", route);
+				i.putExtra("com.jmie.fieldplay.locationName", location.getName());
 				startActivity(i);
 	            return true;
 	        default:
