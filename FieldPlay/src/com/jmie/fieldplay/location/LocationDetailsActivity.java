@@ -82,12 +82,7 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 		MenuItem binocularActionButton = menu.findItem(R.id.augmented_binoculars);
 		if(location instanceof StopLocation){
 			StopLocation stopLocation = (StopLocation)location;
-			Log.d("Binoc Count", Integer.toString(stopLocation.getBinocPointCount()));
-			if(!stopLocation.getBinocularPointIterator().hasNext()){ 
-				
-				binocularActionButton.setVisible(false);
-			}
-			
+			if(stopLocation.getBinocPointCount()<1)  binocularActionButton.setVisible(false);	
 		}
 		else binocularActionButton.setVisible(false);
 		return true;

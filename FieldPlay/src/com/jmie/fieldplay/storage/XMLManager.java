@@ -246,10 +246,12 @@ public class XMLManager {
         	InterestLocation interest = new InterestLocation(latitude, longitude, elevation, locationName, description);
         	interest.setContentRadius(contentRadius);
         	for(FPAudio audio: audioList) interest.addAudio(audio);
+        	for(FPPicture picture: imageList) interest.addImage(picture);
         	location = interest;
         }
         else if(type.contains("binocular")){
         	location = new BinocularLocation(latitude, longitude, elevation, locationName, description);
+        	for(FPPicture picture: imageList) location.addImage(picture);
         }
 
 

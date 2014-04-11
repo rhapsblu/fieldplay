@@ -27,6 +27,7 @@ public class LoadDefaultRoute extends AsyncTask<File, Void, Boolean>{
 			InputStream is = c.getResources().openRawResource(com.jmie.fieldplay.R.raw.fp_test_route);
 			File destination = new File(downloadDirectory.getPath() + "/" + "fp_test_route.zip");
 			File destination2 = new File(downloadDirectory.getPath() + "/" + "fp_crest_route.zip");
+			File destination3 = new File(downloadDirectory.getPath() + "/" + "fp_socorro_demo_route.zip");
 
 			try {
 				FileOutputStream fos = new FileOutputStream(destination);
@@ -46,6 +47,14 @@ public class LoadDefaultRoute extends AsyncTask<File, Void, Boolean>{
 	                	j=is2.read(readData);
 	                }
 	                fos2.close();
+	                InputStream is3 = c.getResources().openRawResource(com.jmie.fieldplay.R.raw.fp_socorro_demo_route);
+	                FileOutputStream fos3 = new FileOutputStream(destination3);
+	                int k = is3.read(readData);
+	                while(k!=-1){
+	                	fos3.write(readData, 0, k);
+	                	k=is3.read(readData);
+	                }
+	                fos3.close();
 	                Log.d(TAG, "Transfered resource " + destination.getName());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

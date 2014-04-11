@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -151,7 +152,8 @@ public class GridViewImageAdapter extends BaseAdapter {
         @Override
         protected void onPostExecute(Bitmap result) {
             final ImageView imageView = imageViewReference.get();
-            imageView.setImageBitmap(result);
+            if(imageView!=null) imageView.setImageBitmap(result);
+            
             //notify
         }
     }

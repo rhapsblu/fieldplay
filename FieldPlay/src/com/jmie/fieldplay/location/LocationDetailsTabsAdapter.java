@@ -3,6 +3,8 @@ package com.jmie.fieldplay.location;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jmie.fieldplay.route.FPPicture;
+
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,36 +21,7 @@ public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 		//setUpFragmentList();
 		
 	}
-//	private void setUpFragmentList(){
-//		Fragment descriptionFrag = new LocationDescriptionFragment();
-//		Bundle detailArgs = new Bundle();
-//		detailArgs.putString("com.jmie.fieldplay.locationName", activity.getLocation().getName());
-//		detailArgs.putString("com.jmie.fieldplay.locationDescription", activity.getLocation().getDescription());
-//		descriptionFrag.setArguments(detailArgs);
-//		
-//		Fragment viewGridFrag = new ImageViewGridFragment();
-//		Bundle gridArgs = new Bundle();
-//		gridArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
-//		gridArgs.putString("com.jmie.fieldplay.routeStorageName", activity.getRoute().getStorageName());
-//		viewGridFrag.setArguments(gridArgs);
-//
-//		
-//		Fragment audioFrag = new AudioPlaylistFragment();
-//		Bundle audioArgs = new Bundle();
-//		audioFrag.setArguments(audioArgs);
-//		
-//		Fragment vidioFrag = new AudioPlaylistFragment();
-//		Bundle vidioArgs = new Bundle();
-//		vidioFrag.setArguments(vidioArgs);
-//		
-//		fragments.add(descriptionFrag);
-//		fragments.add(viewGridFrag);
-//		fragments.add(audioFrag);
-//		fragments.add(vidioFrag);
-//		
-//		
-//		
-//	}
+
 	@Override
 	public Fragment getItem(int index) {
 		switch(index){
@@ -59,7 +32,9 @@ public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 			return LocationDescriptionFragment.newInstance(detailArgs);
 		case 1:
 			Bundle gridArgs = new Bundle();
-			gridArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
+		//	gridArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
+			gridArgs.putParcelableArrayList("com.jmie.fieldplay.locations", (ArrayList<FPPicture>)activity.getLocation().getImageList());
+			
 			gridArgs.putString("com.jmie.fieldplay.routeStorageName", activity.getRoute().getStorageName());
 			return ImageViewGridFragment.newInstance(gridArgs);
 		case 2:

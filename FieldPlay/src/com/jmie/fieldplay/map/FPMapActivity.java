@@ -242,8 +242,8 @@ public class FPMapActivity extends
     		else{
     			iconText = Integer.toString(locationCount);
     			locationCount++;
-    			if(location instanceof StopLocation) iconFactory.setStyle(IconGenerator.STYLE_GREEN);
-    			else iconFactory.setStyle(IconGenerator.STYLE_RED);
+    			if(location instanceof StopLocation) iconFactory.setStyle(IconGenerator.STYLE_RED);
+    			else iconFactory.setStyle(IconGenerator.STYLE_GREEN);
     		}
             MarkerOptions markerOptions = new MarkerOptions().
                     icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(iconText))).

@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="17"
+        android:minSdkVersion="16"
         android:targetSdkVersion="22" />
     <!-- permission
         android:name="com.jmie.fieldplay.MAPS_RECEIVE"

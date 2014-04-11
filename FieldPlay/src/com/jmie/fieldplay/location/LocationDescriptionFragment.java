@@ -7,6 +7,7 @@ import com.jmie.fieldplay.R;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class LocationDescriptionFragment extends Fragment{
 		TextView name = (TextView)rootView.findViewById(R.id.location_name);
 		TextView description = (TextView)rootView.findViewById(R.id.location_description);
 		description.setText(locationDescription);
+		description.setMovementMethod(new ScrollingMovementMethod());
 		name.setText(locationName);
 		Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "Roboto-Medium.ttf");
 		name.setTypeface(font);

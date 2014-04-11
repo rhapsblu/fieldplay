@@ -45,14 +45,19 @@ public class ImageViewGridFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedinstance){
     	super.onCreate(savedinstance);
-		location = this.getArguments().getParcelable("com.jmie.fieldplay.location");
+		//location = this.getArguments().getParcelable("com.jmie.fieldplay.location");
 		routeStorageName =  this.getArguments().getString("com.jmie.fieldplay.routeStorageName");
 
-        imageList = location.getImageList();
+        //imageList = location.getImageList();
         pathList = new ArrayList<String>();
-        for(FPPicture pic: imageList){
-        	pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
-        }
+		
+		ArrayList<FPPicture> pictures = this.getArguments().getParcelableArrayList("com.jmie.fieldplay.locations");
+		for(FPPicture pic : pictures){
+			pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
+		}
+//        for(FPPicture pic: imageList){
+//        	pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
+//        }
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
