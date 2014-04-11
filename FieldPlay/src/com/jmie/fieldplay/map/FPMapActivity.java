@@ -13,6 +13,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -178,6 +179,7 @@ public class FPMapActivity extends
                 mMap.setMyLocationEnabled(true);
                 
             }
+            mMap.setOnInfoWindowClickListener(new InfoWindowClickListener());
         }
     }
 //    private void setUpLocationClientIfNeeded() {
@@ -251,6 +253,8 @@ public class FPMapActivity extends
                     anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
     		Marker marker = mMap.addMarker(markerOptions);
+    		marker.setTitle(location.getName());
+    		marker.setSnippet("Latitude: " + location.getLatitude() + " Longitude: "+location.getLongitude());
     		markerList.add(marker);
     		markerToLocation.put(marker, location);
 
@@ -270,16 +274,17 @@ public class FPMapActivity extends
     }
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
-		FPLocation location = markerToLocation.get(marker);
-		i.putExtra("com.jmie.fieldplay.route", route);
-		i.putExtra("com.jmie.fieldplay.location", location.getName());
-
-		for(String key: i.getExtras().keySet()){
-			Log.d(TAG, "Keys before: "+ key);
-		}
-		
-		startActivity(i);	
+//		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
+//		FPLocation location = markerToLocation.get(marker);
+//		i.putExtra("com.jmie.fieldplay.route", route);
+//		i.putExtra("com.jmie.fieldplay.location", location.getName());
+//
+//		for(String key: i.getExtras().keySet()){
+//			Log.d(TAG, "Keys before: "+ key);
+//		}
+//		
+//		startActivity(i);	
+		marker.showInfoWindow();
 		return false;
 	}
 	@Override
@@ -581,5 +586,24 @@ public class FPMapActivity extends
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+
 	}
+    public class InfoWindowClickListener implements OnInfoWindowClickListener{
+
+		@Override
+		public void onInfoWindowClick(Marker marker) {
+			Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
+			FPLocation location = markerToLocation.get(marker);
+			i.putExtra("com.jmie.fieldplay.route", route);
+			i.putExtra("com.jmie.fieldplay.location", location.getName());
+
+			for(String key: i.getExtras().keySet()){
+				Log.d(TAG, "Keys before: "+ key);
+			}
+			
+			startActivity(i);	
+			
+		}
+    	
+    }
 }

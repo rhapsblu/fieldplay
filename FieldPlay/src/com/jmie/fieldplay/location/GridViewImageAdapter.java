@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
  
 public class GridViewImageAdapter extends BaseAdapter {
  
@@ -72,7 +76,7 @@ public class GridViewImageAdapter extends BaseAdapter {
         //imageView.setImageBitmap(image);
         imageView.setImageBitmap(null);
         
-        ImageGridHandler handler = new ImageGridHandler(_activity, imageView, _filePaths.get(position), imageWidth, imageWidth);
+        BitmapWorkerTask handler = new BitmapWorkerTask(_activity, imageView, _filePaths.get(position), imageWidth, imageWidth);
         handler.execute(_filePaths.get(position));
         // image view click listener
         imageView.setOnClickListener(new OnImageClickListener(position));
@@ -101,7 +105,42 @@ public class GridViewImageAdapter extends BaseAdapter {
         }
  
     }
- 
+//    public void loadBitmap(int resId, Context context, ImageView imageView, String path, int width, int heith) {
+//        if (cancelPotentialWork(resId, imageView)) {
+//            final BitmapWorkerTask task = new BitmapWorkerTask(context, imageView, path, width, heith);
+//            final AsyncDrawable asyncDrawable =
+//                    new AsyncDrawable(context.getResources(), mPlaceHolderBitmap, task);
+//            imageView.setImageDrawable(asyncDrawable);
+//            task.execute(path);
+//        }
+//    }
+//    public static boolean cancelPotentialWork(int data, ImageView imageView) {
+//        final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+//
+//        if (bitmapWorkerTask != null) {
+//            final int bitmapData = bitmapWorkerTask.data;
+//            // If bitmapData is not yet set or it differs from the new data
+//            if (bitmapData == 0 || bitmapData != data) {
+//                // Cancel previous task
+//                bitmapWorkerTask.cancel(true);
+//            } else {
+//                // The same work is already in progress
+//                return false;
+//            }
+//        }
+//        // No task associated with the ImageView, or an existing task was cancelled
+//        return true;
+//    }
+//    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+//    	   if (imageView != null) {
+//    	       final Drawable drawable = imageView.getDrawable();
+//    	       if (drawable instanceof AsyncDrawable) {
+//    	           final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+//    	           return asyncDrawable.getBitmapWorkerTask();
+//    	       }
+//    	    }
+//    	    return null;
+//    	}
     /*
      * Resizing image size
      */
@@ -129,14 +168,14 @@ public class GridViewImageAdapter extends BaseAdapter {
         }
         return null;
     }
-    public class ImageGridHandler extends AsyncTask<String, Void, Bitmap>{
+    public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
         private final WeakReference<ImageView> imageViewReference;
         private Context context;
         private String path;
         int WIDTH;
         int HEITH;
 
-        public ImageGridHandler(Context context, ImageView img, String path, int width, int heith){
+        public BitmapWorkerTask(Context context, ImageView img, String path, int width, int heith){
             imageViewReference = new WeakReference<ImageView>(img);
             this.WIDTH = width;
             this.HEITH = heith;
@@ -151,10 +190,36 @@ public class GridViewImageAdapter extends BaseAdapter {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            final ImageView imageView = imageViewReference.get();
-            if(imageView!=null) imageView.setImageBitmap(result);
-            
-            //notify
+ 
+//            if(imageViewReference!=null && result!=null) {
+//            	final ImageView imageView = imageViewReference.get();
+//            	if(imageView != null)
+//            	imageView.setImageBitmap(result);
+//            }
+            if (isCancelled()) {
+                result = null;
+            }
+
+            if (imageViewReference != null && result != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(result);
+                }
+            }
         }
     }
+//    static class AsyncDrawable extends BitmapDrawable {
+//        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
+//
+//        public AsyncDrawable(Resources res, Bitmap bitmap,
+//                BitmapWorkerTask bitmapWorkerTask) {
+//            super(res, bitmap);
+//            bitmapWorkerTaskReference =
+//                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+//        }
+//
+//        public BitmapWorkerTask getBitmapWorkerTask() {
+//            return bitmapWorkerTaskReference.get();
+//        }
+//    }
 }
