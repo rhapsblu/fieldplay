@@ -1,5 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+	<item
+	    android:id="@+id/add_route"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/add_route"
+        android:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

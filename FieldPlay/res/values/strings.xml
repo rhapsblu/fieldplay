@@ -45,5 +45,10 @@
     <string name="start">Start</string>
     <string name="no_route_selected">No Route Selected</string>
     <string name="layers">Layers</string>
+    <string name="add_route">Add Route</string>
+    <string name="fp_store">FieldPlay Store</string>
+    <string name="qr_code">QR Code</string>
+    <string name="search_downloads">Downloads Folder</string>
+    <string name="url_download">Enter URL</string>
 
 </resources>

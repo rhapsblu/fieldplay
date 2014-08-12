@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,41 +51,20 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 
 public class FPMapActivity extends 
-								Activity 
+								FragmentActivity 
 							implements
-								OnMarkerClickListener,        
-								ConnectionCallbacks,
-								OnConnectionFailedListener,
-								LocationListener
-								//ServiceConnection
+								OnMarkerClickListener       
+
 {
 	
-//    private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
-//    private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
-//            GEOFENCE_EXPIRATION_IN_HOURS * DateUtils.HOUR_IN_MILLIS;
-//    private REQUEST_TYPE mRequestType;
 
-    // Store the current type of removal
-   // private REMOVE_TYPE mRemoveType;
-
-    // Persistent storage for geofences
-//    private FPGeofenceStore mPrefs;
-//    List<Geofence> mCurrentGeofences;
-    // Add geofences handler
-//    private GeofenceRequester mGeofenceRequester;
-    // Remove geofences handler
-//    private GeofenceRemover mGeofenceRemover;
-//    
-//    private List<String> mGeofenceIdsToRemove;
     
 	private Route route;
-//	private AudioService audioService;
 	public static String TAG = "FP Map";
 	private GoogleMap mMap;
 	private MenuItem toggle;
-	//private boolean bound = false;
 	private List<Marker> markerList = new ArrayList<Marker>();
-//	private List<FPGeofence> fenceList = new ArrayList<FPGeofence>();
+
     private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
     private PopupMenu layerMenu;
     private CustomLayerTileProvider tileProvider = new CustomLayerTileProvider();
@@ -97,30 +77,12 @@ public class FPMapActivity extends
 		Bundle b = getIntent().getExtras();
 		c = this;
 		String routeName = b.getString("com.jmie.fieldplay.routeName");
-
-//		mPrefs = new FPGeofenceStore(this);
-        // Instantiate the current List of geofences
-//        mCurrentGeofences = new ArrayList<Geofence>();
-
-        // Instantiate a Geofence requester
-//        mGeofenceRequester = new GeofenceRequester(this);
-
-        // Instantiate a Geofence remover
-//        mGeofenceRemover = new GeofenceRemover(this);
-		//Log.d(TAG, "Recieved Route " + routeName);
-		//route = StorageManager.getCachedRoute(c);
-		route = b.getParcelable("com.jmie.fieldplay.route");
-//		if((route == null)||(route.getStorageName().compareTo(routeName)!=0)){
+		//route = b.getParcelable("com.jmie.fieldplay.route");
 			route = StorageManager.buildRoute(this, routeName);
-//			StorageManager.cacheRoute(c, route);
-//		}
+
 		setContentView(R.layout.activity_fpmap);
 		setUpMapIfNeeded();
-//		Intent intent = new Intent(this, AudioService.class);
-//		startService(intent);
-//        bindService(new Intent(this, AudioService.class), this,
-//                Context.BIND_AUTO_CREATE);
-     
+
         layerMenu = new PopupMenu(this, findViewById(R.id.popupAnchor));
         List<MapLayer> mapLayers = route.getMapLayers();
         layerMenu.getMenu().add(Menu.NONE, 1, Menu.NONE, "No layers");
@@ -135,26 +97,13 @@ public class FPMapActivity extends
 	protected void onResume(){
 		super.onResume();
 		setUpMapIfNeeded();
-//		if(mPrefs.getFenceCount() >0){
-//			for(int i = 0; i<mPrefs.getFenceCount(); i++) fenceList.add(mPrefs.getGeofence(String.valueOf(i)));
-//		}
-
-		//mLocationClient.connect();
 	}
     @Override
     public void onPause() {
         super.onPause();
-//        if (mLocationClient != null) {
-//            mLocationClient.disconnect();
 
-//        }
     }
-//    @Override
-//    public void onDestroy(){
-//    	super.onDestroy();
-//    	if(bound) unbindService(this);
-//    	bound = false;
-//    }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -182,20 +131,7 @@ public class FPMapActivity extends
             mMap.setOnInfoWindowClickListener(new InfoWindowClickListener());
         }
     }
-//    private void setUpLocationClientIfNeeded() {
-//        if (mLocationClient == null) {
-//            mLocationClient = new LocationClient(
-//                    getApplicationContext(),
-//                    this,  // ConnectionCallbacks
-//                    this); // OnConnectionFailedListener
-//        }
-//    }
-//    public void showMyLocation(View view) {
-//        if (mLocationClient != null && mLocationClient.isConnected()) {
-//            String msg = "Location = " + mLocationClient.getLastLocation();
-//            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-//        }
-//    }
+
     private void setUpMap() {
     	Log.d(TAG, "Setting up map");
         // Add lots of markers to the map.
@@ -230,12 +166,11 @@ public class FPMapActivity extends
         }
     }
     private void addMarkersToMap() {
-    	Log.d(TAG, "Adding markers to map");
+    	//Log.d(TAG, "Adding markers to map");
     	IconGenerator iconFactory = new IconGenerator(this);
     	int locationCount = 1;
     	for(FPLocation location: route.getLocationList()){
-    		Log.d(TAG, "Adding marker for " + location.getName() + " lat: " + location.getLatitude() + " long: " + location.getLongitude());
-    		//addIcon(iconFactory, "Blue style", new LatLng(location.getLatitude(), location.getLongitude()));
+    		//Log.d(TAG, "Adding marker for " + location.getName() + " lat: " + location.getLatitude() + " long: " + location.getLongitude());
     		String iconText = "";
     		if(location instanceof BinocularLocation){
     			iconFactory.setStyle(IconGenerator.STYLE_BLUE);
@@ -263,7 +198,7 @@ public class FPMapActivity extends
     }
 
     private void addRouteLineToMap(){
-    	Log.d(TAG, "Adding route lines to map");
+    	//Log.d(TAG, "Adding route lines to map");
     	PolylineOptions routeLine = new PolylineOptions();
     	for(FPLocation location: route.getLocationList()){
     		if(!(location instanceof BinocularLocation))
@@ -274,291 +209,13 @@ public class FPMapActivity extends
     }
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-//		Intent i = new Intent(FPMapActivity.this, LocationDetailsActivity.class);
-//		FPLocation location = markerToLocation.get(marker);
-//		i.putExtra("com.jmie.fieldplay.route", route);
-//		i.putExtra("com.jmie.fieldplay.location", location.getName());
-//
-//		for(String key: i.getExtras().keySet()){
-//			Log.d(TAG, "Keys before: "+ key);
-//		}
-//		
-//		startActivity(i);	
 		marker.showInfoWindow();
 		return false;
 	}
-	@Override
-	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onConnected(Bundle connectionHint) {
-//        mLocationClient.requestLocationUpdates(
-//                REQUEST,
-//                this);
-		
-	}
-	@Override
-	public void onDisconnected() {
-		// TODO Auto-generated method stub
-		
-	}
-//	@Override
-//	public void onServiceConnected(ComponentName name, IBinder service) {
-//		LocalBinder localBinder = (LocalBinder)service;
-//		audioService = localBinder.getService();
-//		bound = true;
-//		
-//	}
-//	@Override
-//	public void onServiceDisconnected(ComponentName name) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-//        // Choose what to do based on the request code
-//        switch (requestCode) {
-//
-//            // If the request code matches the code sent in onConnectionFailed
-//            case GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST :
-//
-//                switch (resultCode) {
-//                    // If Google Play services resolved the problem
-//                    case Activity.RESULT_OK:
-//
-//                        // If the request was to add geofences
-//                        if (GeofenceUtils.REQUEST_TYPE.ADD == mRequestType) {
-//
-//                            // Toggle the request flag and send a new request
-//                            mGeofenceRequester.setInProgressFlag(false);
-//
-//                            // Restart the process of adding the current geofences
-//                            mGeofenceRequester.addGeofences(mCurrentGeofences);
-//
-//                        // If the request was to remove geofences
-//                        } else if (GeofenceUtils.REQUEST_TYPE.REMOVE == mRequestType ){
-//
-//                            // Toggle the removal flag and send a new removal request
-//                            mGeofenceRemover.setInProgressFlag(false);
-//
-//                            // If the removal was by Intent
-//                            if (GeofenceUtils.REMOVE_TYPE.INTENT == mRemoveType) {
-//
-//                                // Restart the removal of all geofences for the PendingIntent
-//                                mGeofenceRemover.removeGeofencesByIntent(
-//                                    mGeofenceRequester.getRequestPendingIntent());
-//
-//                            // If the removal was by a List of geofence IDs
-//                            } else {
-//
-//                                // Restart the removal of the geofence list
-//                                mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
-//                            }
-//                        }
-//                    break;
-//
-//                    // If any other result was returned by Google Play services
-//                    default:
-//
-//                        // Report that Google Play services was unable to resolve the problem.
-//                        Log.d(GeofenceUtils.APPTAG, "google play services reports a problem");
-//                }
-//
-//            // If any other request code was received
-//            default:
-//               // Report that this Activity received an unknown requestCode
-//               Log.d(GeofenceUtils.APPTAG,
-//                       "unknown code: ");
-//
-//               break;
-//        }
-//    }
-    /**
-     * Verify that Google Play services is available before making a request.
-     *
-     * @return true if Google Play services is available, otherwise false
-     */
-//    private boolean servicesConnected() {
-//
-//        // Check that Google Play services is available
-//        int resultCode =
-//                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-//
-//        // If Google Play services is available
-//        if (ConnectionResult.SUCCESS == resultCode) {
-//
-//            // In debug mode, log the status
-//            Log.d(GeofenceUtils.APPTAG, "play services available");
-//
-//            registerGeofences();
-//            return true;
-//
-//        // Google Play services was not available for some reason
-//        } else {
-//
-//            // Display an error dialog
-//            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
-//            if (dialog != null) {
-//                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-//                errorFragment.setDialog(dialog);
-//                errorFragment.show(getFragmentManager(), GeofenceUtils.APPTAG);
-//            }
-//            return false;
-//        }
-//    }
-    
-//    public void onUnregisterByPendingIntent() {
-//        /*
-//         * Remove all geofences set by this app. To do this, get the
-//         * PendingIntent that was added when the geofences were added
-//         * and use it as an argument to removeGeofences(). The removal
-//         * happens asynchronously; Location Services calls
-//         * onRemoveGeofencesByPendingIntentResult() (implemented in
-//         * the current Activity) when the removal is done
-//         */
-//
-//        /*
-//         * Record the removal as remove by Intent. If a connection error occurs,
-//         * the app can automatically restart the removal if Google Play services
-//         * can fix the error
-//         */
-//        // Record the type of removal
-//        mRemoveType = GeofenceUtils.REMOVE_TYPE.INTENT;
-//
-//        /*
-//         * Check for Google Play services. Do this after
-//         * setting the request type. If connecting to Google Play services
-//         * fails, onActivityResult is eventually called, and it needs to
-//         * know what type of request was in progress.
-//         */
-//        if (!servicesConnected()) {
-//
-//            return;
-//        }
-//
-//        // Try to make a removal request
-//        try {
-//        /*
-//         * Remove the geofences represented by the currently-active PendingIntent. If the
-//         * PendingIntent was removed for some reason, re-create it; since it's always
-//         * created with FLAG_UPDATE_CURRENT, an identical PendingIntent is always created.
-//         */
-//        mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
-//        
-//
-//        } catch (UnsupportedOperationException e) {
-//            // Notify user that previous request hasn't finished.
-//            Toast.makeText(this, "Remove fences already requested",
-//                        Toast.LENGTH_LONG).show();
-//        }
-//
-//    }
-//    
-//    public void registerGeofences() {
-//
-//        /*
-//         * Record the request as an ADD. If a connection error occurs,
-//         * the app can automatically restart the add request if Google Play services
-//         * can fix the error
-//         */
-//        mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
-//
-//        /*
-//         * Check for Google Play services. Do this after
-//         * setting the request type. If connecting to Google Play services
-//         * fails, onActivityResult is eventually called, and it needs to
-//         * know what type of request was in progress.
-//         */
-//        if (!servicesConnected()) {
-//
-//            return;
-//        }
-//
-//        int id = 0;
-//        for(FPLocation l : route.getLocationList()){
-//        	if(l instanceof StopLocation){
-//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-//        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getAlertRadius(), 
-//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-//        		id++;
-//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-//        				l.getLatitude(), l.getLongitude(),(long) ((StopLocation) l).getContentRadius(), 
-//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-//        		id++;
-//        	}
-//        	else if(l instanceof InterestLocation){
-//        		fenceList.add(new FPGeofence(Integer.toString(id), route.getName(), l.getName(), 
-//        				l.getLatitude(), l.getLongitude(),(long) ((InterestLocation) l).getContentRadius(), 
-//        				GEOFENCE_EXPIRATION_IN_MILLISECONDS,Geofence.GEOFENCE_TRANSITION_ENTER));
-//        		id++;
-//        	}
-//        }
-//        for(FPGeofence fence: fenceList){
-//        	mPrefs.setGeofence(fence.getId(), fence);
-//        	mCurrentGeofences.add(fence.toGeofence());
-//        }
-        /*
-         * Create a version of geofence 1 that is "flattened" into individual fields. This
-         * allows it to be stored in SharedPreferences.
-         */
-//        mUIGeofence1 = new SimpleGeofence(
-//            "1",
-//            // Get latitude, longitude, and radius from the UI
-//            Double.valueOf(mLatitude1.getText().toString()),
-//            Double.valueOf(mLongitude1.getText().toString()),
-//            Float.valueOf(mRadius1.getText().toString()),
-//            // Set the expiration time
-//            GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-//            // Only detect entry transitions
-//            Geofence.GEOFENCE_TRANSITION_ENTER);
-//
-//        // Store this flat version in SharedPreferences
-//        mPrefs.setGeofence("1", mUIGeofence1);
-//
-//        /*
-//         * Create a version of geofence 2 that is "flattened" into individual fields. This
-//         * allows it to be stored in SharedPreferences.
-//         */
-//        mUIGeofence2 = new SimpleGeofence(
-//            "2",
-//            // Get latitude, longitude, and radius from the UI
-//            Double.valueOf(mLatitude2.getText().toString()),
-//            Double.valueOf(mLongitude2.getText().toString()),
-//            Float.valueOf(mRadius2.getText().toString()),
-//            // Set the expiration time
-//            GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-//            // Detect both entry and exit transitions
-//            Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
-//            );
-//
-//        // Store this flat version in SharedPreferences
-//        mPrefs.setGeofence("2", mUIGeofence2);
-//
-//        /*
-//         * Add Geofence objects to a List. toGeofence()
-//         * creates a Location Services Geofence object from a
-//         * flat object
-//         */
-//        mCurrentGeofences.add(mUIGeofence1.toGeofence());
-//        mCurrentGeofences.add(mUIGeofence2.toGeofence());
 
-        // Start the request. Fail if there's already a request in progress
-//        try {
-//            // Try to add geofences
-//            mGeofenceRequester.addGeofences(mCurrentGeofences);
-//        } catch (UnsupportedOperationException e) {
-//            // Notify user that previous request hasn't finished.
-//            Toast.makeText(this, "Adding geofence already requested",
-//                        Toast.LENGTH_LONG).show();
-//        }
-//    }
+
+
+
     private class LayerMenuItemClickListener implements OnMenuItemClickListener{
 
 		@Override
@@ -567,12 +224,15 @@ public class FPMapActivity extends
 			
 			int i = item.getItemId()-2;
 			
-			if(i == -1){
-				if(tileOverlay != null)tileOverlay.remove();
-				return false;
+//			if(i == -1){
+//				if(tileOverlay != null)tileOverlay.remove();
+//				return false;
+//			}
+			if(tileOverlay != null)tileOverlay.remove();
+			if(i!= -1){
+				tileProvider.setMapLayer(c, route.getStorageName(), layers.get(i));
+				tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
 			}
-			tileProvider.setMapLayer(c, route.getStorageName(), layers.get(i));
-			tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
 			return false;
 		}
     	
@@ -606,4 +266,6 @@ public class FPMapActivity extends
 		}
     	
     }
+    
+    
 }

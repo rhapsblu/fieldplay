@@ -10,12 +10,16 @@ import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.map.FPMapActivity;
 import com.jmie.fieldplay.storage.StorageManager;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,11 +28,16 @@ import android.widget.TextView;
 
 public class RouteLoaderActivity extends Activity
 	implements RouteDetailsFragment.OnRouteSelectedListener{
+	
+	static final int PICK_DOWNLOAD_REQUEST = 0;
 	private ArrayAdapter<StorageNameMeta> arrayAdapter;
 	static final String TAG = "Route Load Activity";
 	private String selectedRoute;
 	private List<StorageNameMeta> routeMeta = new ArrayList<StorageNameMeta>();
 	private Context c;
+	DownloadManager downloadManager;
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +114,36 @@ public class RouteLoaderActivity extends Activity
 			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
 		}
 		arrayAdapter.notifyDataSetChanged();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.add_route:
+	        	Intent i = new Intent(RouteLoaderActivity.this, RouteAddActivity.class);
+	        	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode== PICK_DOWNLOAD_REQUEST){
+			if(resultCode == RESULT_OK){
+				Boolean isLocal = data.getBooleanExtra("com.jmie.fieldplay.local", false);
+				String location = data.getStringExtra("com.jmie.fieldplay.location");
+				if(!isLocal)startDownload(location);
+			}
+		}
+	}
+	private void startDownload(String location){
+		downloadManager= (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		Uri uri = Uri.parse(location);
+		DownloadManager.Request request = new DownloadManager.Request(uri);
+		downloadManager.enqueue(request);
+		Log.d(TAG, "Starting download of " + location);
 	}
 	private class StorageNameMeta{
 		private String routeName;

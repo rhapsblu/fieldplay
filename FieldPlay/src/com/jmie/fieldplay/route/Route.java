@@ -112,7 +112,7 @@ public class Route implements Parcelable{
 			dest.writeInt(location);
 		}
 		dest.writeTypedList(mapLayers);
-		dest.writeString(storageName);
+		//dest.writeString(storageName);
 		//Log.d("Route Write", "End: "+_name);
 		
 		

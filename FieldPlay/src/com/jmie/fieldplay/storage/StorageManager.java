@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 
 import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.route.RouteLoaderActivity;
 
 public class StorageManager {
@@ -101,6 +102,36 @@ public class StorageManager {
 		}
 		return routeName;
 	}
+//	public static Route buildRoute(Context c, RouteData routeData){
+//		Log.d(TAG, "Building route " + routeData.get_routeName());
+//		Route route = null;
+//		String routeXMLPath = routeData.get_routeFile()+"/"+ROUTE_XML;
+//		String state = Environment.getExternalStorageState();
+//		if (Environment.MEDIA_MOUNTED.equals(state)) {	
+//			//Log.d(TAG, "Media Mounted");
+//			InputStream inputStream;
+//			try {
+//				//Log.d(TAG, "Accessing " + routeXMLPath);
+//				File inputFile = c.getExternalFilesDir(routeXMLPath);
+//				inputStream = new FileInputStream(inputFile);
+//	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+//	            //Log.d(TAG, "Starting parse of " + inputFile.getName());
+//	            XMLManager xmlManager = new XMLManager();
+//	            route = xmlManager.parse(bufferedInputStream, routeStorageName);
+//	            bufferedInputStream.close();
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			} catch (XmlPullParserException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		} 
+//		else {
+//			Log.e(TAG, "External media not available ");
+//		}
+//		return route;
+//	}
 	public static Route buildRoute(Context c, String routeStorageName){
 		
 		Log.d(TAG, "Building route " + routeStorageName);
