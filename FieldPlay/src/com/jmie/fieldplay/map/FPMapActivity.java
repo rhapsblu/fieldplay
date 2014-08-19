@@ -30,6 +30,7 @@ import com.jmie.fieldplay.location.LocationDetailsActivity;
 import com.jmie.fieldplay.route.BinocularLocation;
 import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.Route;
+import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.route.StopLocation;
 import com.jmie.fieldplay.storage.StorageManager;
 
@@ -70,15 +71,16 @@ public class FPMapActivity extends
     private CustomLayerTileProvider tileProvider = new CustomLayerTileProvider();
     private TileOverlay tileOverlay;
     private Context c;
+    private RouteData routeData;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
 		c = this;
-		String routeName = b.getString("com.jmie.fieldplay.routeName");
+		routeData = b.getParcelable("com.jmie.fieldplay.routeData");
 		//route = b.getParcelable("com.jmie.fieldplay.route");
-			route = StorageManager.buildRoute(this, routeName);
+		route = StorageManager.buildRoute(this, routeData);
 
 		setContentView(R.layout.activity_fpmap);
 		setUpMapIfNeeded();
@@ -230,7 +232,7 @@ public class FPMapActivity extends
 //			}
 			if(tileOverlay != null)tileOverlay.remove();
 			if(i!= -1){
-				tileProvider.setMapLayer(c, route.getStorageName(), layers.get(i));
+				tileProvider.setMapLayer(c, routeData, layers.get(i));
 				tileOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
 			}
 			return false;

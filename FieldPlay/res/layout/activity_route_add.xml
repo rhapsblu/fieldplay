@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+    <Button
+        android:id="@+id/fp_store"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/field_play_store"
+        android:onClick="fpstorehandler"
+        android:text="@string/fp_store"/>
+    <Button
+        android:id="@+id/qr_load"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fp_store"
+        android:drawableLeft="@drawable/qr_download"
+        android:onClick="zxinghandler"
+        android:text="@string/qr_code"/>
+    <Button
+        android:id="@+id/download_folder"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qr_load"
+        android:drawableLeft="@drawable/file_search"
+        android:text="@string/search_downloads"/>
+        <Button
+        android:id="@+id/url_download"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/download_folder"
+        android:drawableLeft="@drawable/www"
+        android:onClick="urlhandler"
+        android:text="@string/url_download"/>
+ </RelativeLayout>

@@ -52,7 +52,7 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 		
 		
         for(FPPicture pic: location.getImageList()){
-        	imagePathList.add(StorageManager.getImagePath(this, route.getStorageName(), pic.getResource()));
+        	imagePathList.add(StorageManager.getImagePath(this, route.getRouteData(), pic.getResource()));
         }
 		
 		setContentView(R.layout.activity_location_detail);

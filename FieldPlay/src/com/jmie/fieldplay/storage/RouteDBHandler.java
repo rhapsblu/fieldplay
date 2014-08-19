@@ -1,14 +1,18 @@
 package com.jmie.fieldplay.storage;
+import java.util.ArrayList;
+
 import com.jmie.fieldplay.route.RouteData;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 public class RouteDBHandler extends SQLiteOpenHelper{
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "routeDB.db";
 	public static final String TABLE_ROUTES = "routes";
 	
@@ -19,22 +23,26 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	public static final String COLUMN_DOWNLOADPROGRESS = "downloadprogress";
 	public static final String COLUMN_UNZIPPROGRESS = "unzipprogress";
 	public static final String COLUMN_MANAGERID = "managerid";
-	
+	public String TAG = "RouteDB Handler";
 	public RouteDBHandler(Context context, String name, CursorFactory factory, int version){
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
 	}
+	public RouteDBHandler(Context context){
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_PRODUCTS_TABLE = "CREATE TABLE " +
+		String CREATE_ROUTES_TABLE = "CREATE TABLE " +
 	             TABLE_ROUTES + "("
 	             + COLUMN_ID + " INTEGER PRIMARY KEY," 
 	             + COLUMN_ROUTENAME + " TEXT," 
 	             + COLUMN_DESCRIPTION + " TEXT," 
 	             + COLUMN_ROUTEFILE + " TEXT,"
-	             + COLUMN_DOWNLOADPROGRESS + " INTEGER"
-	             + COLUMN_MANAGERID + " INTEGER" 
+	             + COLUMN_DOWNLOADPROGRESS + " INTEGER, "
+	             + COLUMN_MANAGERID + " INTEGER, " 
 	             + COLUMN_UNZIPPROGRESS + " INTEGER" + ")";
-	      db.execSQL(CREATE_PRODUCTS_TABLE);
+	      db.execSQL(CREATE_ROUTES_TABLE);
+	      
 		
 	}
 
@@ -45,6 +53,11 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		
 	}
 	public void addRoute (RouteData routeData){
+		Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM routes", null);
+		Log.d("Column Count", Integer.toString(cursor.getColumnCount()));
+		for(int i = 0; i<cursor.getColumnCount(); i++){
+			Log.d("Column name", cursor.getColumnName(i));
+		}
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_ROUTENAME,  routeData.get_routeName());
 		values.put(COLUMN_DESCRIPTION, routeData.get_routeDescription());
@@ -54,6 +67,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		values.put(COLUMN_UNZIPPROGRESS, routeData.get_unzipProgress());
 		
 		SQLiteDatabase db = this.getWritableDatabase();
+		
 		
 		db.insert(TABLE_ROUTES, null, values);
 		
@@ -97,6 +111,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 			routeData = null;
 		}
 	        db.close();
+	        Log.d(TAG, "Retrieved: " + routeData.get_routeName());
 		return routeData;
 	}
 	
@@ -121,5 +136,37 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		}
 	        db.close();
 		return result;
+	}
+//	public Cursor getData(int id){
+//		SQLiteDatabase db = this.getReadableDatabase();
+//		Cursor res =  db.rawQuery( "select * TABLE_ROUTES where COLUMN_ID ="+id+"", null );
+//		return res;
+//	}
+	public int numberOfRows(){
+		 SQLiteDatabase db = this.getReadableDatabase();
+		 int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_ROUTES);
+		 return numRows;
+	}
+	public ArrayList<RouteData> getAllRoutes(){
+	      ArrayList<RouteData> array_list = new ArrayList<RouteData>();
+	      //hp = new HashMap();
+	      SQLiteDatabase db = this.getReadableDatabase();
+	      Cursor res =  db.rawQuery( "select * from " +TABLE_ROUTES, null );
+	      res.moveToFirst();
+	      while(res.isAfterLast() == false){
+	    	  RouteData routeData = new RouteData();
+				routeData.set_id(Integer.parseInt(res.getString(0)));
+				routeData.set_routeName(res.getString(1));
+				routeData.set_routeDescription(res.getString(2));
+				routeData.set_routeFile(res.getString(3));
+				routeData.set_downloadProgress(Integer.parseInt(res.getString(4)));
+				routeData.set_managerID(Integer.parseInt(res.getString(5)));
+				routeData.set_unzipProgress(Integer.parseInt(res.getString(6)));
+				array_list.add(routeData);
+	      //array_list.add(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
+				res.moveToNext();
+	      }
+	      Log.d(TAG, "Retrieved list of size: " + array_list.size());
+	   return array_list;
 	}
 }

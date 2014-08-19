@@ -1,6 +1,7 @@
 package com.jmie.fieldplay.route;
 
-import java.util.ArrayList;
+import java.io.File;
+
 
 import java.util.List;
 
@@ -8,34 +9,42 @@ import java.util.List;
 import com.jmie.fieldplay.R;
 
 import com.jmie.fieldplay.map.FPMapActivity;
+import com.jmie.fieldplay.storage.RouteDBHandler;
 import com.jmie.fieldplay.storage.StorageManager;
+import com.jmie.fieldplay.storage.UnZipTask;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.ListView;
-import android.widget.TextView;
+
 
 public class RouteLoaderActivity extends Activity
 	implements RouteDetailsFragment.OnRouteSelectedListener{
 	
 	static final int PICK_DOWNLOAD_REQUEST = 0;
-	private ArrayAdapter<StorageNameMeta> arrayAdapter;
+
+	private RoutesAdapter routesAdapter;
 	static final String TAG = "Route Load Activity";
-	private String selectedRoute;
-	private List<StorageNameMeta> routeMeta = new ArrayList<StorageNameMeta>();
-	private Context c;
+
+	private RouteData selectedRouteData;
+
+	private List<RouteData> routeDataList;
+
 	DownloadManager downloadManager;
+	private RouteDBHandler routeDB;
 	
 	
 	
@@ -43,21 +52,16 @@ public class RouteLoaderActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_loader);
-		c = this;
-		if(StorageManager.isFirstRun(this)) StorageManager.firstRunSetup(this);
-		
-		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
-			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
-		}
+
+		routeDB = new RouteDBHandler(this);
+		routeDataList = routeDB.getAllRoutes();
 
 	
 		ListView lv = (ListView) findViewById(R.id.list);
-	
-		//simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.simple_list_item_1, new String[]{"routeItem"}, new int[] {android.R.id.text1});
-		
-		//simpleAdpt = new SimpleAdapter(this, routeList, android.R.layout.activity_list_item, new String[]{"routeItem"}, new int[] {android.R.id.text1});
-		arrayAdapter = new ArrayAdapter<StorageNameMeta>(this, android.R.layout.simple_list_item_1, routeMeta);
-		lv.setAdapter(arrayAdapter);
+
+		routesAdapter = new RoutesAdapter(this, routeDataList);
+
+		lv.setAdapter(routesAdapter);
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -68,19 +72,19 @@ public class RouteLoaderActivity extends Activity
 
 	            // change the background color of the selected element
 	            view.setBackgroundColor(Color.LTGRAY);
-				TextView clickedView = (TextView) view;
+//				TextView clickedView = (TextView) view;
 
 				//selectedRoute = storage.getReadName(RouteLoaderActivity.this, clickedView.getText().toString());
-				selectedRoute = routeMeta.get(position).getStorageName();
-				deliverToFragment(StorageManager.getRouteDescription(c, selectedRoute));
+				selectedRouteData = routeDataList.get(position);
+				deliverToFragment(selectedRouteData);
 	
 			}
 		});
 	}
-	private void deliverToFragment(String description){
+	private void deliverToFragment(RouteData routeData){
         RouteDetailsFragment routeDetailFrag = (RouteDetailsFragment)
                 getFragmentManager().findFragmentById(R.id.details_fragment);
-        routeDetailFrag.displayRouteDetails(description);
+        routeDetailFrag.displayRouteDetails(routeData.get_routeDescription());
         
 	}
 	@Override
@@ -103,17 +107,20 @@ public class RouteLoaderActivity extends Activity
 	@Override
 	public void onRouteSelected() {
 		Intent i = new Intent(RouteLoaderActivity.this, FPMapActivity.class);
-		i.putExtra("com.jmie.fieldplay.routeName", selectedRoute);
+		i.putExtra("com.jmie.fieldplay.routeData", selectedRouteData);
 		startActivity(i);
 		
 	}
 
-	public void updateNames() {
-		routeMeta.clear();
-		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
-			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
-		}
-		arrayAdapter.notifyDataSetChanged();
+	public void updateAdapter() {
+		routeDataList.clear();
+		routesAdapter.notifyDataSetChanged();
+//		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
+//			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
+//		}
+		routeDataList =  routeDB.getAllRoutes();
+		routesAdapter.notifyDataSetChanged();
+		
 	}
 	
 	@Override
@@ -139,25 +146,92 @@ public class RouteLoaderActivity extends Activity
 		}
 	}
 	private void startDownload(String location){
+		RouteData routeData = new RouteData();
+		routeData.set_routeName(location);
+		routeData.set_downloadProgress(0);
+		routeData.set_unzipProgress(0);
+
 		downloadManager= (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
 		Uri uri = Uri.parse(location);
 		DownloadManager.Request request = new DownloadManager.Request(uri);
-		downloadManager.enqueue(request);
+		routeData.set_managerID(downloadManager.enqueue(request));
 		Log.d(TAG, "Starting download of " + location);
+		routeDB.addRoute(routeData);
+		new DownloadProgressUpdateTask().execute(location, null, null);
+		updateAdapter();
+		
 	}
-	private class StorageNameMeta{
-		private String routeName;
-		private String routeStorageName;
-		private StorageNameMeta(String routeName, String routeStorageName){
-			this.routeName = routeName;
-			this.routeStorageName = routeStorageName;
-		}
-		private String getStorageName(){
-			return routeStorageName;
-		}
+	private void startUnzip(String location, RouteData routeData){
+		new UnZipTask(this, routeData.get_routeName()).execute(new File(location), this.getExternalFilesDir(StorageManager.ROUTES_DIR));
+	}
+	private class DownloadProgressUpdateTask extends AsyncTask<String, Void, Void>{
+
 		@Override
-		public String toString(){
-			return routeName;
+		protected Void doInBackground(String ... locations) {
+			Log.d(TAG, "Starting download monitor");
+			while(true){
+				RouteData routeData = routeDB.findRoute(locations[0]);
+				DownloadManager.Query query = new DownloadManager.Query();
+				query.setFilterById(routeData.get_managerID());
+				Cursor cursor = downloadManager.query(query);
+				
+				if(cursor.moveToFirst()){
+					int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+					int status = cursor.getInt(columnIndex);
+					columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+					int byteSoFar = cursor.getInt(columnIndex);
+					columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
+					int totalBytes = cursor.getInt(columnIndex);
+					if(status == DownloadManager.STATUS_SUCCESSFUL){
+						//pass to unzip routine
+						columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+						String fileLocation = cursor.getString(columnIndex);
+						routeData.set_routeName(fileLocation);
+						routeData.set_downloadProgress(100);
+						routeDB.updateRoute(routeData);
+						Log.d(TAG, "Download done");
+						runOnUiThread(new Runnable() {
+						    @Override
+						    public void run() {
+						    	Log.d(TAG, "Update Called");
+						    	updateAdapter();
+						    }
+						} );
+						startUnzip(fileLocation, routeData);
+						break;
+					}
+					else if(status == DownloadManager.STATUS_RUNNING){
+
+						int progress = (byteSoFar*100)/totalBytes;
+						routeData.set_downloadProgress(progress);
+						routeDB.updateRoute(routeData);
+						Log.d(TAG, "Downloading Progress: " + progress);
+						runOnUiThread(new Runnable() {
+						    @Override
+						    public void run() {
+						    	Log.d(TAG, "Update Called");
+						    	updateAdapter();
+						    }
+						} );
+						
+					}
+					else if(status == DownloadManager.STATUS_FAILED){
+						routeDB.deleteRoute(locations[0]);
+						break;
+					}
+					try {
+
+						Thread.sleep(500);
+					} 
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}   
+
+			}
+			return null;
 		}
+			
 	}
 }

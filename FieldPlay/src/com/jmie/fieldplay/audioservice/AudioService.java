@@ -93,21 +93,21 @@ implements OnCompletionListener, OnPreparedListener{
 	         .setSmallIcon(R.drawable.av_play)
 	         .build();
 			startForeground(ONGOING_NOTIFICATION_ID, notification);
-			try {
-				mediaPlayer.setDataSource(StorageManager.getAudioPath(this, route.getName(), audio.getFilePath()));
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				mediaPlayer.setDataSource(StorageManager.getAudioPath(this, route.getName(), audio.getFilePath()));
+//			} catch (IllegalArgumentException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (SecurityException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IllegalStateException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 			preparing = true;
 			mediaPlayer.prepareAsync();

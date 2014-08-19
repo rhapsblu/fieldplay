@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
+import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.content.Context;
@@ -41,8 +42,8 @@ public class MapLayer implements Parcelable{
 	public MapLayer(Parcel in){
 		readFromParcel(in);
 	}
-	public void setUpRoute(Context c, String routeStorageName){
-		layerPath = StorageManager.getTilePath(c, routeStorageName, layerName);
+	public void setUpRoute(Context c, RouteData routeData){
+		layerPath = StorageManager.getTilePath(c, routeData, layerName);
 		this.c = c;
 	}
 	public String getName(){

@@ -7,6 +7,7 @@ import com.jmie.fieldplay.R;
 
 import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
+import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.storage.StorageManager;
 
 
@@ -35,7 +36,7 @@ public class ImageViewGridFragment extends Fragment {
     private int columnWidth;
     private FPLocation location;
 
-    private String routeStorageName;
+    private RouteData routeData;
     
     public static final ImageViewGridFragment newInstance(Bundle b){
     	ImageViewGridFragment f = new ImageViewGridFragment();
@@ -46,14 +47,14 @@ public class ImageViewGridFragment extends Fragment {
     public void onCreate(Bundle savedinstance){
     	super.onCreate(savedinstance);
 		//location = this.getArguments().getParcelable("com.jmie.fieldplay.location");
-		routeStorageName =  this.getArguments().getString("com.jmie.fieldplay.routeStorageName");
+		routeData =  this.getArguments().getParcelable("com.jmie.fieldplay.routeData");
 
         //imageList = location.getImageList();
         pathList = new ArrayList<String>();
 		
 		ArrayList<FPPicture> pictures = this.getArguments().getParcelableArrayList("com.jmie.fieldplay.locations");
 		for(FPPicture pic : pictures){
-			pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
+			pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeData, pic.getResource())).getPath());
 		}
 //        for(FPPicture pic: imageList){
 //        	pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());

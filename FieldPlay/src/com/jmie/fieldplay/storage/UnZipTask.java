@@ -9,17 +9,26 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.route.RouteLoaderActivity;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class UnZipTask extends AsyncTask<File, Void, Boolean> {
+public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
 //	 private String routeName;
 	 static final String TAG = "UnZipTask";
 	 RouteLoaderActivity loader;
-	 public UnZipTask(RouteLoaderActivity loader){
+	 private RouteDBHandler routeDB;
+	 private int size;
+	 private String routeName;
+
+	 private String fileName;
+	 
+	 public UnZipTask(RouteLoaderActivity loader, String routeName){
 		 this.loader = loader;
+		 routeDB = new RouteDBHandler(loader);
+		 this.routeName = routeName;
 	 }
 //       @SuppressWarnings("rawtypes")
        @Override
@@ -30,9 +39,15 @@ public class UnZipTask extends AsyncTask<File, Void, Boolean> {
 //           routeName = archive.getName();
            try {
                ZipFile zipfile = new ZipFile(archive);
+               
+               size = zipfile.size();
+               int count = 0;
                for (Enumeration<?> e = zipfile.entries(); e.hasMoreElements();) {
                    ZipEntry entry = (ZipEntry) e.nextElement();
+                   if(count==0)fileName = entry.getName();
                    unzipEntry(zipfile, entry, destinationPath);
+                   count++;
+                   onProgressUpdate((count*100)/size);
                }
                
            } catch (Exception e) {
@@ -43,9 +58,35 @@ public class UnZipTask extends AsyncTask<File, Void, Boolean> {
            return true;
        }
 
+       protected void onProgressUpdate(Integer progress){
+    	   
+    	   RouteData routeData = routeDB.findRoute(routeName);
+    	   routeData.set_unzipProgress(progress);
+    	   routeDB.updateRoute(routeData);
+			loader.runOnUiThread(new Runnable() {
+			    @Override
+			    public void run() {
+			    	Log.d(TAG, "Update Called");
+			    	loader.updateAdapter();
+			    }
+			} );
+    	   Log.d(TAG, "Unzip Progress: " + progress);
+       }
        @Override
        protected void onPostExecute(Boolean result) {
-    	   loader.updateNames();
+    	   RouteData routeData = routeDB.findRoute(routeName);
+    	   routeData.set_unzipProgress(100);
+    	  routeDB.updateRoute(routeData);
+    	  
+    	   StorageManager.populateDBFromXML(loader, routeName, fileName);
+			loader.runOnUiThread(new Runnable() {
+			    @Override
+			    public void run() {
+			    	Log.d(TAG, "Update Called");
+			    	loader.updateAdapter();
+			    }
+			} );
+
        }
 
        private void unzipEntry(ZipFile zipfile, ZipEntry entry,
@@ -80,10 +121,10 @@ public class UnZipTask extends AsyncTask<File, Void, Boolean> {
 
        private void createDir(File dir) {
            if (dir.exists()) {
-           	//Log.v(TAG, "Directory exists " + dir.getName());
+           	Log.v(TAG, "Directory exists " + dir.getName());
                return;
            }
-           //Log.v(TAG, "Creating dir " + dir.getName());
+           Log.v(TAG, "Creating dir " + dir.getName());
            if (!dir.mkdirs()) {
                throw new RuntimeException("Can not create dir " + dir);
            }

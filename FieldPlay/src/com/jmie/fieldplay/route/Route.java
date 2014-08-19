@@ -14,14 +14,15 @@ import android.os.Parcelable;
 import android.util.Log;
 
 public class Route implements Parcelable{
-	private String _name = "default";
-	private String _description = "none";
+	//private String _name = "default";
+	//private String _description = "none";
 	private List<FPLocation> locations = new ArrayList<FPLocation>();
 	private double _length;
 	private Boundry _boundry = new Boundry();
 	private Map<String, Integer> nameToLocation = new HashMap<String, Integer>();
 	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
-	private String storageName;
+	//private String storageName;
+	private RouteData routeData;
 
 	public Route(){
 		locations = new ArrayList<FPLocation>();
@@ -30,25 +31,25 @@ public class Route implements Parcelable{
 		readFromParcel(in);
 	}
 	public String getName(){
-		return _name;
+		return routeData.get_routeName();
 	}
 
-	public void setName(String name){
-		this._name = name;
-	}
-	public void setStorageName(String storageName){
-		this.storageName = storageName;
-	}
-	public String getStorageName(){
-		return this.storageName;
-	}
+//	public void setName(String name){
+//		this._name = name;
+//	}
+//	public void setStorageName(String storageName){
+//		this.storageName = storageName;
+//	}
+//	public String getStorageName(){
+//		return this.storageName;
+//	}
 	public String getDescription() {
-		return _description;
+		return routeData.get_routeDescription();
 	}
 
-	public void setDescription(String description) {
-		this._description = description;
-	}
+//	public void setDescription(String description) {
+//		this._description = description;
+//	}
 	public void addMapLayer(MapLayer mapLayer){
 		mapLayers.add(mapLayer);
 	}
@@ -91,8 +92,8 @@ public class Route implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		//Log.d("Route Write", "Start: "+ _name);
-		dest.writeString(_name);
-		dest.writeString(_description);
+		//dest.writeString(_name);
+		//dest.writeString(_description);
 		dest.writeInt(locations.size());
 		for(FPLocation loc: locations){
 			
@@ -112,16 +113,17 @@ public class Route implements Parcelable{
 			dest.writeInt(location);
 		}
 		dest.writeTypedList(mapLayers);
+		dest.writeParcelable(routeData, flags);
 		//dest.writeString(storageName);
 		//Log.d("Route Write", "End: "+_name);
 		
 		
 	}
 	private void readFromParcel(Parcel in){
-		_name = in.readString();
-		Log.d("Route read ", "name: "+ _name);
-		_description = in.readString();
-		Log.d("Route read ", "description: "+ _description);
+		//_name = in.readString();
+		//Log.d("Route read ", "name: "+ _name);
+		//_description = in.readString();
+		//Log.d("Route read ", "description: "+ _description);
 		int locationCount = in.readInt();
 		for(int i=0; i<locationCount; i++){
 			LocationType type = LocationType.getType(in.readInt());
@@ -163,9 +165,16 @@ public class Route implements Parcelable{
 			
 		}
 		in.readTypedList(mapLayers, MapLayer.CREATOR);
+		routeData = in.readParcelable(RouteData.class.getClassLoader());
 		//Log.d("Route read ", "layers read: ");
-		storageName = in.readString();
+		//storageName = in.readString();
 		//Log.d("Route read ", "storageName: "+ storageName);
+	}
+	public RouteData getRouteData() {
+		return routeData;
+	}
+	public void setRouteData(RouteData routeData) {
+		this.routeData = routeData;
 	}
 	public static final Parcelable.Creator<Route> CREATOR = new Parcelable.Creator<Route>() {
 		public Route createFromParcel(Parcel in){

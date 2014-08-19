@@ -35,7 +35,7 @@ public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 		//	gridArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
 			gridArgs.putParcelableArrayList("com.jmie.fieldplay.locations", (ArrayList<FPPicture>)activity.getLocation().getImageList());
 			
-			gridArgs.putString("com.jmie.fieldplay.routeStorageName", activity.getRoute().getStorageName());
+			gridArgs.putParcelable("com.jmie.fieldplay.routeData", activity.getRoute().getRouteData());
 			return ImageViewGridFragment.newInstance(gridArgs);
 		case 2:
 			Bundle audioArgs = new Bundle();

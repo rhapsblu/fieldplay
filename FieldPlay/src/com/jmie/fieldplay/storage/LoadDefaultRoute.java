@@ -75,7 +75,7 @@ public class LoadDefaultRoute extends AsyncTask<File, Void, Boolean>{
 		else {
 			Log.e(TAG, "External media not available ");
 		}
-		StorageManager.loadDownloadedZips(c);
+		//StorageManager.loadDownloadedZips(c);
 		return null;
 	}
 

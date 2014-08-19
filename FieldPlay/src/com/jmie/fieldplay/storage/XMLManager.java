@@ -28,14 +28,14 @@ public class XMLManager {
 	public XMLManager() {
 		
 	}
-    public Route parse(InputStream in, String routeStorageName) throws XmlPullParserException, IOException {
+    public Route parse(InputStream in) throws XmlPullParserException, IOException {
     	Log.d(TAG, "Starting route parse ");
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
-            return readRoute(parser, routeStorageName);
+            return readRoute(parser);
         } finally {
             in.close();
         }
@@ -49,7 +49,7 @@ public class XMLManager {
             parser.nextTag();
             return readNameOnly(parser);
         } finally {
-            in.close();
+           in.close();
         }
     }
     public String parseDescriptionOnly(InputStream in) throws XmlPullParserException, IOException{
@@ -62,6 +62,18 @@ public class XMLManager {
             return readDescriptionOnly(parser);
         } finally {
             in.close();
+        }
+    }
+    public String[] parseNameAndDescription(InputStream in) throws XmlPullParserException, IOException{
+    	Log.d(TAG, "Starting route parse ");
+        try {
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in, null);
+            parser.nextTag();
+            return readNameAndDescription(parser);
+        } finally {
+            //in.close();
         }
     }
     private String readNameOnly(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -106,10 +118,34 @@ public class XMLManager {
     	 }
     	 return routeDescription;
     }
-    private Route readRoute(XmlPullParser parser, String routeStorageName) throws XmlPullParserException, IOException {
+    private String[] readNameAndDescription(XmlPullParser parser) throws XmlPullParserException, IOException{
+    	String[] nameAndDescription = new String[2];
+    	parser.require(XmlPullParser.START_TAG, ns, "route");
+    	
+   	 while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            
+            if (name.equals("description")){
+            	nameAndDescription[1] = readDescription(parser);
+            	//Log.d(TAG, "Found description "+ routeDescription);
+            }
+            else if (name.equals("name")){
+             	nameAndDescription[0] = readName(parser);
+             	//Log.d(TAG, "Found Name "+ routeName);
+             }
+            else {
+                skip(parser);
+            }
+   	 	}
+   	 return nameAndDescription;
+    }
+    private Route readRoute(XmlPullParser parser) throws XmlPullParserException, IOException {
     	//Log.d(TAG, "Top Level");
     	Route route = new Route();
-    	route.setStorageName(routeStorageName);
+    	//route.setStorageName(routeStorageName);
         parser.require(XmlPullParser.START_TAG, ns, "route");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -131,15 +167,7 @@ public class XMLManager {
             	route.addMapLayer(readMapLayer(parser, type));
             	//Log.d(TAG, "Found map layer ");
             }
-            else if (name.equals("name")){
-            	route.setName(readName(parser));
-            	//Log.d(TAG, "Found Name "+ route.getName());
-            }
-            else if (name.equals("description")){
 
-            	route.setDescription(readDescription(parser));
-            	//Log.d(TAG, "Found description " + route.getDescription());
-            }
             else if (name.equals("length")){
             	route.setLength(readLength(parser));
             	//Log.d(TAG, "Found length "+ route.getLength());

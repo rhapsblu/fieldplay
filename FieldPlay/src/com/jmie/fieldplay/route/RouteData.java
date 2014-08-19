@@ -1,6 +1,9 @@
 package com.jmie.fieldplay.route;
 
-public class RouteData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class RouteData implements Parcelable{
 	private int _id;
 	private String _routeName;
 	private String _routeDescription;
@@ -11,6 +14,9 @@ public class RouteData {
 	
 	public RouteData(){
 		
+	}
+	public RouteData(Parcel in){
+		readFromParcel(in);
 	}
 	public RouteData(int id, String routeName, String routeDescription, String routeFile, int downloadProgress, long managerID, int unzipProgress){
 		set_id(id);
@@ -65,4 +71,41 @@ public class RouteData {
 	public void set_managerID(long _managerID) {
 		this._managerID = _managerID;
 	}
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel dest, int arg1) {
+		dest.writeInt(_id);
+		dest.writeString(_routeName);
+		dest.writeString(_routeDescription);
+		dest.writeString(_routeFile);
+		dest.writeInt(_downloadProgress);
+		dest.writeInt(_unzipProgress);
+		dest.writeLong(_managerID);	
+	}
+	
+	private void readFromParcel(Parcel in){
+		_id = in.readInt();
+		_routeName = in.readString();
+		_routeDescription = in.readString();
+		_routeFile = in.readString();
+		_downloadProgress = in.readInt();
+		_unzipProgress = in.readInt();
+		_managerID = in.readLong();
+	}
+	@Override
+	public String toString(){
+		return _routeName;
+	}
+	public static final Parcelable.Creator<RouteData> CREATOR = new Parcelable.Creator<RouteData>() {
+		public RouteData createFromParcel(Parcel in){
+			return new RouteData(in);
+		}
+		public RouteData[] newArray(int size){
+			return new RouteData[size];
+		}
+	};
 }
