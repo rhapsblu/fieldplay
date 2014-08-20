@@ -24,6 +24,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	public static final String COLUMN_UNZIPPROGRESS = "unzipprogress";
 	public static final String COLUMN_MANAGERID = "managerid";
 	public String TAG = "RouteDB Handler";
+	
 	public RouteDBHandler(Context context, String name, CursorFactory factory, int version){
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
 	}
@@ -53,11 +54,6 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		
 	}
 	public void addRoute (RouteData routeData){
-		Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM routes", null);
-		Log.d("Column Count", Integer.toString(cursor.getColumnCount()));
-		for(int i = 0; i<cursor.getColumnCount(); i++){
-			Log.d("Column name", cursor.getColumnName(i));
-		}
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_ROUTENAME,  routeData.get_routeName());
 		values.put(COLUMN_DESCRIPTION, routeData.get_routeDescription());
@@ -166,6 +162,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	      //array_list.add(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
 				res.moveToNext();
 	      }
+	      res.close();
 	      Log.d(TAG, "Retrieved list of size: " + array_list.size());
 	   return array_list;
 	}

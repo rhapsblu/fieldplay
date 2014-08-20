@@ -13,8 +13,9 @@
     
      <ProgressBar
          android:id="@+id/download_progress"
-         android:layout_width="wrap_content"
+         android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         style="@android:style/Widget.ProgressBar.Small"
+         style="?android:attr/progressBarStyleHorizontal"
+         android:max="100"
          android:layout_marginRight="5dp" />
 </LinearLayout>

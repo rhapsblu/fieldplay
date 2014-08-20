@@ -59,7 +59,7 @@ public class RouteLoaderActivity extends Activity
 	
 		ListView lv = (ListView) findViewById(R.id.list);
 
-		routesAdapter = new RoutesAdapter(this, routeDataList);
+		routesAdapter = new RoutesAdapter(this);
 
 		lv.setAdapter(routesAdapter);
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,8 +111,11 @@ public class RouteLoaderActivity extends Activity
 		startActivity(i);
 		
 	}
-
+	public List<RouteData> getRouteList(){
+		return routeDataList;
+	}
 	public void updateAdapter() {
+    	Log.d(TAG, "Update Called");
 		routeDataList.clear();
 		routesAdapter.notifyDataSetChanged();
 //		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
@@ -182,6 +185,7 @@ public class RouteLoaderActivity extends Activity
 					int byteSoFar = cursor.getInt(columnIndex);
 					columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
 					int totalBytes = cursor.getInt(columnIndex);
+					
 					if(status == DownloadManager.STATUS_SUCCESSFUL){
 						//pass to unzip routine
 						columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
@@ -198,6 +202,7 @@ public class RouteLoaderActivity extends Activity
 						    }
 						} );
 						startUnzip(fileLocation, routeData);
+						cursor.close();
 						break;
 					}
 					else if(status == DownloadManager.STATUS_RUNNING){
@@ -209,7 +214,6 @@ public class RouteLoaderActivity extends Activity
 						runOnUiThread(new Runnable() {
 						    @Override
 						    public void run() {
-						    	Log.d(TAG, "Update Called");
 						    	updateAdapter();
 						    }
 						} );
@@ -217,8 +221,10 @@ public class RouteLoaderActivity extends Activity
 					}
 					else if(status == DownloadManager.STATUS_FAILED){
 						routeDB.deleteRoute(locations[0]);
+						cursor.close();
 						break;
 					}
+					cursor.close();
 					try {
 
 						Thread.sleep(500);
