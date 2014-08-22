@@ -31,7 +31,6 @@ import com.jmie.fieldplay.route.RouteData;
 public class StorageManager {
 	static final String TAG = "Storage Manager";
 	public static final String PREFS_NAME = "FPPrefsFile";
-	//public static final String ROUTES_DIR= "/Android/data/com.jmie.fieldplay/routes/";
 	public static final String ROUTES_DIR= "routes/";
 	public static final String IMAGES_DIR= "images/";
 	public static final String AUDIO_DIR="audio/";

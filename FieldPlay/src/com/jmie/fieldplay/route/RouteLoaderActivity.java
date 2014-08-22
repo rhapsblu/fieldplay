@@ -40,10 +40,10 @@ public class RouteLoaderActivity extends Activity
 	static final String TAG = "Route Load Activity";
 
 	private RouteData selectedRouteData;
+	private ListView lv;
 
 	private List<RouteData> routeDataList;
 
-	DownloadManager downloadManager;
 	private RouteDBHandler routeDB;
 	
 	
@@ -57,10 +57,10 @@ public class RouteLoaderActivity extends Activity
 		routeDataList = routeDB.getAllRoutes();
 
 	
-		ListView lv = (ListView) findViewById(R.id.list);
-
+		lv = (ListView) findViewById(R.id.list);
+		
 		routesAdapter = new RoutesAdapter(this);
-
+		
 		lv.setAdapter(routesAdapter);
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -98,11 +98,6 @@ public class RouteLoaderActivity extends Activity
 		getMenuInflater().inflate(R.menu.route_loader, menu);
 		return true;
 	}
-//	private HashMap<String, String> createRouteItem(String key, String name){
-//		HashMap<String, String> routeItem = new HashMap<String, String>();
-//		routeItem.put(key, name);
-//		return routeItem;
-//	}
 
 	@Override
 	public void onRouteSelected() {
@@ -117,12 +112,12 @@ public class RouteLoaderActivity extends Activity
 	public void updateAdapter() {
     	Log.d(TAG, "Update Called");
 		routeDataList.clear();
-		routesAdapter.notifyDataSetChanged();
-//		for(String routeStorageName: StorageManager.getRouteStorageNames(this)){
-//			routeMeta.add(new StorageNameMeta(StorageManager.storageNameToRouteName(c, routeStorageName), routeStorageName));
-//		}
+//		routesAdapter.notifyDataSetChanged();
 		routeDataList =  routeDB.getAllRoutes();
 		routesAdapter.notifyDataSetChanged();
+		lv.setAdapter(routesAdapter);
+		
+		
 		
 	}
 	
@@ -154,13 +149,13 @@ public class RouteLoaderActivity extends Activity
 		routeData.set_downloadProgress(0);
 		routeData.set_unzipProgress(0);
 
-		downloadManager= (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		DownloadManager downloadManager= (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
 		Uri uri = Uri.parse(location);
 		DownloadManager.Request request = new DownloadManager.Request(uri);
 		routeData.set_managerID(downloadManager.enqueue(request));
 		Log.d(TAG, "Starting download of " + location);
 		routeDB.addRoute(routeData);
-		new DownloadProgressUpdateTask().execute(location, null, null);
+		new DownloadProgressUpdateTask(downloadManager).execute(location, null, null);
 		updateAdapter();
 		
 	}
@@ -168,7 +163,10 @@ public class RouteLoaderActivity extends Activity
 		new UnZipTask(this, routeData.get_routeName()).execute(new File(location), this.getExternalFilesDir(StorageManager.ROUTES_DIR));
 	}
 	private class DownloadProgressUpdateTask extends AsyncTask<String, Void, Void>{
-
+		DownloadManager downloadManager;
+		public DownloadProgressUpdateTask(DownloadManager downloadManager){
+			this.downloadManager=downloadManager;
+		}
 		@Override
 		protected Void doInBackground(String ... locations) {
 			Log.d(TAG, "Starting download monitor");
@@ -210,7 +208,7 @@ public class RouteLoaderActivity extends Activity
 						int progress = (byteSoFar*100)/totalBytes;
 						routeData.set_downloadProgress(progress);
 						routeDB.updateRoute(routeData);
-						Log.d(TAG, "Downloading Progress: " + progress);
+						Log.d(TAG, "Downloading Progress: " + progress + "% ("+ byteSoFar+ "/"+ totalBytes+")");
 						runOnUiThread(new Runnable() {
 						    @Override
 						    public void run() {
@@ -227,7 +225,7 @@ public class RouteLoaderActivity extends Activity
 					cursor.close();
 					try {
 
-						Thread.sleep(500);
+						Thread.sleep(2000);
 					} 
 					catch (InterruptedException e) {
 						// TODO Auto-generated catch block

@@ -16,7 +16,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
-//	 private String routeName;
+
 	 static final String TAG = "UnZipTask";
 	 RouteLoaderActivity loader;
 	 private RouteDBHandler routeDB;
@@ -30,13 +30,13 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
 		 routeDB = new RouteDBHandler(loader);
 		 this.routeName = routeName;
 	 }
-//       @SuppressWarnings("rawtypes")
+
        @Override
        protected Boolean doInBackground(File... params) {
 
            String destinationPath = params[1].getPath();
            File archive = params[0];
-//           routeName = archive.getName();
+
            try {
                ZipFile zipfile = new ZipFile(archive);
                
@@ -47,7 +47,9 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
                    if(count==0)fileName = entry.getName();
                    unzipEntry(zipfile, entry, destinationPath);
                    count++;
-                   onProgressUpdate((count*100)/size);
+                   int progress = (count*100)/size;
+                   if(progress%5==0) onProgressUpdate(progress);
+                   //onProgressUpdate((count*100)/size);
                }
                
            } catch (Exception e) {

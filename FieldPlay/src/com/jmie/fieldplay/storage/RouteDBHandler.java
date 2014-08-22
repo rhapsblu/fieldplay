@@ -133,11 +133,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	        db.close();
 		return result;
 	}
-//	public Cursor getData(int id){
-//		SQLiteDatabase db = this.getReadableDatabase();
-//		Cursor res =  db.rawQuery( "select * TABLE_ROUTES where COLUMN_ID ="+id+"", null );
-//		return res;
-//	}
+
 	public int numberOfRows(){
 		 SQLiteDatabase db = this.getReadableDatabase();
 		 int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_ROUTES);
@@ -145,7 +141,6 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	}
 	public ArrayList<RouteData> getAllRoutes(){
 	      ArrayList<RouteData> array_list = new ArrayList<RouteData>();
-	      //hp = new HashMap();
 	      SQLiteDatabase db = this.getReadableDatabase();
 	      Cursor res =  db.rawQuery( "select * from " +TABLE_ROUTES, null );
 	      res.moveToFirst();
@@ -159,7 +154,6 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 				routeData.set_managerID(Integer.parseInt(res.getString(5)));
 				routeData.set_unzipProgress(Integer.parseInt(res.getString(6)));
 				array_list.add(routeData);
-	      //array_list.add(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
 				res.moveToNext();
 	      }
 	      res.close();
