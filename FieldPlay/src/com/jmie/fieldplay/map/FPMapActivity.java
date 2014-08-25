@@ -7,10 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -26,6 +23,7 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.ui.IconGenerator;
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.audioservice.AudioService;
 import com.jmie.fieldplay.location.LocationDetailsActivity;
 import com.jmie.fieldplay.route.BinocularLocation;
 import com.jmie.fieldplay.route.FPLocation;
@@ -35,10 +33,11 @@ import com.jmie.fieldplay.route.StopLocation;
 import com.jmie.fieldplay.storage.StorageManager;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.NotificationManager;
+
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -209,6 +208,21 @@ public class FPMapActivity extends
     
     	mMap.addPolyline(routeLine);
     }
+    public void toggleAudioService(){
+    	boolean audioStatus = StorageManager.getAudioTourStatus(this);
+    	if(!audioStatus){
+    		Intent intent = new Intent(this, AudioService.class);
+    		intent.putExtra("com.jmie.fieldplay.route", route);
+    		startService(intent);
+    		StorageManager.saveAudioTourStatus(c, !audioStatus);
+    		toggle.setIcon(R.drawable.av_stop);
+    	}
+    	else if(audioStatus){
+    		stopService(new Intent(this, AudioService.class));
+    		StorageManager.saveAudioTourStatus(c, !audioStatus);
+    		toggle.setIcon(R.drawable.av_play);
+    	}
+    }
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		marker.showInfoWindow();
@@ -245,6 +259,8 @@ public class FPMapActivity extends
 	    switch (item.getItemId()) {
 	        case R.id.layer_options:
 	        	layerMenu.show();
+	        case R.id.service_control:
+	        	toggleAudioService();
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

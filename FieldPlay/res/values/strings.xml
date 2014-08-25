@@ -50,5 +50,6 @@
     <string name="qr_code">QR Code</string>
     <string name="search_downloads">Downloads Folder</string>
     <string name="url_download">Enter URL</string>
+    <string name="audio_ticker">Field Play Audio Service</string>
 
 </resources>

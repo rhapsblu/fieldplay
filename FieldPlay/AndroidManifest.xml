@@ -41,17 +41,28 @@
        <activity
             android:name="com.jmie.fieldplay.binocular.testar.FPBinocularActivity"
             android:label="@string/binoculars"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape" 
+            android:parentActivityName="com.jmie.fieldplay.location.LocationDetailsActivity">
+            <meta-data
+            	      android:name="android.support.PARENT_ACTIVITY"
+            	      android:value="com.jmie.fieldplay.location.LocationDetailsActivity"/>
         </activity>
         <activity android:name="com.jmie.fieldplay.library.GooglePlayServices" />
         <activity android:name="com.jmie.fieldplay.route.RouteAddActivity"/>
         <activity android:name="com.jmie.fieldplay.map.FPMapActivity"
-            	  android:label="@string/FPMap" >   	 
+            	  android:label="@string/FPMap" 
+            	  android:parentActivityName="com.jmie.fieldplay.route.RouteLoaderActivity">
+            	  <meta-data
+            	      android:name="android.support.PARENT_ACTIVITY"
+            	      android:value="com.jmie.fieldplay.route.RouteLoaderActivity"/>   
         </activity>
         <activity android:name="com.jmie.fieldplay.location.FullScreenViewActivity"/>
         <activity android:name="com.jmie.fieldplay.location.LocationDetailsActivity"
-            	  android:label="@string/location_details" >
-            	 
+            	  android:label="@string/location_details" 
+            	  android:parentActivityName="com.jmie.fieldplay.map.FPMapActivity">
+            	  <meta-data
+            	      android:name="android.support.PARENT_ACTIVITY"
+            	      android:value="com.jmie.fieldplay.map.FPMapActivity"/>   	 
         </activity>
         <activity
             android:name="com.jmie.fieldplay.route.RouteLoaderActivity"
