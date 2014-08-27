@@ -88,7 +88,7 @@ public class FPMapActivity extends
     private TileOverlay tileOverlay;
 	 
 	private Route route;
-	public static String TAG = "FP Map";
+	public static String TAG = "FP Mapp";
 
     /*Geofence vars*/
     private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
@@ -156,7 +156,9 @@ public class FPMapActivity extends
 	@Override
 	protected void onResume(){
 		super.onResume();
-		setUpMapIfNeeded();
+
+			setUpMapIfNeeded();
+
 		LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, mIntentFilter);
 	}
     @Override
@@ -176,7 +178,7 @@ public class FPMapActivity extends
 
 		return true;
 	}
-    private void setUpMapIfNeeded() {
+    private void setUpMapIfNeeded(){
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
@@ -193,7 +195,7 @@ public class FPMapActivity extends
         }
     }
 
-    private void setUpMap() {
+    private void setUpMap(){
     	Log.d(TAG, "Setting up map");
         // Add lots of markers to the map.
         addMarkersToMap();
@@ -471,7 +473,7 @@ public class FPMapActivity extends
 
     }
     private void registerFences() {
-    	Log.d(TAG, "Call to register fences");
+    	//Log.d(TAG, "Call to register fences!");
         /*
          * Record the request as an ADD. If a connection error occurs,
          * the app can automatically restart the add request if Google Play services
@@ -496,14 +498,21 @@ public class FPMapActivity extends
         	currentFPGeofences.add(fpGeofence);
         	Geofence content = fpGeofence.toContentGeofence();
         	Geofence alert = fpGeofence.toAlertGeofence();
-        	if(alert!=null)mCurrentGeofences.add(content);
-        	if(content!=null) mCurrentGeofences.add(alert);
+        	if(content!=null)mCurrentGeofences.add(content);
+        	if(alert!=null) mCurrentGeofences.add(alert);
         }
-        
+        Log.d(TAG, "Pre print" + mCurrentGeofences.size() + " geofences");
+        for(FPGeofence fpGeofence:currentFPGeofences){
+        	Log.d(TAG, "FP geofence: " + fpGeofence.getInterestLocation().getName());
+        }
+        for(Geofence fence:mCurrentGeofences){
+        	Log.d(TAG, "have fence: " + fence.getRequestId());
+        }
+
         // Start the request. Fail if there's already a request in progress
         try {
             // Try to add geofences
-        	Log.d(TAG, "Trying to add " + mCurrentGeofences.size() + " geofences");
+        	//Log.d(TAG, "Trying to add " + mCurrentGeofences.size() + " geofences");
             mGeofenceRequester.addGeofences(mCurrentGeofences);
         } catch (UnsupportedOperationException e) {
             // Notify user that previous request hasn't finished.
@@ -574,7 +583,10 @@ public class FPMapActivity extends
          * @param intent The received broadcast Intent
          */
         private void handleGeofenceStatus(Context context, Intent intent) {
-
+        	String action = intent.getAction();
+        	if(TextUtils.equals(action, GeofenceUtils.ACTION_GEOFENCES_REMOVED) ){
+        		mCurrentGeofences.clear();
+        	}
         }
 
         /**

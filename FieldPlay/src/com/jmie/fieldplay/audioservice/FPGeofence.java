@@ -35,7 +35,7 @@ public class FPGeofence implements Parcelable {
     private InterestLocation location;
     private long mExpirationDuration;
     private int mTransitionType;
-    private double alertRadius;
+    private double alertRadius = 0;
     
 
     /**

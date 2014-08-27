@@ -115,6 +115,7 @@ public class AudioService extends Service {
 			startForeground(1, builder.build());
 		}
 		else if(intent.getAction()=="com.jmie.fieldplay.play_location"){
+			Log.d(TAG, "recieved fence notification: " + intent.getStringExtra("com.jmie.fieldplay.fence_ids"));
 			String transitionType = intent.getStringExtra("com.jmie.fieldplay.transition_type");
 			String[] ids = TextUtils.split(intent.getStringExtra("com.jmie.fieldplay.fence_ids"), GeofenceUtils.GEOFENCE_ID_DELIMITER.toString());
 			for(String id: ids){
@@ -156,18 +157,24 @@ public class AudioService extends Service {
 		NotificationCompat.Builder builder = new NotificationCompat
 				.Builder(this)
 				.setSmallIcon(R.drawable.ic_action_boot)
-				.setContentTitle(getText(R.string.audio_ticker))
-				.setContentText(location.getName());
-		
-		Intent locationIntent = new Intent(this, FPMapActivity.class);
+				.setAutoCancel(true)
+				.setContentTitle(location.getName())
+				.setContentText(location.getDescription());
+
+		Intent locationIntent = new Intent(this, LocationDetailsActivity.class);
 		locationIntent.putExtra("com.jmie.fieldplay.route", route);
 		locationIntent.putExtra("com.jmie.fieldplay.location", location.getName());
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		stackBuilder.addParentStack(LocationDetailsActivity.class);
-		stackBuilder.addNextIntent(locationIntent);
+		//stackBuilder.addParentStack(FPMapActivity.class);
+//		stackBuilder.addNextIntent(locationIntent);
+		Intent loaderIntent = new Intent(this, RouteLoaderActivity.class);
 		Intent mapIntent = new Intent(this, FPMapActivity.class);
 		mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
+		mapIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+		//stackBuilder.addNextIntent(loaderIntent);
 		stackBuilder.addNextIntent(mapIntent);
+		stackBuilder.addNextIntent(locationIntent);
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(resultPendingIntent);
 		 NotificationManager mNotificationManager =
