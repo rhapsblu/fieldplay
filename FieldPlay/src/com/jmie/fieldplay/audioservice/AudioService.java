@@ -1,12 +1,20 @@
 package com.jmie.fieldplay.audioservice;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 
+import com.google.android.gms.location.Geofence;
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.audioservice.GeofenceUtils.REMOVE_TYPE;
+import com.jmie.fieldplay.audioservice.GeofenceUtils.REQUEST_TYPE;
+import com.jmie.fieldplay.location.LocationDetailsActivity;
 import com.jmie.fieldplay.map.FPMapActivity;
 import com.jmie.fieldplay.route.FPAudio;
 import com.jmie.fieldplay.route.FPLocation;
@@ -21,8 +29,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -37,54 +47,96 @@ import android.os.PowerManager;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 public class AudioService extends Service {
+	
+
+    
+    /*Media player vars*/
 	private Looper serviceLooper;
 	private ServiceHandler serviceHandler;
 	private Route route;
-	
+	private ArrayList<FPGeofence> geoFenceList;
+	private Map<String, InterestLocation> fenceIdToLocation;
+	private String TAG = "AudioService";
 	private final class ServiceHandler extends Handler {
 		public ServiceHandler (Looper looper){
 			super(looper);
 		}
 		@Override
 		public void handleMessage(Message msg){
-			//recieved a new GeoFence, do something
+			String id = msg.getData().getString("com.jmie.fieldplay.fence_id");
+			Log.d(TAG, "Handler recieved id: " + id);
+			sendNotification(id);
+			playAudio(id);
 		}
 	}
 	
 	@Override
 	public void onCreate(){
 	
-		
+		fenceIdToLocation = new HashMap<String, InterestLocation>();
 		HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_FOREGROUND);
 		thread.start();
 		serviceLooper = thread.getLooper();
 		serviceHandler = new ServiceHandler(serviceLooper);
+
+        
 		Toast.makeText(this, "Audio service ON", Toast.LENGTH_SHORT).show();
 
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		
-		route = intent.getExtras().getParcelable("com.jmie.fieldplay.route");
-		NotificationCompat.Builder builder = new NotificationCompat
-				.Builder(this)
-				.setSmallIcon(R.drawable.ic_action_boot)
-				.setContentTitle("FP Service")
-				.setContentText(getText(R.string.audio_ticker));
-		
-		Intent mapIntent = new Intent(this, FPMapActivity.class);
-		mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(FPMapActivity.class);
-		stackBuilder.addNextIntent(mapIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
-		builder.setContentIntent(resultPendingIntent);
-		startForeground(1, builder.build());
-		
+		if(intent.getAction() == "com.jmie.fieldplay.start_audio_service"){
+			route = intent.getExtras().getParcelable("com.jmie.fieldplay.route");
+			geoFenceList = intent.getExtras().getParcelableArrayList("com.jmie.fieldplay.geofence_list");
+			for(FPGeofence fpgeoFence : geoFenceList){
+				fenceIdToLocation.put(fpgeoFence.getAlertId(), fpgeoFence.getInterestLocation());
+				fenceIdToLocation.put(fpgeoFence.getContentId(), fpgeoFence.getInterestLocation());
+			}
+			NotificationCompat.Builder builder = new NotificationCompat
+					.Builder(this)
+					.setSmallIcon(R.drawable.ic_action_boot)
+					.setContentTitle(getText(R.string.audio_ticker))
+					.setContentText(route.getName());
+			
+			Intent mapIntent = new Intent(this, FPMapActivity.class);
+			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+			stackBuilder.addParentStack(FPMapActivity.class);
+			stackBuilder.addNextIntent(mapIntent);
+			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(resultPendingIntent);
+			startForeground(1, builder.build());
+		}
+		else if(intent.getAction()=="com.jmie.fieldplay.play_location"){
+			String transitionType = intent.getStringExtra("com.jmie.fieldplay.transition_type");
+			String[] ids = TextUtils.split(intent.getStringExtra("com.jmie.fieldplay.fence_ids"), GeofenceUtils.GEOFENCE_ID_DELIMITER.toString());
+			for(String id: ids){
+				if(id.startsWith("!")){
+					Message msg = serviceHandler.obtainMessage();
+					Bundle data = new Bundle();
+					data.putString("com.jmie.fieldplay.fence_id", id);
+				    msg.setData(data);
+				    serviceHandler.sendMessage(msg);
+				}
+			}
+			for(String id: ids){
+				if(!id.startsWith("!")){
+					Message msg = serviceHandler.obtainMessage();
+					Bundle data = new Bundle();
+					data.putString("com.jmie.fieldplay.fence_id", id);
+				    msg.setData(data);
+				    serviceHandler.sendMessage(msg);
+				}
+			}
+		      
+		}
 		return START_STICKY;
 	}
 	
@@ -97,6 +149,33 @@ public class AudioService extends Service {
 	public void onDestroy(){
 		Toast.makeText(this,  "Audio service OFF", Toast.LENGTH_SHORT).show();
 
+	}
+	private void sendNotification(String geoFenceID){
+		if(geoFenceID.startsWith("!"))return;
+		InterestLocation location = fenceIdToLocation.get(geoFenceID);
+		NotificationCompat.Builder builder = new NotificationCompat
+				.Builder(this)
+				.setSmallIcon(R.drawable.ic_action_boot)
+				.setContentTitle(getText(R.string.audio_ticker))
+				.setContentText(location.getName());
+		
+		Intent locationIntent = new Intent(this, FPMapActivity.class);
+		locationIntent.putExtra("com.jmie.fieldplay.route", route);
+		locationIntent.putExtra("com.jmie.fieldplay.location", location.getName());
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(LocationDetailsActivity.class);
+		stackBuilder.addNextIntent(locationIntent);
+		Intent mapIntent = new Intent(this, FPMapActivity.class);
+		mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
+		stackBuilder.addNextIntent(mapIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(resultPendingIntent);
+		 NotificationManager mNotificationManager =
+		            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		 mNotificationManager.notify(geoFenceID.hashCode(), builder.build());
+	}
+	private void playAudio(String geoFenceID){
+		
 	}
 //	private Queue<FPAudio> audioQueue = new PriorityBlockingQueue<FPAudio>();
 //	private Route route;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.jmie.fieldplay.audioservice.FPGeofence;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -56,7 +58,10 @@ public class StopLocation extends InterestLocation {
 	public void addVideo(FPVideo vid){
 		videos.add(vid);
 	}
-
+	@Override
+	public FPGeofence getGeofence(String fenceID, long experation, int transitionType){
+		return  new FPGeofence(fenceID, this, experation, transitionType);
+	}
 	public Iterator<String> getBinocularPointIterator(){
 		return binocularPoints.iterator();
 	}

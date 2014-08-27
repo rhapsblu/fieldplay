@@ -119,41 +119,13 @@ public class ReceiveTransitionsIntentService extends IntentService{// implements
      *
      */
     private void sendNotification(String transitionType, String ids) {
-
         // Create an explicit content Intent that starts the main Activity
-//        Intent notificationIntent =
-//                new Intent(getApplicationContext(),MainActivity.class);
-
-        // Construct a task stack
-      //  TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the main Activity to the task stack as the parent
-//        stackBuilder.addParentStack(MainActivity.class);
-
-        // Push the content Intent onto the stack
-      //  stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack
-//        PendingIntent notificationPendingIntent =
-//                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get a notification builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        // Set the notification contents
-        builder.setSmallIcon(R.drawable.ic_notification)
-               .setContentTitle(
-                       getString(R.string.geofence_transition_notification_title,
-                               transitionType, ids))
-               .setContentText(getString(R.string.geofence_transition_notification_text));
-              // .setContentIntent(notificationPendingIntent);
-
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        Intent notifyAudioServiceIntent =
+                new Intent(getApplicationContext(),AudioService.class);
+        notifyAudioServiceIntent.setAction("com.jmie.fieldplay.play_location");
+        notifyAudioServiceIntent.putExtra("com.jmie.fieldplay.transition_type", transitionType);
+        notifyAudioServiceIntent.putExtra("com.jmie.fieldplay.fence_ids", ids);
+        startService(notifyAudioServiceIntent);
     }
 
     /**

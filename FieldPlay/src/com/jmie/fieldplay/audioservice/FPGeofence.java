@@ -16,21 +16,26 @@
 
 package com.jmie.fieldplay.audioservice;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.location.Geofence;
+import com.jmie.fieldplay.route.InterestLocation;
+import com.jmie.fieldplay.route.StopLocation;
+import com.jmie.fieldplay.route.FPLocation.LocationType;
 
 /**
- * A single Geofence object, defined by its center (latitude and longitude position) and radius.
+ * A Geofence object, defined by its center (latitude and longitude position) and radius.
  */
-public class FPGeofence {
+public class FPGeofence implements Parcelable {
     // Instance variables
-    private final String mId;
-    private final double mLatitude;
-    private final double mLongitude;
-    private final float mRadius;
+	private String contentId;
+	private String alertId;
+
+    private InterestLocation location;
     private long mExpirationDuration;
     private int mTransitionType;
-    private String routeName;
-    private String locationName;
+    private double alertRadius;
     
 
     /**
@@ -43,33 +48,45 @@ public class FPGeofence {
      * @param transition Type of Geofence transition. The value is not checked for validity.
      */
     public FPGeofence(
-            String geofenceId,
-            String routeName,
-            String locationName,
-            double latitude,
-            double longitude,
-            float radius,
+            String contentId,
+            InterestLocation location,
             long expiration,
             int transition) {
         // Set the instance fields from the constructor
-
+    	this.location = location;
         // An identifier for the geofence
-        this.mId = geofenceId;
-
-        // Center of the geofence
-        this.mLatitude = latitude;
-        this.mLongitude = longitude;
-
-        // Radius of the geofence, in meters
-        this.mRadius = radius;
+        this.contentId = contentId;
+        this.alertId = "";
 
         // Expiration time in milliseconds
         this.mExpirationDuration = expiration;
 
         // Transition type
         this.mTransitionType = transition;
-        this.routeName = routeName;
-        this.locationName = locationName;
+        this.alertRadius = 0;
+
+    }
+    public FPGeofence(
+            String contentId,
+            StopLocation location,
+            long expiration,
+            int transition) {
+        // Set the instance fields from the constructor
+    	this.location = location;
+        // An identifier for the geofence
+        this.contentId = contentId;
+        this.alertId = "!"+contentId;
+
+        // Expiration time in milliseconds
+        this.mExpirationDuration = expiration;
+
+        // Transition type
+        this.mTransitionType = transition;
+        this.alertRadius = location.getAlertRadius();
+
+    }
+    public FPGeofence (Parcel in){
+    	readFromParcel(in);
     }
     // Instance field getters
 
@@ -77,34 +94,12 @@ public class FPGeofence {
      * Get the geofence ID
      * @return A SimpleGeofence ID
      */
-    public String getId() {
-        return mId;
+    public String getContentId() {
+        return contentId;
     }
-
-    /**
-     * Get the geofence latitude
-     * @return A latitude value
-     */
-    public double getLatitude() {
-        return mLatitude;
+    public String getAlertId(){
+    	return alertId;
     }
-
-    /**
-     * Get the geofence longitude
-     * @return A longitude value
-     */
-    public double getLongitude() {
-        return mLongitude;
-    }
-
-    /**
-     * Get the geofence radius
-     * @return A radius value
-     */
-    public float getRadius() {
-        return mRadius;
-    }
-
     /**
      * Get the geofence expiration duration
      * @return Expiration duration in milliseconds
@@ -120,28 +115,84 @@ public class FPGeofence {
     public int getTransitionType() {
         return mTransitionType;
     }
-    public String getRouteName(){
-    	return routeName;
+    public InterestLocation getInterestLocation(){
+    	return location;
     }
-    public String getLocationName(){
-    	return locationName;
-    }
+//    public FPLocation getLocation{
+//    	return location;
+//    }
     /**
      * Creates a Location Services Geofence object from a
      * SimpleGeofence.
      *
      * @return A Geofence object
      */
-    public Geofence toGeofence() {
+    public Geofence toContentGeofence() {
         // Build a new Geofence object
         return new Geofence.Builder()
-                       .setRequestId(getId())
+                       .setRequestId(getContentId())
                        .setTransitionTypes(mTransitionType)
                        .setCircularRegion(
-                               getLatitude(),
-                               getLongitude(),
-                               getRadius())
+                               location.getLatitude(),
+                               location.getLongitude(),
+                               (float)location.getContentRadius())
                        .setExpirationDuration(mExpirationDuration)
                        .build();
     }
+    public Geofence toAlertGeofence() {
+    	if(this.alertRadius==0) return null;
+    	else{
+	        return new Geofence.Builder()
+	                       .setRequestId(getAlertId())
+	                       .setTransitionTypes(mTransitionType)
+	                       .setCircularRegion(
+	                               location.getLatitude(),
+	                               location.getLongitude(),
+	                               (float)this.alertRadius)
+	                       .setExpirationDuration(mExpirationDuration)
+	                       .build();
+    	}
+    }
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(contentId);
+		dest.writeString(alertId);
+		dest.writeInt(location.getType().getTypeNumber());
+		dest.writeParcelable(location, flags);
+		dest.writeLong(mExpirationDuration);
+		dest.writeInt(mTransitionType);
+		dest.writeDouble(alertRadius);
+	}
+	protected void readFromParcel(Parcel in){
+		contentId = in.readString();
+		alertId = in.readString();
+		LocationType type = LocationType.getType(in.readInt());
+		switch(type){
+			case INTEREST_LOCATION:
+				location = (InterestLocation)in.readParcelable(InterestLocation.class.getClassLoader());
+				break;
+			case STOP_LOCATION:
+				location = (InterestLocation)in.readParcelable(StopLocation.class.getClassLoader());
+				break;
+			case ABSTRACT://uh-oh's
+			default:
+		}
+		mExpirationDuration = in.readLong();
+		mTransitionType = in.readInt();
+		alertRadius = in.readDouble();
+	}
+	
+	public static final Parcelable.Creator<FPGeofence> CREATOR = new Parcelable.Creator<FPGeofence>() {
+		public FPGeofence createFromParcel (Parcel in){
+			return new FPGeofence(in);
+		}
+		public FPGeofence[] newArray(int size) {
+			return new FPGeofence[size];
+		}
+	};
 }

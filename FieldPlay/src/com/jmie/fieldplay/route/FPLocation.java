@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.jmie.fieldplay.audioservice.FPGeofence;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -69,6 +71,9 @@ public abstract class FPLocation implements Parcelable{
 	}
 	public void addImage(FPPicture pic){
 		images.add(pic);
+	}
+	public FPGeofence getGeofence(String fenceID, long experation, int transitionType){
+		return null;
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags){

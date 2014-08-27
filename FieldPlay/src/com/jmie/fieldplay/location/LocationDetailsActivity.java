@@ -94,17 +94,27 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.augmented_binoculars:
-	        	//Log.d(TAG, route.debugPrintMap());
-				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
-				i.putExtra("com.jmie.fieldplay.route", route);
-				i.putExtra("com.jmie.fieldplay.locationName", location.getName());
-				startActivity(i);
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		
+		if(item.getItemId()==R.id.augmented_binoculars){
+        	//Log.d(TAG, route.debugPrintMap());
+			Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
+			i.putExtra("com.jmie.fieldplay.route", route);
+			i.putExtra("com.jmie.fieldplay.locationName", location.getName());
+			startActivity(i);
+            return true;
+		}
+		return super.onOptionsItemSelected(item);
+//	    switch (item.getItemId()) {
+//	        case R.id.augmented_binoculars:
+//	        	//Log.d(TAG, route.debugPrintMap());
+//				Intent i = new Intent(LocationDetailsActivity.this, FPBinocularActivity.class);
+//				i.putExtra("com.jmie.fieldplay.route", route);
+//				i.putExtra("com.jmie.fieldplay.locationName", location.getName());
+//				startActivity(i);
+//	            return true;
+//	        default:
+//	            return super.onOptionsItemSelected(item);
+//	    }
 	}
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {

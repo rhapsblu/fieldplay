@@ -124,13 +124,20 @@ public class RouteLoaderActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.add_route:
-	        	Intent i = new Intent(RouteLoaderActivity.this, RouteAddActivity.class);
-	        	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		
+		if(item.getItemId()==R.id.add_route){
+        	Intent i = new Intent(RouteLoaderActivity.this, RouteAddActivity.class);
+        	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
+        	return true;
+		}
+		return super.onOptionsItemSelected(item);
+//	    switch (item.getItemId()) {
+//	        case R.id.add_route:
+//	        	Intent i = new Intent(RouteLoaderActivity.this, RouteAddActivity.class);
+//	        	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
+//	        default:
+//	            return super.onOptionsItemSelected(item);
+//	    }
 
 	}
 	@Override

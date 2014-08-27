@@ -86,15 +86,23 @@ public class FPBinocularActivity extends AugmentedReality {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         Log.v(TAG, "onOptionsItemSelected() item=" + item);
-        switch (item.getItemId()) {
-            case R.id.showRadar:
-                showRadar = !showRadar;
-                item.setTitle(((showRadar) ? "Hide" : "Show") + " Radar");
-                break;
-            case R.id.exit:
-                finish();
-                break;
+        
+        if(item.getItemId() == R.id.showRadar){
+            showRadar = !showRadar;
+            item.setTitle(((showRadar) ? "Hide" : "Show") + " Radar");
         }
+        else if(item.getItemId() == R.id.exit){
+            finish();
+        }
+//        switch (item.getItemId()) {
+//            case R.id.showRadar:
+//                showRadar = !showRadar;
+//                item.setTitle(((showRadar) ? "Hide" : "Show") + " Radar");
+//                break;
+//            case R.id.exit:
+//                finish();
+//                break;
+//        }
         return true;
     }
 
