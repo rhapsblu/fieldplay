@@ -116,7 +116,8 @@ public class StorageManager {
 		return ROUTES_DIR + routeData.get_routeFile()+"/" + LAYERS_DIR +"/"+layerName;
 	}
 	public static String getAudioPath(Context c, RouteData routeData, String audioName) {
-		return ROUTES_DIR + routeData.get_routeFile()+"/"+AUDIO_DIR+audioName;
+		String fullPath = c.getExternalFilesDir(ROUTES_DIR + routeData.get_routeFile()+AUDIO_DIR+audioName).getAbsolutePath();
+		return fullPath;
 	}
 	public static String getImagePath(Context c, RouteData routeData, String imageName) {
 		return ROUTES_DIR + routeData.get_routeFile()+"/"+IMAGES_DIR+imageName;

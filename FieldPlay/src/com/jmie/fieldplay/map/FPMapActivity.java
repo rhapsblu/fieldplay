@@ -501,18 +501,13 @@ public class FPMapActivity extends
         	if(content!=null)mCurrentGeofences.add(content);
         	if(alert!=null) mCurrentGeofences.add(alert);
         }
-        Log.d(TAG, "Pre print" + mCurrentGeofences.size() + " geofences");
         for(FPGeofence fpGeofence:currentFPGeofences){
         	Log.d(TAG, "FP geofence: " + fpGeofence.getInterestLocation().getName());
-        }
-        for(Geofence fence:mCurrentGeofences){
-        	Log.d(TAG, "have fence: " + fence.getRequestId());
         }
 
         // Start the request. Fail if there's already a request in progress
         try {
             // Try to add geofences
-        	//Log.d(TAG, "Trying to add " + mCurrentGeofences.size() + " geofences");
             mGeofenceRequester.addGeofences(mCurrentGeofences);
         } catch (UnsupportedOperationException e) {
             // Notify user that previous request hasn't finished.
@@ -529,10 +524,6 @@ public class FPMapActivity extends
 			FPLocation location = markerToLocation.get(marker);
 			i.putExtra("com.jmie.fieldplay.route", route);
 			i.putExtra("com.jmie.fieldplay.location", location.getName());
-
-			for(String key: i.getExtras().keySet()){
-				Log.d(TAG, "Keys before: "+ key);
-			}
 			
 			startActivity(i);	
 			
@@ -586,6 +577,8 @@ public class FPMapActivity extends
         	String action = intent.getAction();
         	if(TextUtils.equals(action, GeofenceUtils.ACTION_GEOFENCES_REMOVED) ){
         		mCurrentGeofences.clear();
+        		mGeofenceRequester = new GeofenceRequester(FPMapActivity.this);
+        		currentFPGeofences.clear();
         	}
         }
 

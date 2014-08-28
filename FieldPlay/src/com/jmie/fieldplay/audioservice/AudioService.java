@@ -36,6 +36,9 @@ import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,6 +66,7 @@ public class AudioService extends Service {
 	private ArrayList<FPGeofence> geoFenceList;
 	private Map<String, InterestLocation> fenceIdToLocation;
 	private String TAG = "AudioService";
+	private MediaQueuePlayer player;
 	private final class ServiceHandler extends Handler {
 		public ServiceHandler (Looper looper){
 			super(looper);
@@ -72,6 +76,12 @@ public class AudioService extends Service {
 			String id = msg.getData().getString("com.jmie.fieldplay.fence_id");
 			Log.d(TAG, "Handler recieved id: " + id);
 			sendNotification(id);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			playAudio(id);
 		}
 	}
@@ -84,7 +94,7 @@ public class AudioService extends Service {
 		thread.start();
 		serviceLooper = thread.getLooper();
 		serviceHandler = new ServiceHandler(serviceLooper);
-
+		player = new MediaQueuePlayer(this);
         
 		Toast.makeText(this, "Audio service ON", Toast.LENGTH_SHORT).show();
 
@@ -148,16 +158,19 @@ public class AudioService extends Service {
 
 	@Override
 	public void onDestroy(){
+		player.releaseMediaPlayer();
 		Toast.makeText(this,  "Audio service OFF", Toast.LENGTH_SHORT).show();
 
 	}
 	private void sendNotification(String geoFenceID){
 		if(geoFenceID.startsWith("!"))return;
 		InterestLocation location = fenceIdToLocation.get(geoFenceID);
+		 Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		NotificationCompat.Builder builder = new NotificationCompat
 				.Builder(this)
 				.setSmallIcon(R.drawable.ic_action_boot)
 				.setAutoCancel(true)
+				.setSound(notificationSound)
 				.setContentTitle(location.getName())
 				.setContentText(location.getDescription());
 
@@ -166,157 +179,33 @@ public class AudioService extends Service {
 		locationIntent.putExtra("com.jmie.fieldplay.location", location.getName());
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		stackBuilder.addParentStack(LocationDetailsActivity.class);
-		//stackBuilder.addParentStack(FPMapActivity.class);
-//		stackBuilder.addNextIntent(locationIntent);
-		Intent loaderIntent = new Intent(this, RouteLoaderActivity.class);
 		Intent mapIntent = new Intent(this, FPMapActivity.class);
 		mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
 		mapIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-		//stackBuilder.addNextIntent(loaderIntent);
 		stackBuilder.addNextIntent(mapIntent);
 		stackBuilder.addNextIntent(locationIntent);
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(resultPendingIntent);
 		 NotificationManager mNotificationManager =
 		            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		 
 		 mNotificationManager.notify(geoFenceID.hashCode(), builder.build());
 	}
 	private void playAudio(String geoFenceID){
+		InterestLocation location = fenceIdToLocation.get(geoFenceID);
+		Iterator<FPAudio> iterator = location.getAudioIterator();
+		if(!iterator.hasNext()) return;
+		List<String> pathList = new ArrayList<String>();
+		while(iterator.hasNext()){
+			FPAudio fpAudio = iterator.next();
+			String localPath = StorageManager.getAudioPath(this, route.getRouteData(), fpAudio.getFilePath());
+			Log.d(TAG, "Path to add is " + localPath);
+			pathList.add(localPath);
+		}
 		
+		player.addAudio(pathList);
+		Log.d(TAG, "Audio added, Starting player");
+		player.startPlayer();
 	}
-//	private Queue<FPAudio> audioQueue = new PriorityBlockingQueue<FPAudio>();
-//	private Route route;
-//   // private int mStartMode;       // indicates how to behave if the service is killed
-//   // private boolean mAllowRebind; // indicates whether onRebind should be used
-//    private final IBinder mBinder = new LocalBinder();
-//    private MediaPlayer mediaPlayer;
-//    //private Thread queueThread;
-//    
-//    private boolean paused = false;
-//    private boolean stop = false;
-//    private boolean preparing = false;
-//    private boolean prepared = false;
-//    
-//    private static int ONGOING_NOTIFICATION_ID = 1;
-//    public class LocalBinder extends Binder {
-//        public AudioService getService() {
-//            // Return this instance of LocalService so clients can call public methods
-//            return AudioService.this;
-//        }
-//    }
-//    @Override
-//    public void onCreate(){
-//    	mediaPlayer = new MediaPlayer();
-//    	super.onCreate();
-//    	
-//    }
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId){
-//    	super.onStartCommand(intent, flags, startId);
-//    	return START_STICKY;
-//    }
-//	@Override
-//	public IBinder onBind(Intent arg0) {
-//		return mBinder;
-//	}
-//	public void setRoute (Route r) {
-//		this.route = r;
-//		stopPlayer();
-//		audioQueue.clear();
-//	}
-//	public void stopPlayer(){
-//		if(mediaPlayer.isPlaying()) mediaPlayer.stop();
-//		stop = true;
-//		paused = false;
-//		this.stopForeground(true);
-//
-//	}
-//	public void startPlayer(){
-//		stop = false;
-//		paused = false;
-//		runPlayer();
-//	}
-//	public void runPlayer(){
-//		if(mediaPlayer.isPlaying() || preparing || stop || paused)return;
-//		else if(prepared){
-//			prepared = false;
-//			mediaPlayer.start();
-//		}
-//		else{
-//			
-//			FPAudio audio = audioQueue.poll();
-//			 Notification notification = new Notification.Builder(this)
-//	         .setContentTitle("FP Player " )
-//	         .setContentText(audio.getName())
-//	         .setSmallIcon(R.drawable.av_play)
-//	         .build();
-//			startForeground(ONGOING_NOTIFICATION_ID, notification);
-////			try {
-////				mediaPlayer.setDataSource(StorageManager.getAudioPath(this, route.getName(), audio.getFilePath()));
-////			} catch (IllegalArgumentException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			} catch (SecurityException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			} catch (IllegalStateException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			} catch (IOException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			}
-//			mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-//			preparing = true;
-//			mediaPlayer.prepareAsync();
-//		}
-//		
-//	}
-//	public void pausePlayer(){
-//		if(mediaPlayer.isPlaying()) mediaPlayer.pause();
-//		if(!stop) paused = true;
-//		this.stopForeground(false);
-//
-//
-//	}
-//	public void playLocation(String name){
-//		FPLocation l = route.getLocationByName(name);
-//		if(l instanceof InterestLocation){
-//			InterestLocation audioLocation = (InterestLocation)l;
-//			Iterator<FPAudio> audioIterator = audioLocation.getAudioIterator();
-//			while(audioIterator.hasNext()) audioQueue.offer(audioIterator.next());
-//		}
-//		runPlayer();
-//	}
-//
-//	@Override
-//	public void onCompletion(MediaPlayer arg0) {
-//		if(!audioQueue.isEmpty()){
-//			runPlayer();
-//
-//		}
-//		else{
-//			this.stopForeground(true);
-//			stop = false;
-//			paused = false;
-//			preparing = false;
-//			prepared = false;
-//		}
-//		
-//	}
-//	@Override
-//	public void onPrepared(MediaPlayer arg0) {
-//		if((!paused)&&(!stop)){
-//			prepared = false;
-//			mediaPlayer.start();
-//		}
-//		preparing = false;
-//		prepared = true;
-//		
-//	}
-//	public void distory(){
-//		stopPlayer();
-//		mediaPlayer.release();
-//		this.stopSelf();
-//	}
+
 }
