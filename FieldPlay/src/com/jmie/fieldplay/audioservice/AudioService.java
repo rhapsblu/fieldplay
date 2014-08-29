@@ -33,6 +33,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -67,6 +68,7 @@ public class AudioService extends Service {
 	private Map<String, InterestLocation> fenceIdToLocation;
 	private String TAG = "AudioService";
 	private MediaQueuePlayer player;
+	private boolean muted = false;
 	private final class ServiceHandler extends Handler {
 		public ServiceHandler (Looper looper){
 			super(looper);
@@ -76,6 +78,7 @@ public class AudioService extends Service {
 			String id = msg.getData().getString("com.jmie.fieldplay.fence_id");
 			Log.d(TAG, "Handler recieved id: " + id);
 			sendNotification(id);
+			if(muted) return;
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -109,11 +112,17 @@ public class AudioService extends Service {
 				fenceIdToLocation.put(fpgeoFence.getAlertId(), fpgeoFence.getInterestLocation());
 				fenceIdToLocation.put(fpgeoFence.getContentId(), fpgeoFence.getInterestLocation());
 			}
+			Intent muteIntent = new Intent(this, AudioService.class);
+			muteIntent.setAction("com.jmie.fieldplay.mute_audio");
+			PendingIntent mutePending = PendingIntent.getService(this, 0, muteIntent, 0);
 			NotificationCompat.Builder builder = new NotificationCompat
 					.Builder(this)
 					.setSmallIcon(R.drawable.ic_action_boot)
+					.setLargeIcon(((BitmapDrawable)this.getResources().getDrawable(R.drawable.fp_logo_notification)).getBitmap())
 					.setContentTitle(getText(R.string.audio_ticker))
-					.setContentText(route.getName());
+					.setContentText(route.getName())
+					.setPriority(NotificationCompat.PRIORITY_MAX)
+					.addAction(R.drawable.ic_action_volume_on, "Mute Audio", mutePending);
 			
 			Intent mapIntent = new Intent(this, FPMapActivity.class);
 			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
@@ -148,6 +157,32 @@ public class AudioService extends Service {
 			}
 		      
 		}
+		else if(intent.getAction()=="com.jmie.fieldplay.mute_audio"){
+			muted = !muted;
+			Log.d(TAG, "Audio mute: " + muted);
+			Intent muteIntent = new Intent(this, AudioService.class);
+			muteIntent.setAction("com.jmie.fieldplay.mute_audio");
+			PendingIntent mutePending = PendingIntent.getService(this, 0, muteIntent, 0);
+			NotificationCompat.Builder builder = new NotificationCompat
+					.Builder(this)
+					.setSmallIcon(R.drawable.ic_action_boot)
+					.setLargeIcon(((BitmapDrawable)this.getResources().getDrawable(R.drawable.fp_logo_notification)).getBitmap())
+					.setContentTitle(getText(R.string.audio_ticker))
+					.setPriority(NotificationCompat.PRIORITY_MAX)
+					.setContentText(route.getName());
+			
+					if(muted)builder.addAction(R.drawable.ic_action_volume_muted, "Unmute Audio", mutePending);
+					else builder.addAction(R.drawable.ic_action_volume_on, "Mute Audio", mutePending);
+			
+			Intent mapIntent = new Intent(this, FPMapActivity.class);
+			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+			stackBuilder.addParentStack(FPMapActivity.class);
+			stackBuilder.addNextIntent(mapIntent);
+			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(resultPendingIntent);
+			startForeground(1, builder.build());
+		}
 		return START_STICKY;
 	}
 	
@@ -165,13 +200,16 @@ public class AudioService extends Service {
 	private void sendNotification(String geoFenceID){
 		if(geoFenceID.startsWith("!"))return;
 		InterestLocation location = fenceIdToLocation.get(geoFenceID);
-		 Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
 		NotificationCompat.Builder builder = new NotificationCompat
 				.Builder(this)
 				.setSmallIcon(R.drawable.ic_action_boot)
+				.setLargeIcon(((BitmapDrawable)this.getResources().getDrawable(R.drawable.fp_logo_notification)).getBitmap())
 				.setAutoCancel(true)
-				.setSound(notificationSound)
+				.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_SHOW_LIGHTS)
 				.setContentTitle(location.getName())
+				.setPriority(NotificationCompat.PRIORITY_HIGH)
+				.setLights(0xFF00FF00, 300, 100)
 				.setContentText(location.getDescription());
 
 		Intent locationIntent = new Intent(this, LocationDetailsActivity.class);
@@ -198,6 +236,7 @@ public class AudioService extends Service {
 		List<String> pathList = new ArrayList<String>();
 		while(iterator.hasNext()){
 			FPAudio fpAudio = iterator.next();
+			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()<50))continue;
 			String localPath = StorageManager.getAudioPath(this, route.getRouteData(), fpAudio.getFilePath());
 			Log.d(TAG, "Path to add is " + localPath);
 			pathList.add(localPath);
