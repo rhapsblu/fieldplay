@@ -41,6 +41,7 @@ import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.route.StopLocation;
 import com.jmie.fieldplay.storage.StorageManager;
 
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -412,6 +413,19 @@ public class FPMapActivity extends
 		}
 		else if(item.getItemId() == R.id.service_control){
 			toggleAudioService();
+		}
+		else if(item.getItemId() == R.id.replay_last){
+			boolean audioStatus = StorageManager.getAudioTourStatus(this);
+			if(audioStatus){
+		        Intent notifyAudioServiceIntent =
+		                new Intent(getApplicationContext(),AudioService.class);
+		        notifyAudioServiceIntent.setAction("com.jmie.fieldplay.replay");
+		        startService(notifyAudioServiceIntent);
+		        Toast.makeText(this, "Last location replay", Toast.LENGTH_SHORT).show();
+			}
+			else{
+				Toast.makeText(this, "Can't replay with audio service off", Toast.LENGTH_SHORT).show();
+			}
 		}
 
 		return super.onOptionsItemSelected(item);

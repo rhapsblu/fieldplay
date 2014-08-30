@@ -24,6 +24,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -49,7 +50,10 @@ public class AudioService extends Service {
 	private String TAG = "AudioService";
 	private MediaQueuePlayer player;
 	private boolean muted = false;
-	private final class ServiceHandler extends Handler {
+	private String replayID;
+
+	private final class ServiceHandler extends Handler 
+									   implements AudioManager.OnAudioFocusChangeListener{
 		public ServiceHandler (Looper looper){
 			super(looper);
 		}
@@ -65,7 +69,13 @@ public class AudioService extends Service {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			replayID = id;
 			playAudio(id);
+		}
+		@Override
+		public void onAudioFocusChange(int focusChange) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 	
@@ -151,8 +161,8 @@ public class AudioService extends Service {
 					.setPriority(NotificationCompat.PRIORITY_MAX)
 					.setContentText(route.getName());
 			
-					if(muted)builder.addAction(R.drawable.ic_action_volume_muted, "Unmute Audio", mutePending);
-					else builder.addAction(R.drawable.ic_action_volume_on, "Mute Audio", mutePending);
+					if(muted)builder.addAction(R.drawable.ic_action_volume_muted, "Click to unmute", mutePending);
+					else builder.addAction(R.drawable.ic_action_volume_on, "Click to mute", mutePending);
 			
 			Intent mapIntent = new Intent(this, FPMapActivity.class);
 			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
@@ -162,6 +172,10 @@ public class AudioService extends Service {
 			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
 			builder.setContentIntent(resultPendingIntent);
 			startForeground(1, builder.build());
+		}
+		else if (intent.getAction() == "com.jmie.fieldplay.replay"){
+			if(replayID != null) playAudio(replayID);
+			else Log.e(TAG, "No audio replay");
 		}
 		return START_STICKY;
 	}
