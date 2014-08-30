@@ -45,7 +45,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
-import android.app.NotificationManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

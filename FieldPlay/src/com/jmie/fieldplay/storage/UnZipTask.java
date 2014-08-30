@@ -21,14 +21,15 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
 	 RouteLoaderActivity loader;
 	 private RouteDBHandler routeDB;
 	 private int size;
-	 private String routeName;
+	 private RouteData routeData;
 
 	 private String fileName;
 	 
-	 public UnZipTask(RouteLoaderActivity loader, String routeName){
+	 public UnZipTask(RouteLoaderActivity loader, RouteData routeData){
 		 this.loader = loader;
 		 routeDB = new RouteDBHandler(loader);
-		 this.routeName = routeName;
+		 this.routeData = routeDB.refreshData(routeData);
+		 Log.d(TAG, "unzip constructor "+ this.routeData.get_id());
 	 }
 
        @Override
@@ -61,14 +62,13 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
        }
 
        protected void onProgressUpdate(Integer progress){
-    	   
-    	   RouteData routeData = routeDB.findRoute(routeName);
+    	   Log.d(TAG, "unzip progress update "+ routeData.get_id());
+    	   routeData = routeDB.refreshData(routeData);
     	   routeData.set_unzipProgress(progress);
     	   routeDB.updateRoute(routeData);
 			loader.runOnUiThread(new Runnable() {
 			    @Override
 			    public void run() {
-			    	Log.d(TAG, "Update Called");
 			    	loader.updateAdapter();
 			    }
 			} );
@@ -76,15 +76,14 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
        }
        @Override
        protected void onPostExecute(Boolean result) {
-    	   RouteData routeData = routeDB.findRoute(routeName);
+    	   routeData = routeDB.refreshData(routeData);
     	   routeData.set_unzipProgress(100);
     	  routeDB.updateRoute(routeData);
     	  
-    	   StorageManager.populateDBFromXML(loader, routeName, fileName);
+    	   StorageManager.populateDBFromXML(loader, routeData, fileName);
 			loader.runOnUiThread(new Runnable() {
 			    @Override
 			    public void run() {
-			    	Log.d(TAG, "Update Called");
 			    	loader.updateAdapter();
 			    }
 			} );
@@ -95,18 +94,15 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
                String outputDir) throws IOException {
 
            if (entry.isDirectory()) {
-           //	Log.d(TAG, "Is directory " + entry.getName());
                createDir(new File(outputDir, entry.getName()));
                return;
            }
 
            File outputFile = new File(outputDir, entry.getName());
            if (!outputFile.getParentFile().exists()) {
-           	//Log.d(TAG, "Creating directory from png path" + entry.getName());
                createDir(outputFile.getParentFile());
            }
 
-           //Log.v(TAG, "Extracting: " + entry);
            BufferedInputStream inputStream = new BufferedInputStream(zipfile.getInputStream(entry));
            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
 

@@ -2,14 +2,11 @@ package com.jmie.fieldplay.route;
 
 import com.jmie.fieldplay.R;
 import com.jmie.fieldplay.audioservice.zxing.integration.android.IntentIntegrator;
-import com.jmie.fieldplay.audioservice.zxing.integration.android.IntentIntegratorV30;
 import com.jmie.fieldplay.audioservice.zxing.integration.android.IntentResult;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +33,7 @@ public class RouteAddActivity extends Activity {
 		scanIntegrator.initiateScan();
 	}
 	public void fpstorehandler(View view){
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK);
 		alert.setTitle("Coming Soon!");
 		alert.setMessage("The FieldPlay store is not yet available.  Please check back later.");
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -46,7 +43,7 @@ public class RouteAddActivity extends Activity {
 		alert.show();
 	}
 	public void urlhandler(View view){
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK);
 		alert.setTitle("Route URL");
 		alert.setMessage("Please enter the url of the route to download");
 		
@@ -97,7 +94,7 @@ public class RouteAddActivity extends Activity {
 			finish();
 		}
 		else{
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK);
 			alert.setTitle("Invalid address");
 			alert.setMessage(location + "\nIs not a valid URL");
 			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

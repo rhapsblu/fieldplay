@@ -4,6 +4,11 @@
         android:icon="@drawable/ic_action_new"
         android:title="@string/add_route"
         android:showAsAction="ifRoom"/>
+	<item 
+	    android:id="@+id/delete_route"
+	    android:icon="@drawable/ic_action_discard"
+	    android:title="@string/delete_route"
+	    android:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

@@ -54,4 +54,9 @@ public class RouteDetailsFragment extends Fragment{
     	description.setText(details);
     	button.setEnabled(true);
     }
+    public void clear(){
+    	TextView description = (TextView)getView().findViewById(R.id.route_details);
+    	description.setText(getString(R.string.no_route_selected));
+    	button.setEnabled(false);
+    }
 }

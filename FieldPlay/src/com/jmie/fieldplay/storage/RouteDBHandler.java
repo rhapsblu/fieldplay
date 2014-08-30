@@ -65,7 +65,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		
 		
-		db.insert(TABLE_ROUTES, null, values);
+		routeData.set_id((int)db.insert(TABLE_ROUTES, null, values));
 		
 		db.close();
 	}
@@ -83,15 +83,15 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 		db.close();
 		return i;
 	}
-	public RouteData findRoute(String routeName) {
-		String query = "Select * FROM " + TABLE_ROUTES + " WHERE " + COLUMN_ROUTENAME + " =  \"" + routeName + "\"";
-		
-		SQLiteDatabase db = this.getWritableDatabase();
-		
-		Cursor cursor = db.rawQuery(query, null);
-		
+
+	private RouteData findRoute(int routeID) {
+
 		RouteData routeData = new RouteData();
-		
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.query(TABLE_ROUTES, new String[] { COLUMN_ID,
+	            COLUMN_ROUTENAME, COLUMN_DESCRIPTION, COLUMN_ROUTEFILE, COLUMN_DOWNLOADPROGRESS,
+	            COLUMN_UNZIPPROGRESS, COLUMN_MANAGERID}, COLUMN_ID + "=?",
+	            new String[] { String.valueOf(routeID) }, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			cursor.moveToFirst();
 			routeData.set_id(Integer.parseInt(cursor.getString(0)));
@@ -101,39 +101,27 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 			routeData.set_downloadProgress(Integer.parseInt(cursor.getString(4)));
 			routeData.set_managerID(Integer.parseInt(cursor.getString(5)));
 			routeData.set_unzipProgress(Integer.parseInt(cursor.getString(6)));
-
+	
 			cursor.close();
 		} else {
 			routeData = null;
 		}
-	        db.close();
-	        Log.d(TAG, "Retrieved: " + routeData.get_routeName());
 		return routeData;
 	}
-	
-	public boolean deleteRoute(String routeName) {
-		
-		boolean result = false;
-		
-		String query = "Select * FROM " + TABLE_ROUTES + " WHERE " + COLUMN_ROUTENAME + " =  \"" + routeName + "\"";
+	public RouteData refreshData(RouteData routeData){
+		return findRoute(routeData.get_id());
+	}
 
+	public boolean deleteRoute(RouteData routeData){
+		boolean result = false;
 		SQLiteDatabase db = this.getWritableDatabase();
 		
-		Cursor cursor = db.rawQuery(query, null);
-		
-		RouteData routeData = new RouteData();
-		
-		if (cursor.moveToFirst()) {
-			routeData.set_id(Integer.parseInt(cursor.getString(0)));
 			db.delete(TABLE_ROUTES, COLUMN_ID + " = ?",
 		            new String[] { String.valueOf(routeData.get_id()) });
-			cursor.close();
 			result = true;
-		}
 	        db.close();
 		return result;
 	}
-
 	public int numberOfRows(){
 		 SQLiteDatabase db = this.getReadableDatabase();
 		 int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_ROUTES);

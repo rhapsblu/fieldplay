@@ -72,9 +72,27 @@ public class StorageManager {
 		route.setRouteData(routeData);
 		return route;
 	}
+	public static void deleteRoute(Context c, RouteData routeData){
+		String state = Environment.getExternalStorageState();
+		String routeName = routeData.get_routeName();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {	
+			File deleteFile = c.getExternalFilesDir(ROUTES_DIR + routeData.get_routeFile());
+			deleteRecursive(deleteFile);
+		} 
+		else {
+			Log.e(TAG, "External media not available ");
+		}
+		Log.d(TAG, "Deleted route " + routeName);
+	}
+	private static void deleteRecursive(File fileOrDirectory) {
+	    if (fileOrDirectory.isDirectory())
+	        for (File child : fileOrDirectory.listFiles())
+	            deleteRecursive(child);
 
-	public static void populateDBFromXML(Context c, String routeName, String fileName){
-		Log.d(TAG, "Route name retrival " + routeName);
+	    fileOrDirectory.delete();
+	}
+	public static void populateDBFromXML(Context c, RouteData routeData, String fileName){
+		Log.d(TAG, "Route name retrival " + routeData.get_routeName());
 		String[] nameAndDescription = new String[2];
 
 		String routeXMLPath = ROUTES_DIR+ "/" + fileName+"/"+ROUTE_XML;
@@ -104,7 +122,6 @@ public class StorageManager {
 			Log.e(TAG, "External media not available ");
 		}
 		RouteDBHandler dbHandler = new RouteDBHandler(c);
-		RouteData routeData = dbHandler.findRoute(routeName);
 		routeData.set_routeDescription(nameAndDescription[1]);
 		routeData.set_routeName(nameAndDescription[0]);
 		routeData.set_routeFile(fileName);

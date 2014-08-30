@@ -51,5 +51,6 @@
     <string name="search_downloads">Downloads Folder</string>
     <string name="url_download">Enter URL</string>
     <string name="audio_ticker">Field Play Audio Service</string>
+    <string name="delete_route">Delete Route</string>
 
 </resources>

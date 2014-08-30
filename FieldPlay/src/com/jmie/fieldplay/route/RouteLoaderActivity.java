@@ -17,8 +17,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -84,8 +86,12 @@ public class RouteLoaderActivity extends Activity
 	private void deliverToFragment(RouteData routeData){
         RouteDetailsFragment routeDetailFrag = (RouteDetailsFragment)
                 getFragmentManager().findFragmentById(R.id.details_fragment);
-        routeDetailFrag.displayRouteDetails(routeData.get_routeDescription());
-        
+		if(routeData == null){
+			routeDetailFrag.clear();
+		}
+		else{
+			routeDetailFrag.displayRouteDetails(routeData.get_routeDescription());
+		}
 	}
 	@Override
 	public void onResume(){
@@ -112,7 +118,6 @@ public class RouteLoaderActivity extends Activity
 	public void updateAdapter() {
     	Log.d(TAG, "Update Called");
 		routeDataList.clear();
-//		routesAdapter.notifyDataSetChanged();
 		routeDataList =  routeDB.getAllRoutes();
 		routesAdapter.notifyDataSetChanged();
 		lv.setAdapter(routesAdapter);
@@ -130,15 +135,35 @@ public class RouteLoaderActivity extends Activity
         	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
         	return true;
 		}
+		else if(item.getItemId()==R.id.delete_route){
+			AlertDialog.Builder builder = new AlertDialog.Builder(RouteLoaderActivity.this, AlertDialog.THEME_HOLO_DARK);
+			if(selectedRouteData==null){
+				builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			           }
+			       });
+				builder.setTitle("Select a route");
+				builder.setMessage("Please select a route to delete");
+			}
+			else{
+				builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			        	   routeDB.deleteRoute(selectedRouteData);
+			        	   selectedRouteData = null;
+			        	   deliverToFragment(selectedRouteData);
+			        	   updateAdapter();
+			           }
+			       });
+				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			           }
+			       });
+				builder.setTitle("Delete Route");
+				builder.setMessage("Are you sure you like to delete this route?");
+			}
+			builder.create().show();
+		}
 		return super.onOptionsItemSelected(item);
-//	    switch (item.getItemId()) {
-//	        case R.id.add_route:
-//	        	Intent i = new Intent(RouteLoaderActivity.this, RouteAddActivity.class);
-//	        	startActivityForResult(i, PICK_DOWNLOAD_REQUEST);
-//	        default:
-//	            return super.onOptionsItemSelected(item);
-//	    }
-
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -162,23 +187,23 @@ public class RouteLoaderActivity extends Activity
 		routeData.set_managerID(downloadManager.enqueue(request));
 		Log.d(TAG, "Starting download of " + location);
 		routeDB.addRoute(routeData);
-		new DownloadProgressUpdateTask(downloadManager).execute(location, null, null);
+		new DownloadProgressUpdateTask(downloadManager).execute(routeData, null, null);
 		updateAdapter();
 		
 	}
 	private void startUnzip(String location, RouteData routeData){
-		new UnZipTask(this, routeData.get_routeName()).execute(new File(location), this.getExternalFilesDir(StorageManager.ROUTES_DIR));
+		new UnZipTask(this, routeData).execute(new File(location), this.getExternalFilesDir(StorageManager.ROUTES_DIR));
 	}
-	private class DownloadProgressUpdateTask extends AsyncTask<String, Void, Void>{
+	private class DownloadProgressUpdateTask extends AsyncTask<RouteData, Void, Void>{
 		DownloadManager downloadManager;
 		public DownloadProgressUpdateTask(DownloadManager downloadManager){
 			this.downloadManager=downloadManager;
 		}
 		@Override
-		protected Void doInBackground(String ... locations) {
+		protected Void doInBackground(RouteData ... locations) {
 			Log.d(TAG, "Starting download monitor");
 			while(true){
-				RouteData routeData = routeDB.findRoute(locations[0]);
+				RouteData routeData = locations[0];
 				DownloadManager.Query query = new DownloadManager.Query();
 				query.setFilterById(routeData.get_managerID());
 				Cursor cursor = downloadManager.query(query);
@@ -195,18 +220,45 @@ public class RouteLoaderActivity extends Activity
 						//pass to unzip routine
 						columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
 						String fileLocation = cursor.getString(columnIndex);
-						routeData.set_routeName(fileLocation);
-						routeData.set_downloadProgress(100);
-						routeDB.updateRoute(routeData);
-						Log.d(TAG, "Download done");
-						runOnUiThread(new Runnable() {
-						    @Override
-						    public void run() {
-						    	Log.d(TAG, "Update Called");
-						    	updateAdapter();
-						    }
-						} );
-						startUnzip(fileLocation, routeData);
+						if(fileLocation.endsWith(".fpr")){
+							routeData.set_routeName(fileLocation);
+							routeData.set_downloadProgress(100);
+							routeDB.updateRoute(routeData);
+							Log.d(TAG, "Download done");
+							runOnUiThread(new Runnable() {
+							    @Override
+							    public void run() {
+							    	updateAdapter();
+							    }
+							} );
+							startUnzip(fileLocation, routeData);
+						}	
+						else {
+							
+							final String badFile = new File(fileLocation).getName();
+							routeDB.deleteRoute(routeData);
+							runOnUiThread(new Runnable() {
+							    @Override
+							    public void run() {
+							    	updateAdapter();
+									AlertDialog.Builder builder = new AlertDialog.Builder(RouteLoaderActivity.this, AlertDialog.THEME_HOLO_DARK);
+
+									builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+								           public void onClick(DialogInterface dialog, int id) {
+
+								           }
+								       });
+									builder.setTitle("Not a FieldPlay route!");
+									builder.setMessage("The download \n\n"+ badFile + "\n\nis not a valid Field Play Route");
+									Log.e(TAG, badFile + " does not have the proper extension");
+								// Create the AlertDialog
+									AlertDialog dialog = builder.create();
+									dialog.show();
+							    }
+							} );
+
+							
+						}
 						cursor.close();
 						break;
 					}

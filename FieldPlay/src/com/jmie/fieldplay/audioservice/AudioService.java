@@ -1,26 +1,18 @@
 package com.jmie.fieldplay.audioservice;
 
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.PriorityBlockingQueue;
-
-
-import com.google.android.gms.location.Geofence;
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.audioservice.GeofenceUtils.REMOVE_TYPE;
-import com.jmie.fieldplay.audioservice.GeofenceUtils.REQUEST_TYPE;
+
 import com.jmie.fieldplay.location.LocationDetailsActivity;
 import com.jmie.fieldplay.map.FPMapActivity;
 import com.jmie.fieldplay.route.FPAudio;
-import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.InterestLocation;
 import com.jmie.fieldplay.route.Route;
-import com.jmie.fieldplay.route.RouteLoaderActivity;
 import com.jmie.fieldplay.storage.StorageManager;
 
 
@@ -29,30 +21,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.PowerManager;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -135,7 +115,7 @@ public class AudioService extends Service {
 		}
 		else if(intent.getAction()=="com.jmie.fieldplay.play_location"){
 			Log.d(TAG, "recieved fence notification: " + intent.getStringExtra("com.jmie.fieldplay.fence_ids"));
-			String transitionType = intent.getStringExtra("com.jmie.fieldplay.transition_type");
+			//String transitionType = intent.getStringExtra("com.jmie.fieldplay.transition_type");
 			String[] ids = TextUtils.split(intent.getStringExtra("com.jmie.fieldplay.fence_ids"), GeofenceUtils.GEOFENCE_ID_DELIMITER.toString());
 			for(String id: ids){
 				if(id.startsWith("!")){

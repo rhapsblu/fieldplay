@@ -1,11 +1,10 @@
 package com.jmie.fieldplay.location;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import com.jmie.fieldplay.R;
 
-import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.storage.StorageManager;
@@ -29,12 +28,12 @@ public class ImageViewGridFragment extends Fragment {
 	public static final int GRID_PADDING = 8;
 	public static final int NUM_OF_COLUMNS = 3;
 	
-    private List<FPPicture> imageList;
+
     private ArrayList<String> pathList;
     private GridViewImageAdapter adapter;
     private GridView gridView;
     private int columnWidth;
-    private FPLocation location;
+
 
     private RouteData routeData;
     
@@ -46,19 +45,14 @@ public class ImageViewGridFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedinstance){
     	super.onCreate(savedinstance);
-		//location = this.getArguments().getParcelable("com.jmie.fieldplay.location");
 		routeData =  this.getArguments().getParcelable("com.jmie.fieldplay.routeData");
-
-        //imageList = location.getImageList();
         pathList = new ArrayList<String>();
 		
 		ArrayList<FPPicture> pictures = this.getArguments().getParcelableArrayList("com.jmie.fieldplay.locations");
 		for(FPPicture pic : pictures){
 			pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeData, pic.getResource())).getPath());
 		}
-//        for(FPPicture pic: imageList){
-//        	pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeStorageName, pic.getResource())).getPath());
-//        }
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,31 +73,6 @@ public class ImageViewGridFragment extends Fragment {
         return rootView;
     }
  
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_image_grid);
-
-		//String[] routeAndLocation = b.getStringArray("com.jmie.fieldplay.locationID");
-		
-		
-		//Route route = StorageManager.getCachedRoute(this);
-//		if((route == null)||(route.getStorageName().compareTo(routeAndLocation[0])!=0)){
-//			route = StorageManager.buildRoute(this, routeAndLocation[0]);
-//			StorageManager.cacheRoute(this, route);
-//		}
-//		location = route.getLocationByName(routeAndLocation[1]);
-		
-        
- 
- 
-        // Initilizing Grid View
-        
-        
-        // loading all image paths from SD card
-
-//    }
  
     private void InitilizeGridLayout() {
         Resources r = getResources();
