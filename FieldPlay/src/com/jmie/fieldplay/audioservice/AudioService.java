@@ -60,11 +60,11 @@ public class AudioService extends Service {
 		@Override
 		public void handleMessage(Message msg){
 			String id = msg.getData().getString("com.jmie.fieldplay.fence_id");
-			Log.d(TAG, "Handler recieved id: " + id);
 			sendNotification(id);
 			if(muted) return;
 			try {
-				Thread.sleep(1000);
+				
+				Thread.sleep(getResources().getInteger(R.integer.audio_fence_delay));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -112,7 +112,7 @@ public class AudioService extends Service {
 					.setContentTitle(getText(R.string.audio_ticker))
 					.setContentText(route.getName())
 					.setPriority(NotificationCompat.PRIORITY_MAX)
-					.addAction(R.drawable.ic_action_volume_on, "Mute Audio", mutePending);
+					.addAction(R.drawable.ic_action_volume_on, getText(R.string.mute_audio), mutePending);
 			
 			Intent mapIntent = new Intent(this, FPMapActivity.class);
 			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
@@ -161,8 +161,8 @@ public class AudioService extends Service {
 					.setPriority(NotificationCompat.PRIORITY_MAX)
 					.setContentText(route.getName());
 			
-					if(muted)builder.addAction(R.drawable.ic_action_volume_muted, "Click to unmute", mutePending);
-					else builder.addAction(R.drawable.ic_action_volume_on, "Click to mute", mutePending);
+					if(muted)builder.addAction(R.drawable.ic_action_volume_muted, getText(R.string.click_to_unmute), mutePending);
+					else builder.addAction(R.drawable.ic_action_volume_on, getText(R.string.click_to_mute), mutePending);
 			
 			Intent mapIntent = new Intent(this, FPMapActivity.class);
 			mapIntent.putExtra("com.jmie.fieldplay.routeData", route.getRouteData());
@@ -188,7 +188,7 @@ public class AudioService extends Service {
 	@Override
 	public void onDestroy(){
 		player.releaseMediaPlayer();
-		Toast.makeText(this,  "Audio service OFF", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this,  getText(R.string.audio_service_off), Toast.LENGTH_SHORT).show();
 
 	}
 	private void sendNotification(String geoFenceID){

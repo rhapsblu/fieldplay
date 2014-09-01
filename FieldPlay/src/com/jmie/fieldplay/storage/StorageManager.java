@@ -40,7 +40,6 @@ public class StorageManager {
 	public static final String ROUTE_NAMES="routenames";
 	public static final String ROUTE_CACHE="route_cache";
 
-
 	public static Route buildRoute(Context c, RouteData routeData){
 		Log.d(TAG, "Building route " + routeData.get_routeName());
 		Route route = null;

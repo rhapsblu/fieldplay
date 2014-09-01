@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">FieldPlay</string>
+    
+    <string name="app_name">FieldPlay</string>  
+<!-- 	Map  -->
     <string name="FPMap">Field Play Map</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="service_toggle">Start/stop service</string>
     <string name="replay_last">Replay last</string>
+<!-- Audio Service  -->
+<!-- Augmented Binoculars -->
+<!-- Route Loader -->
+
+
+    <string name="action_settings">Settings</string>
+
+
+
     <string name="details">Get details</string>
     <string name="empty">No Content</string>
     <string name="location_details">Location Details</string>
@@ -52,5 +60,10 @@
     <string name="url_download">Enter URL</string>
     <string name="audio_ticker">Field Play Audio Service</string>
     <string name="delete_route">Delete Route</string>
+    <string name="mute_audio">Mute Audio</string>
+    <string name="click_to_mute">Click To Mute</string>
+    <string name="click_to_unmute">Click To Unmute</string>
+    <string name="audio_service_on">Audio Service ON</string>
+    <string name="audio_service_off">Audio Service OFF</string>
 
 </resources>

@@ -13,10 +13,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -36,6 +40,7 @@ import com.jmie.fieldplay.audioservice.GeofenceUtils.REQUEST_TYPE;
 import com.jmie.fieldplay.location.LocationDetailsActivity;
 import com.jmie.fieldplay.route.BinocularLocation;
 import com.jmie.fieldplay.route.FPLocation;
+import com.jmie.fieldplay.route.InterestLocation;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.route.StopLocation;
@@ -51,6 +56,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -71,7 +78,8 @@ import android.widget.Toast;
 public class FPMapActivity extends 
 								FragmentActivity 
 							implements
-								OnMarkerClickListener       
+								OnMarkerClickListener,
+								OnCameraChangeListener
 
 {
 	
@@ -86,9 +94,10 @@ public class FPMapActivity extends
 	private Map<Marker, FPLocation> markerToLocation = new HashMap<Marker, FPLocation>();
 	private CustomLayerTileProvider tileProvider = new CustomLayerTileProvider();
     private TileOverlay tileOverlay;
-	 
+	private List<Circle> circleList;
 	private Route route;
 	public static String TAG = "FP Mapp";
+	private CameraPosition savedCamera;
 
     /*Geofence vars*/
     private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
@@ -120,6 +129,7 @@ public class FPMapActivity extends
 		Bundle b = getIntent().getExtras();
 		//c = this;
 		RouteData routeData = b.getParcelable("com.jmie.fieldplay.routeData");
+        circleList = new ArrayList<Circle>();
 		//route = b.getParcelable("com.jmie.fieldplay.route");
 		route = StorageManager.buildRoute(this, routeData);
 
@@ -128,6 +138,7 @@ public class FPMapActivity extends
 
         layerMenu = new PopupMenu(this, findViewById(R.id.popupAnchor));
         List<MapLayer> mapLayers = route.getMapLayers();
+
         layerMenu.getMenu().add(Menu.NONE, 1, Menu.NONE, "No layers");
         	
         for(int i = 2; i<=mapLayers.size()+1; i++){
@@ -178,6 +189,16 @@ public class FPMapActivity extends
 
 		return true;
 	}
+	@Override
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putParcelable("com.jmie.fieldplay.map_camera", savedCamera);
+	}
+	@Override 
+	public void onRestoreInstanceState(Bundle inState){
+		super.onRestoreInstanceState(inState);
+		savedCamera = inState.getParcelable("com.jmie.fieldplay.map_camera");
+	}
     private void setUpMapIfNeeded(){
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -199,10 +220,11 @@ public class FPMapActivity extends
     	Log.d(TAG, "Setting up map");
         // Add lots of markers to the map.
         addMarkersToMap();
-        addRouteLineToMap();
+        generateGeofenceLines(mMap);
+        //addRouteLineToMap();
         // Set listeners for marker events.  See the bottom of this class for their behavior.
         mMap.setOnMarkerClickListener(this);
-
+        mMap.setOnCameraChangeListener(this);
         // Pan to see all markers in view.
         // Cannot zoom to bounds until the map has a size.
         final View mapView = getFragmentManager().findFragmentById(R.id.map).getView();
@@ -223,7 +245,14 @@ public class FPMapActivity extends
                       mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                     Log.d(TAG, "Moving camera to bounds");
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                    
+                    
+                    if(savedCamera==null){
+                    	Log.d(TAG, "Saved camera is null");
+                    	mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                    }
+                    else
+                    	mMap.moveCamera(CameraUpdateFactory.newCameraPosition(savedCamera));
                 }
             });
         }
@@ -235,20 +264,24 @@ public class FPMapActivity extends
     	for(FPLocation location: route.getLocationList()){
     		//Log.d(TAG, "Adding marker for " + location.getName() + " lat: " + location.getLatitude() + " long: " + location.getLongitude());
     		String iconText = "";
+    		Bitmap bitmap;
     		if(location instanceof BinocularLocation){
     			iconFactory.setStyle(IconGenerator.STYLE_BLUE);
     			iconText = "B";
+    			Bitmap oldBitmap = iconFactory.makeIcon(iconText);
+    			bitmap = Bitmap.createScaledBitmap(oldBitmap, oldBitmap.getWidth()/2, oldBitmap.getHeight()/2, false);
     		}
     		else{
     			iconText = Integer.toString(locationCount);
     			locationCount++;
     			if(location instanceof StopLocation) iconFactory.setStyle(IconGenerator.STYLE_RED);
     			else iconFactory.setStyle(IconGenerator.STYLE_GREEN);
+    			bitmap = iconFactory.makeIcon(iconText);
     		}
             MarkerOptions markerOptions = new MarkerOptions().
-                    icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(iconText))).
-                    position(new LatLng(location.getLatitude(), location.getLongitude())).
-                    anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+                    icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
     		Marker marker = mMap.addMarker(markerOptions);
     		marker.setTitle(location.getName());
@@ -259,7 +292,7 @@ public class FPMapActivity extends
     	}
 
     }
-
+    @Deprecated
     private void addRouteLineToMap(){
     	//Log.d(TAG, "Adding route lines to map");
     	PolylineOptions routeLine = new PolylineOptions();
@@ -270,8 +303,50 @@ public class FPMapActivity extends
     
     	mMap.addPolyline(routeLine);
     }
+    private void generateGeofenceLines(GoogleMap map){
+    	for(FPLocation location: route.getLocationList()){
+    		if(location instanceof StopLocation){
+    			StopLocation stop = (StopLocation)location;
+    			CircleOptions alertCircle = new CircleOptions()
+    			.center(new LatLng(stop.getLatitude(), stop.getLongitude()))
+    			.radius(stop.getAlertRadius())
+    			.strokeWidth(3f)
+    			.fillColor(0x11FF0000)
+    			.strokeColor(0x88FF0000);
+    			circleList.add(map.addCircle(alertCircle));
+    			
+    			CircleOptions contentCircle = new CircleOptions()
+    			.center(new LatLng(stop.getLatitude(), stop.getLongitude()))
+    			.radius(stop.getContentRadius())
+    			.strokeWidth(3f)
+    			.fillColor(0x1100FF00)
+    			.strokeColor(0x8800FF00);
+    			circleList.add(map.addCircle(contentCircle));
+    			
+    		}
+    		else if(location instanceof InterestLocation){
+    			InterestLocation interest = (InterestLocation)location;
+    			CircleOptions contentCircle = new CircleOptions()
+    			.center(new LatLng(interest.getLatitude(), interest.getLongitude()))
+    			.radius(interest.getContentRadius())
+    			.strokeWidth(3f)
+    			.fillColor(0x1100FF00)
+    			.strokeColor(0x8800FF00);
+    			circleList.add(map.addCircle(contentCircle));
+    		}	
+    	}	
+    	for(Circle c: circleList) c.setVisible(StorageManager.getAudioTourStatus(this));
+    }
+    private void toggleCircles(boolean on){
+    	for(Circle c: circleList){
+    		c.setVisible(on);
+    		Log.d(TAG, "Turning on circle: " + c.isVisible());
+
+    	}
+    }
     private void toggleAudioService(){
     	boolean audioStatus = StorageManager.getAudioTourStatus(this);
+    	toggleCircles(!audioStatus);
     	if(!audioStatus){
     		Intent intent = new Intent(this, AudioService.class);
     		intent.setAction("com.jmie.fieldplay.start_audio_service");
@@ -650,5 +725,10 @@ public class FPMapActivity extends
             return mDialog;
         }
     }
+	@Override
+	public void onCameraChange(CameraPosition cameraPosition) {
+		Log.d(TAG, "saving map camera");
+		savedCamera = cameraPosition;
+	}
     
 }
