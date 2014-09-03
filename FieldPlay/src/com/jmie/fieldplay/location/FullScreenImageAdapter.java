@@ -43,7 +43,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
      
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        ImageView imgDisplay;
+        TouchImageView imgDisplay;
         Button btnClose;
   
         inflater = (LayoutInflater) _activity
@@ -51,7 +51,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         View viewLayout = inflater.inflate(R.layout.fullscreen_image_layout, container,
                 false);
   
-        imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
+        imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
         btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
          
 //        BitmapFactory.Options options = new BitmapFactory.Options();

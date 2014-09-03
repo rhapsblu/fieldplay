@@ -24,6 +24,7 @@ public class MediaQueuePlayer implements
 	private Context context;
 	private AudioBundle currentBundle;
 	private String TAG = "MediaQueuePlayer";
+	private boolean mute = false;
 	
 	public MediaQueuePlayer(Context c){
 		bundleQueue = new ConcurrentLinkedQueue<AudioBundle>();
@@ -45,6 +46,8 @@ public class MediaQueuePlayer implements
 			return;
 		}
 		mediaPlayer = new MediaPlayer();
+		Log.d(TAG, "Media Player obtained");
+		if(mute)mediaPlayer.setVolume(0, 0);
 		mediaPlayer.setWakeMode(context.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 		mediaPlayer.setOnCompletionListener(this);
 		mediaPlayer.setOnErrorListener(this);
@@ -131,13 +134,21 @@ public class MediaQueuePlayer implements
 		mediaPlayer.start();
 		
 	}
-
+	public void mute(boolean mute){
+		this.mute = mute;
+		if(mediaPlayer == null) return;
+		if(mute)
+			mediaPlayer.setVolume(0, 0);
+		else
+			mediaPlayer.setVolume(1, 1);
+	}
 	public void releaseMediaPlayer(){
 		if (mediaPlayer != null) {
 			mediaPlayer.reset();
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
+		Log.d(TAG, "Media Player released");
 	}
 	private String getNextAudio(){
 		if((currentBundle==null)&&bundleQueue.isEmpty())return null;

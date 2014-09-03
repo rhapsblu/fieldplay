@@ -39,10 +39,12 @@ public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 			return ImageViewGridFragment.newInstance(gridArgs);
 		case 2:
 			Bundle audioArgs = new Bundle();
+			audioArgs.putParcelable("com.jmie.fieldplay.routeData", activity.getRoute().getRouteData());
+			audioArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
 			return AudioPlaylistFragment.newInstance(audioArgs);
 		case 3:
 			Bundle videoArgs = new Bundle();
-			return AudioPlaylistFragment.newInstance(videoArgs);
+			return VideoPlaylistFragment.newInstance(videoArgs);
 		}
 		return fragments.get(index);
 	}

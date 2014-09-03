@@ -65,5 +65,6 @@
     <string name="click_to_unmute">Click To Unmute</string>
     <string name="audio_service_on">Audio Service ON</string>
     <string name="audio_service_off">Audio Service OFF</string>
-
+	<string name="pause_play_button">Play</string>
+	
 </resources>

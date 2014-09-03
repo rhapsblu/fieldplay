@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 
 import android.os.AsyncTask;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,12 +28,11 @@ import android.widget.ImageView;
 
  
 public class GridViewImageAdapter extends BaseAdapter {
- 
+	private static String TAG = "GridView Adapter";
     private Activity _activity;
 
     private ArrayList<String> _filePaths = new ArrayList<String>();
     private int imageWidth;
- 
     public GridViewImageAdapter(Activity activity, ArrayList<String> _filePaths,
             int imageWidth) {
         this._activity = activity;
@@ -65,84 +65,18 @@ public class GridViewImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
  
-        // get screen dimensions
-//        Bitmap image = decodeFile(_activity, _filePaths.get(position), imageWidth,
-//                imageWidth);
- 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams(imageWidth,
                 imageWidth));
-        //imageView.setImageBitmap(image);
-        imageView.setImageBitmap(null);
+        
         
         BitmapWorkerTask handler = new BitmapWorkerTask(_activity, imageView, _filePaths.get(position), imageWidth, imageWidth);
         handler.execute(_filePaths.get(position));
-        // image view click listener
-        imageView.setOnClickListener(new OnImageClickListener(position));
         
         return imageView;
     }
  
-    class OnImageClickListener implements OnClickListener {
- 
-        int _postion;
- 
-        // constructor
-        public OnImageClickListener(int position) {
-            this._postion = position;
-        }
- 
-        @Override
-        public void onClick(View v) {
-            // on selecting grid view image
-            // launch full screen activity
-            Intent i = new Intent(_activity, FullScreenViewActivity.class);
-            i.putExtra("com.jmie.fieldplay.position", _postion);
-            i.putStringArrayListExtra("com.jmie.fieldplay.filepaths", _filePaths);
-            
-            _activity.startActivity(i);
-        }
- 
-    }
-//    public void loadBitmap(int resId, Context context, ImageView imageView, String path, int width, int heith) {
-//        if (cancelPotentialWork(resId, imageView)) {
-//            final BitmapWorkerTask task = new BitmapWorkerTask(context, imageView, path, width, heith);
-//            final AsyncDrawable asyncDrawable =
-//                    new AsyncDrawable(context.getResources(), mPlaceHolderBitmap, task);
-//            imageView.setImageDrawable(asyncDrawable);
-//            task.execute(path);
-//        }
-//    }
-//    public static boolean cancelPotentialWork(int data, ImageView imageView) {
-//        final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-//
-//        if (bitmapWorkerTask != null) {
-//            final int bitmapData = bitmapWorkerTask.data;
-//            // If bitmapData is not yet set or it differs from the new data
-//            if (bitmapData == 0 || bitmapData != data) {
-//                // Cancel previous task
-//                bitmapWorkerTask.cancel(true);
-//            } else {
-//                // The same work is already in progress
-//                return false;
-//            }
-//        }
-//        // No task associated with the ImageView, or an existing task was cancelled
-//        return true;
-//    }
-//    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-//    	   if (imageView != null) {
-//    	       final Drawable drawable = imageView.getDrawable();
-//    	       if (drawable instanceof AsyncDrawable) {
-//    	           final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-//    	           return asyncDrawable.getBitmapWorkerTask();
-//    	       }
-//    	    }
-//    	    return null;
-//    	}
-    /*
-     * Resizing image size
-     */
+
     public static Bitmap decodeFile(Context c, String filePath, int WIDTH, int HIGHT) {
         try {
         	//File f = c.getExternalFilesDir(filePath);
@@ -189,12 +123,7 @@ public class GridViewImageAdapter extends BaseAdapter {
 
         @Override
         protected void onPostExecute(Bitmap result) {
- 
-//            if(imageViewReference!=null && result!=null) {
-//            	final ImageView imageView = imageViewReference.get();
-//            	if(imageView != null)
-//            	imageView.setImageBitmap(result);
-//            }
+
             if (isCancelled()) {
                 result = null;
             }
@@ -207,18 +136,5 @@ public class GridViewImageAdapter extends BaseAdapter {
             }
         }
     }
-//    static class AsyncDrawable extends BitmapDrawable {
-//        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
-//
-//        public AsyncDrawable(Resources res, Bitmap bitmap,
-//                BitmapWorkerTask bitmapWorkerTask) {
-//            super(res, bitmap);
-//            bitmapWorkerTaskReference =
-//                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
-//        }
-//
-//        public BitmapWorkerTask getBitmapWorkerTask() {
-//            return bitmapWorkerTaskReference.get();
-//        }
-//    }
+
 }

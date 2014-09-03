@@ -10,30 +10,37 @@ import com.jmie.fieldplay.route.RouteData;
 import com.jmie.fieldplay.storage.StorageManager;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
  
 public class ImageViewGridFragment extends Fragment {
  
 	public static final int GRID_PADDING = 8;
 	public static final int NUM_OF_COLUMNS = 3;
-	
+	public static String TAG = "Image Grid Fragment";
 
     private ArrayList<String> pathList;
     private GridViewImageAdapter adapter;
     private GridView gridView;
     private int columnWidth;
-
+    
 
     private RouteData routeData;
     
@@ -57,7 +64,7 @@ public class ImageViewGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-
+    	if(pathList.size()==0) return getDefaultView();
         View rootView = inflater.inflate(R.layout.activity_image_grid, container, false);
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
         InitilizeGridLayout();
@@ -69,7 +76,7 @@ public class ImageViewGridFragment extends Fragment {
         
         // setting grid view adapter
         gridView.setAdapter(adapter);
-
+        gridView.setOnItemClickListener(new OnImageClickListener());
         return rootView;
     }
  
@@ -104,5 +111,27 @@ public class ImageViewGridFragment extends Fragment {
         columnWidth = point.x;
         return columnWidth;
     }
- 
+    private View getDefaultView(){
+    	TextView tv = new TextView(getActivity());
+    	tv.setGravity(Gravity.CENTER);
+    	tv.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
+    	tv.setText("No images for this location");
+    	return tv;
+    }
+  class OnImageClickListener implements OnItemClickListener {
+
+
+      @Override
+      public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+      	Log.d(TAG, "View Clicked");
+          // on selecting grid view image
+          // launch full screen activity
+          Intent i = new Intent(getActivity(), FullScreenViewActivity.class);
+          i.putExtra("com.jmie.fieldplay.position", position);
+          i.putStringArrayListExtra("com.jmie.fieldplay.filepaths", pathList);
+          
+          getActivity().startActivity(i);
+      }
+
+  }
 }

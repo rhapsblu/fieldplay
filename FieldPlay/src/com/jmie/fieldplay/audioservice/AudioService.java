@@ -61,7 +61,6 @@ public class AudioService extends Service {
 		public void handleMessage(Message msg){
 			String id = msg.getData().getString("com.jmie.fieldplay.fence_id");
 			sendNotification(id);
-			if(muted) return;
 			try {
 				
 				Thread.sleep(getResources().getInteger(R.integer.audio_fence_delay));
@@ -149,6 +148,7 @@ public class AudioService extends Service {
 		}
 		else if(intent.getAction()=="com.jmie.fieldplay.mute_audio"){
 			muted = !muted;
+			player.mute(muted);
 			Log.d(TAG, "Audio mute: " + muted);
 			Intent muteIntent = new Intent(this, AudioService.class);
 			muteIntent.setAction("com.jmie.fieldplay.mute_audio");
@@ -230,7 +230,9 @@ public class AudioService extends Service {
 		List<String> pathList = new ArrayList<String>();
 		while(iterator.hasNext()){
 			FPAudio fpAudio = iterator.next();
-			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()<50))continue;
+			Log.d(TAG, "Audio priority is " + fpAudio.getPriority());
+			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()>=50))continue;
+			if(!geoFenceID.startsWith("!")&&(fpAudio.getPriority()<50))continue;
 			String localPath = StorageManager.getAudioPath(this, route.getRouteData(), fpAudio.getFilePath());
 			Log.d(TAG, "Path to add is " + localPath);
 			pathList.add(localPath);

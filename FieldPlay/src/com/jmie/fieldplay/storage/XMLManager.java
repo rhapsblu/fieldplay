@@ -456,7 +456,7 @@ public class XMLManager {
     private Integer readInteger(XmlPullParser parser) throws IOException, XmlPullParserException {
         Integer result = null;
         if (parser.next() == XmlPullParser.TEXT) {
-            result = Integer.getInteger(parser.getText());
+            result = Integer.valueOf(parser.getText());
             parser.nextTag();
         }
         return result;

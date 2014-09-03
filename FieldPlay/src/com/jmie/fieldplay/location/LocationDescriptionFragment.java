@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +36,7 @@ public class LocationDescriptionFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.location_detail_fragment, container, false);
-		Log.d(TAG, "Frament create view");
+		if(locationDescription.length()==0) return getDefaultView();
 		
 
 		TextView name = (TextView)rootView.findViewById(R.id.location_name);
@@ -46,6 +48,12 @@ public class LocationDescriptionFragment extends Fragment{
 		name.setTypeface(font);
 		return rootView;
 	}
-	
+    private View getDefaultView(){
+    	TextView tv = new TextView(getActivity());
+    	tv.setGravity(Gravity.CENTER);
+    	tv.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
+    	tv.setText("No description for this location");
+    	return tv;
+    }
 
 }
