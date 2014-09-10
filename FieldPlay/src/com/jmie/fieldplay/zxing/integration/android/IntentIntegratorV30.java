@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jmie.fieldplay.audioservice.zxing.integration.android;
 
+package com.jmie.fieldplay.zxing.integration.android;
+
+import android.app.Fragment;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 
 /**
- * IntentIntegrator for the V4 Android compatibility package.
+ * IntentIntegrator for Android version 3.0 and beyond.
  * 
  * @author Lachezar Dobrev
  */
-public final class IntentIntegratorSupportV4 extends IntentIntegrator {
+public final class IntentIntegratorV30 extends IntentIntegrator {
 
   private final Fragment fragment;
 
   /**
    * @param fragment Fragment to handle activity response.
    */
-  public IntentIntegratorSupportV4(Fragment fragment) {
+  public IntentIntegratorV30(Fragment fragment) {
     super(fragment.getActivity());
     this.fragment = fragment;
   }

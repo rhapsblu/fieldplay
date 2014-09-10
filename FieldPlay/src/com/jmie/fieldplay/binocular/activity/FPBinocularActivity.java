@@ -1,8 +1,7 @@
-package com.jmie.fieldplay.binocular.testar;
+package com.jmie.fieldplay.binocular.activity;
 
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.binocular.activity.AugmentedReality;
 import com.jmie.fieldplay.binocular.data.ARData;
 import com.jmie.fieldplay.binocular.ui.Marker;
 import com.jmie.fieldplay.binocular.widget.VerticalTextView;
@@ -13,10 +12,13 @@ import android.os.Bundle;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 import android.view.ViewGroup.LayoutParams;
 
@@ -27,6 +29,7 @@ public class FPBinocularActivity extends AugmentedReality {
 //	private String routeStorageName;
     private static Toast myToast = null;
     private static VerticalTextView text = null;
+    GestureDetector gestureDetector;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,7 +64,12 @@ public class FPBinocularActivity extends AugmentedReality {
         FPBinocularSource source = new FPBinocularSource(route, location);
         ARData.clearMarkers();
         ARData.addMarkers(source.getMarkers());
-  
+        
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            public void onLongPress(MotionEvent e) {
+                Log.e("", "Longpress detected");
+            }
+        });
 
 	
 	}
@@ -109,7 +117,12 @@ public class FPBinocularActivity extends AugmentedReality {
     @Override
     protected void markerTouched(Marker marker) {
         text.setText(marker.getDescription());
+      
         myToast.show();
+    } 
+    public boolean onTouch(View view, MotionEvent me) {
+    	gestureDetector.onTouchEvent(me);
+    	return super.onTouch(view, me);
     }
 
 }

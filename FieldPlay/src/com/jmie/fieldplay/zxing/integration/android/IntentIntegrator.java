@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jmie.fieldplay.audioservice.zxing.integration.android;
+package com.jmie.fieldplay.zxing.integration.android;
 
 import java.util.Arrays;
 import java.util.Collection;

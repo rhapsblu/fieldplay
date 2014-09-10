@@ -25,7 +25,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.ui.IconGenerator;
@@ -285,24 +284,25 @@ public class FPMapActivity extends
 
     		Marker marker = mMap.addMarker(markerOptions);
     		marker.setTitle(location.getName());
-    		marker.setSnippet("Latitude: " + location.getLatitude() + " Longitude: "+location.getLongitude());
+
+    		marker.setSnippet(location.getDescription());
     		markerList.add(marker);
     		markerToLocation.put(marker, location);
 
     	}
 
     }
-    @Deprecated
-    private void addRouteLineToMap(){
-    	//Log.d(TAG, "Adding route lines to map");
-    	PolylineOptions routeLine = new PolylineOptions();
-    	for(FPLocation location: route.getLocationList()){
-    		if(!(location instanceof BinocularLocation))
-    			routeLine.add(new LatLng(location.getLatitude(), location.getLongitude()));
-    	}
-    
-    	mMap.addPolyline(routeLine);
-    }
+//    @Deprecated
+//    private void addRouteLineToMap(){
+//    	//Log.d(TAG, "Adding route lines to map");
+//    	PolylineOptions routeLine = new PolylineOptions();
+//    	for(FPLocation location: route.getLocationList()){
+//    		if(!(location instanceof BinocularLocation))
+//    			routeLine.add(new LatLng(location.getLatitude(), location.getLongitude()));
+//    	}
+//    
+//    	mMap.addPolyline(routeLine);
+//    }
     private void generateGeofenceLines(GoogleMap map){
     	for(FPLocation location: route.getLocationList()){
     		if(location instanceof StopLocation){

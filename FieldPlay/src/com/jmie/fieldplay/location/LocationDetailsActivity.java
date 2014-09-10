@@ -3,7 +3,7 @@ package com.jmie.fieldplay.location;
 import java.util.ArrayList;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.binocular.testar.FPBinocularActivity;
+import com.jmie.fieldplay.binocular.activity.FPBinocularActivity;
 import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.route.Route;
@@ -103,6 +103,7 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 			startActivity(i);
             return true;
 		}
+
 		return super.onOptionsItemSelected(item);
 
 	}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jmie.fieldplay.audioservice.zxing.integration.android;
+package com.jmie.fieldplay.zxing.integration.android;
 
 /**
  * <p>Encapsulates the result of a barcode scan invoked through {@link IntentIntegrator}.</p>

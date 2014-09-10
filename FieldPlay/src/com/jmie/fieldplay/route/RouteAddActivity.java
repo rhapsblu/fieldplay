@@ -1,8 +1,8 @@
 package com.jmie.fieldplay.route;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.audioservice.zxing.integration.android.IntentIntegrator;
-import com.jmie.fieldplay.audioservice.zxing.integration.android.IntentResult;
+import com.jmie.fieldplay.zxing.integration.android.IntentIntegrator;
+import com.jmie.fieldplay.zxing.integration.android.IntentResult;
 
 import android.app.Activity;
 import android.app.AlertDialog;

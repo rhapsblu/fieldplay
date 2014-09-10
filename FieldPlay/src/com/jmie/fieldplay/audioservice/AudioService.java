@@ -106,7 +106,7 @@ public class AudioService extends Service {
 			PendingIntent mutePending = PendingIntent.getService(this, 0, muteIntent, 0);
 			NotificationCompat.Builder builder = new NotificationCompat
 					.Builder(this)
-					.setSmallIcon(R.drawable.ic_action_boot)
+					.setSmallIcon(R.drawable.ic_notification_boot)
 					.setLargeIcon(((BitmapDrawable)this.getResources().getDrawable(R.drawable.fp_logo_notification)).getBitmap())
 					.setContentTitle(getText(R.string.audio_ticker))
 					.setContentText(route.getName())
@@ -155,7 +155,7 @@ public class AudioService extends Service {
 			PendingIntent mutePending = PendingIntent.getService(this, 0, muteIntent, 0);
 			NotificationCompat.Builder builder = new NotificationCompat
 					.Builder(this)
-					.setSmallIcon(R.drawable.ic_action_boot)
+					.setSmallIcon(R.drawable.ic_notification_boot)
 					.setLargeIcon(((BitmapDrawable)this.getResources().getDrawable(R.drawable.fp_logo_notification)).getBitmap())
 					.setContentTitle(getText(R.string.audio_ticker))
 					.setPriority(NotificationCompat.PRIORITY_MAX)
@@ -231,8 +231,9 @@ public class AudioService extends Service {
 		while(iterator.hasNext()){
 			FPAudio fpAudio = iterator.next();
 			Log.d(TAG, "Audio priority is " + fpAudio.getPriority());
-			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()>=50))continue;
-			if(!geoFenceID.startsWith("!")&&(fpAudio.getPriority()<50))continue;
+
+			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()>=getResources().getInteger(R.integer.alert_priority_threshold)))continue;
+			if(!geoFenceID.startsWith("!")&&(fpAudio.getPriority()<getResources().getInteger(R.integer.alert_priority_threshold)))continue;
 			String localPath = StorageManager.getAudioPath(this, route.getRouteData(), fpAudio.getFilePath());
 			Log.d(TAG, "Path to add is " + localPath);
 			pathList.add(localPath);

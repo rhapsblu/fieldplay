@@ -31,7 +31,7 @@ import com.jmie.fieldplay.binocular.widget.VerticalTextView;
  * @author Justin Wetherell <phishman3579@gmail.com>
  * @author modified by John Donahue <rhapsblu@gmail.com>
  */
-public class AugmentedReality extends SensorsActivity implements OnTouchListener {
+public class AugmentedReality extends SensorsActivity implements OnTouchListener{
 
     private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");

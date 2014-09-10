@@ -3,14 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
-    <Button 
+    <ImageButton 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/pause_play_button">
-     </Button>
+        android:text="@string/pause_play_button"
+        android:id="@+id/singlePlayButton"
+        android:src="@drawable/av_play"
+        android:onClick="playClick">
+     </ImageButton>
     <SeekBar
         android:id="@+id/mediaSeekBar"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:max="100">
     </SeekBar>

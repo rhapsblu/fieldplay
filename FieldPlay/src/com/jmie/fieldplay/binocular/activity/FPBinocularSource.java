@@ -1,4 +1,4 @@
-package com.jmie.fieldplay.binocular.testar;
+package com.jmie.fieldplay.binocular.activity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
