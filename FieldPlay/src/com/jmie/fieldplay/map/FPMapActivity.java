@@ -42,6 +42,7 @@ import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.InterestLocation;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.route.RouteData;
+import com.jmie.fieldplay.route.RouteFullDetailsActivity;
 import com.jmie.fieldplay.route.StopLocation;
 import com.jmie.fieldplay.storage.StorageManager;
 
@@ -488,6 +489,11 @@ public class FPMapActivity extends
 		}
 		else if(item.getItemId() == R.id.service_control){
 			toggleAudioService();
+		}
+		else if(item.getItemId() == R.id.get_details){
+			Intent i = new Intent(FPMapActivity.this, RouteFullDetailsActivity.class);
+			i.putExtra("com.jmie.fieldplay.route", route);
+			startActivity(i);
 		}
 		else if(item.getItemId() == R.id.replay_last){
 			boolean audioStatus = StorageManager.getAudioTourStatus(this);

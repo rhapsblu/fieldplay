@@ -57,9 +57,24 @@
             	      android:name="android.support.PARENT_ACTIVITY"
             	      android:value="com.jmie.fieldplay.route.RouteLoaderActivity"/>   
         </activity>
+        <activity android:name="com.jmie.fieldplay.route.DownloadsViewerActivity"
+            	  android:label="@string/download_folder_viewer" 
+            	  android:launchMode="singleTop"
+            	  android:parentActivityName="com.jmie.fieldplay.route.RouteAddActivity">
+            	  <meta-data
+            	      android:name="android.support.PARENT_ACTIVITY"
+            	      android:value="com.jmie.fieldplay.route.RouteAddActivity"/>   
+        </activity>
         <activity android:name="com.jmie.fieldplay.location.FullScreenViewActivity"/>
         <activity android:name="com.jmie.fieldplay.location.LocationDetailsActivity"
             	  android:label="@string/location_details" 
+            	  android:parentActivityName="com.jmie.fieldplay.map.FPMapActivity">
+            	  <meta-data
+            	      android:name="android.support.PARENT_ACTIVITY"
+            	      android:value="com.jmie.fieldplay.map.FPMapActivity"/>   	 
+        </activity>
+        <activity android:name="com.jmie.fieldplay.route.RouteFullDetailsActivity"
+            	  android:label="@string/route_details" 
             	  android:parentActivityName="com.jmie.fieldplay.map.FPMapActivity">
             	  <meta-data
             	      android:name="android.support.PARENT_ACTIVITY"

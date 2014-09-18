@@ -20,7 +20,7 @@ import android.widget.Toast;
 public class RouteAddActivity extends Activity {
 
 	
-	
+	static final int PICK_FOLDER_REQUEST = 99;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,6 +41,10 @@ public class RouteAddActivity extends Activity {
 			}
 		});
 		alert.show();
+	}
+	public void folderhandler(View view){
+    	Intent i = new Intent(RouteAddActivity.this, DownloadsViewerActivity.class);
+    	startActivityForResult(i, PICK_FOLDER_REQUEST);
 	}
 	public void urlhandler(View view){
 		AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK);
@@ -71,7 +75,11 @@ public class RouteAddActivity extends Activity {
 		if(intent == null) return;
 		IntentResult scanningResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
-		if (scanningResult != null) {
+		if(requestCode == PICK_FOLDER_REQUEST){
+			String location = intent.getStringExtra("com.jmie.fieldplay.location");
+			returnFile(location);
+		}
+		else if (scanningResult != null) {
 			String scanContent = scanningResult.getContents();
 			String scanFormat = scanningResult.getFormatName();
 			returnLocation(false, scanContent);
@@ -84,6 +92,13 @@ public class RouteAddActivity extends Activity {
 			toast.show();
 
 		}
+	}
+	private void returnFile(String location){
+		Intent intent = new Intent();
+		intent.putExtra("com.jmie.fieldplay.local", true);
+		intent.putExtra("com.jmie.fieldplay.location", location);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 	private void returnLocation(boolean isLocal, String location){
 		if(Patterns.WEB_URL.matcher(location).matches()){

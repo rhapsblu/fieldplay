@@ -66,5 +66,8 @@
     <string name="audio_service_on">Audio Service ON</string>
     <string name="audio_service_off">Audio Service OFF</string>
 	<string name="pause_play_button">Play</string>
+	<string name="route_archive_suffix">.fpr</string>
+	<string name="download_folder_viewer">Download Folder Browser</string>
+	<string name="route_details">Route Details</string>
 	
 </resources>

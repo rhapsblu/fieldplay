@@ -23,7 +23,8 @@ public class Route implements Parcelable{
 	private List<MapLayer> mapLayers = new ArrayList<MapLayer>();
 	//private String storageName;
 	private RouteData routeData;
-
+	private List<Reference> references = new ArrayList<Reference>();
+	
 	public Route(){
 		locations = new ArrayList<FPLocation>();
 	}
@@ -53,8 +54,14 @@ public class Route implements Parcelable{
 	public void addMapLayer(MapLayer mapLayer){
 		mapLayers.add(mapLayer);
 	}
+	public void addReference(Reference ref){
+		references.add(ref);
+	}
 	public List<MapLayer> getMapLayers(){
 		return mapLayers;
+	}
+	public List<Reference> getReferences(){
+		return references;
 	}
 	public void addLocation(FPLocation loc){
 		locations.add(loc);
@@ -114,6 +121,7 @@ public class Route implements Parcelable{
 		}
 		dest.writeTypedList(mapLayers);
 		dest.writeParcelable(routeData, flags);
+		dest.writeTypedList(references);
 		//dest.writeString(storageName);
 		//Log.d("Route Write", "End: "+_name);
 		
@@ -166,6 +174,7 @@ public class Route implements Parcelable{
 		}
 		in.readTypedList(mapLayers, MapLayer.CREATOR);
 		routeData = in.readParcelable(RouteData.class.getClassLoader());
+		in.readTypedList(references, Reference.CREATOR);
 		//Log.d("Route read ", "layers read: ");
 		//storageName = in.readString();
 		//Log.d("Route read ", "storageName: "+ storageName);

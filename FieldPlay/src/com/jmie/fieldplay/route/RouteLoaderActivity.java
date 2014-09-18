@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import android.widget.ListView;
 
@@ -107,9 +108,14 @@ public class RouteLoaderActivity extends Activity
 
 	@Override
 	public void onRouteSelected() {
-		Intent i = new Intent(RouteLoaderActivity.this, FPMapActivity.class);
-		i.putExtra("com.jmie.fieldplay.routeData", selectedRouteData);
-		startActivity(i);
+		if(selectedRouteData.get_unzipProgress() <100){
+			Toast.makeText(this, "Route still loading, please wait", Toast.LENGTH_LONG).show();
+		}
+		else{
+			Intent i = new Intent(RouteLoaderActivity.this, FPMapActivity.class);
+			i.putExtra("com.jmie.fieldplay.routeData", selectedRouteData);
+			startActivity(i);
+		}
 		
 	}
 	public List<RouteData> getRouteList(){
@@ -171,7 +177,15 @@ public class RouteLoaderActivity extends Activity
 			if(resultCode == RESULT_OK){
 				Boolean isLocal = data.getBooleanExtra("com.jmie.fieldplay.local", false);
 				String location = data.getStringExtra("com.jmie.fieldplay.location");
-				if(!isLocal)startDownload(location);
+				if(isLocal){
+					RouteData routeData = new RouteData();
+					routeData.set_routeName(location);
+					routeData.set_downloadProgress(100);
+					routeData.set_unzipProgress(0);
+					routeDB.addRoute(routeData);
+					startUnzip(location, routeData);
+				}
+				else if(!isLocal)startDownload(location);
 			}
 		}
 	}

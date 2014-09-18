@@ -16,6 +16,7 @@ import com.jmie.fieldplay.route.FPLocation;
 import com.jmie.fieldplay.route.FPPicture;
 import com.jmie.fieldplay.route.FPVideo;
 import com.jmie.fieldplay.route.InterestLocation;
+import com.jmie.fieldplay.route.Reference;
 import com.jmie.fieldplay.route.Route;
 import com.jmie.fieldplay.route.StopLocation;
 
@@ -172,6 +173,10 @@ public class XMLManager {
             	route.setLength(readLength(parser));
             	//Log.d(TAG, "Found length "+ route.getLength());
             }
+            else if (name.equals("reference")){
+            	int id = Integer.valueOf(parser.getAttributeValue(null, "id"));
+            	route.addReference(readReference(parser, id));
+            }
             else {
                 skip(parser);
             }
@@ -200,6 +205,26 @@ public class XMLManager {
 	        }
     	 }
     	 return new MapLayer(layerName, description, layerPath);
+    }
+    private Reference readReference(XmlPullParser parser, int id) throws XmlPullParserException, IOException {
+    	parser.require(XmlPullParser.START_TAG, ns, "reference");
+    	String text = null; 
+    	String link = null;
+    	//Log.d(TAG, "Setup done for mapLayer, parsing members");
+    	 while (parser.next() != XmlPullParser.END_TAG) {
+             if (parser.getEventType() != XmlPullParser.START_TAG) {
+                 continue;
+             }
+            String name = parser.getName();
+	    	if (name.equals("text")) {
+	            text = readRefText(parser);
+	            //Log.d(TAG, "Layer name: "+ layerName);
+	        } else if (name.equals("link")) {
+	            link = readLink(parser);
+	            //Log.d(TAG, "Description: "+ description);
+	        } 
+    	 }
+    	 return new Reference(id, text, link);
     }
     private FPLocation readLocation(XmlPullParser parser, String type) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "location");
@@ -371,6 +396,18 @@ public class XMLManager {
         String title = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "name");
         return title;
+    }
+    private String readRefText(XmlPullParser parser) throws IOException, XmlPullParserException{
+    	parser.require(XmlPullParser.START_TAG, ns, "text");
+    	String text = readText(parser);
+    	parser.require(XmlPullParser.END_TAG,  ns, "text");
+    	return text;
+    }
+    private String readLink(XmlPullParser parser) throws IOException, XmlPullParserException{
+    	parser.require(XmlPullParser.START_TAG, ns, "link");
+    	String link = readText(parser);
+    	parser.require(XmlPullParser.END_TAG,  ns, "link");
+    	return link;
     }
     private String readBinocularPoint(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "binocularView");

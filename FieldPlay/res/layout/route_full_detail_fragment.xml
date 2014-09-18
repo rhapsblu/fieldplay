@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+    
+    <TextView android:id="@+id/route_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textStyle="bold"
+              android:textSize="60sp"
+              android:text="@string/empty" />
+    
+    <TextView android:id="@+id/route_milage"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/route_name"
+              android:textSize="25sp"
+              android:text="@string/empty" />
+    
+    <TextView android:id="@+id/route_description"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/route_milage"
+              android:textSize="25sp"
+              android:text="@string/empty" />
+
+
+</RelativeLayout>

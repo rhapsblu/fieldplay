@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/qr_load"
         android:drawableLeft="@drawable/file_search"
+        android:onClick="folderhandler"
         android:text="@string/search_downloads"/>
         <Button
         android:id="@+id/url_download"
