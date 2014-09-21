@@ -208,8 +208,8 @@ public class XMLManager {
     }
     private Reference readReference(XmlPullParser parser, int id) throws XmlPullParserException, IOException {
     	parser.require(XmlPullParser.START_TAG, ns, "reference");
-    	String text = null; 
-    	String link = null;
+    	String text = ""; 
+    	String link = "";
     	//Log.d(TAG, "Setup done for mapLayer, parsing members");
     	 while (parser.next() != XmlPullParser.END_TAG) {
              if (parser.getEventType() != XmlPullParser.START_TAG) {

@@ -8,9 +8,12 @@ import com.jmie.fieldplay.R;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,7 +28,7 @@ public class ReferenceFragment extends Fragment {
 	private List<Reference> refList;
 	private ListView lv;
 	private ReferenceListAdapter refListAdapter;
-	
+	private int defaultSelect;
 	private Context c;
 
 	
@@ -67,9 +70,25 @@ public class ReferenceFragment extends Fragment {
 	            // change the background color of the selected element
 	            view.setBackgroundColor(Color.LTGRAY);
 	            //				TextView clickedView = (TextView) view;
-	
 			}
 		});
+		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parentAdapter, View view,
+					int position, long id) {
+				String url = refListAdapter.getItem(position).getLink();
+				if(url.length() > 0){
+					if (!url.startsWith("https://") && !url.startsWith("http://")){
+					    url = "http://" + url;
+					}
+					Intent browserIntent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+					startActivity(browserIntent);
+				}
+				return false;
+			}
+		});
+
         return rootView;
     }
     @Override
@@ -78,6 +97,8 @@ public class ReferenceFragment extends Fragment {
 		refList = new ArrayList<Reference>();
 		
 		route = b.getParcelable("com.jmie.fieldplay.route");
+		defaultSelect = b.getInt("com.jmie.fieldplay.refselect");
+		
 		refList = route.getReferences();	
     }
 
@@ -87,6 +108,7 @@ public class ReferenceFragment extends Fragment {
 
 		
     }
+
     private View getDefaultView(){
     	TextView tv = new TextView(getActivity());
     	tv.setGravity(Gravity.CENTER);

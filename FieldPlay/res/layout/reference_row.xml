@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
     
     <TextView
     	android:id="@+id/reference_row"
@@ -10,4 +10,23 @@
     	android:layout_height="wrap_content"
     	android:textAppearance="@android:style/TextAppearance.Medium" />
     
-</LinearLayout>
+</LinearLayout> -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/weblink_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+    	android:src="@drawable/ic_action_web_site"/>
+        <TextView
+    	android:id="@+id/reference_row"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:scrollHorizontally="false"
+    	android:layout_toLeftOf="@id/weblink_button"
+    	android:layout_alignParentLeft="true"
+    	android:textAppearance="@android:style/TextAppearance.Medium" />
+ </RelativeLayout> 

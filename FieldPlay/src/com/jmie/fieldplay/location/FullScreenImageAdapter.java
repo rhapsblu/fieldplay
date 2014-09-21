@@ -1,6 +1,7 @@
 package com.jmie.fieldplay.location;
 
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.route.ReferenceLinker;
  
 import java.util.ArrayList;
  
@@ -17,18 +18,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
  
 public class FullScreenImageAdapter extends PagerAdapter {
  
     private Activity _activity;
     private ArrayList<String> _imagePaths;
+    private ArrayList<String> descriptions;
     private LayoutInflater inflater;
  
     // constructor
     public FullScreenImageAdapter(Activity activity,
-            ArrayList<String> imagePaths) {
+            ArrayList<String> imagePaths, ArrayList<String> descriptions) {
         this._activity = activity;
         this._imagePaths = imagePaths;
+        this.descriptions = descriptions;
     }
  
     @Override
@@ -45,20 +49,18 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         TouchImageView imgDisplay;
         Button btnClose;
-  
+        TextView description;
+        
         inflater = (LayoutInflater) _activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.fullscreen_image_layout, container,
                 false);
   
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
+        description = (TextView)viewLayout.findViewById(R.id.photo_description);
+        description.setText(descriptions.get(position));
         btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
          
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        
-//        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//        Bitmap bitmap = BitmapFactory.decodeFile(_imagePaths.get(position), options);
-//        imgDisplay.setImageBitmap(bitmap);
         DisplayMetrics metrics = new DisplayMetrics();
         this._activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         imgDisplay.setImageBitmap(decodeSampledBitmapFromFile(_imagePaths.get(position), metrics.widthPixels, metrics.heightPixels));

@@ -17,6 +17,7 @@
               android:layout_height="wrap_content"
               android:layout_below="@id/location_name"
               android:textSize="25sp"
+              android:clickable="true"
               android:text="@string/empty" />
 
 </RelativeLayout>

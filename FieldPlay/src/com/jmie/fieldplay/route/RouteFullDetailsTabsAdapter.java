@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 public class RouteFullDetailsTabsAdapter extends FragmentPagerAdapter{
 	private RouteFullDetailsActivity activity;
 	public static String TAG = "Tab adapter";
+	
+	private int defaultRefSelect = 0;
 	public List<Fragment> fragments = new ArrayList<Fragment>();
 	public RouteFullDetailsTabsAdapter(FragmentManager fm, RouteFullDetailsActivity activity) {
 		super(fm);
@@ -37,6 +39,7 @@ public class RouteFullDetailsTabsAdapter extends FragmentPagerAdapter{
 		case 2:
 			Bundle referenceArgs = new Bundle();
 			referenceArgs.putParcelable("com.jmie.fieldplay.route", activity.getRoute());
+			referenceArgs.putInt("com.jmie.fieldplay.refselect", defaultRefSelect);
 //			audioArgs.putParcelable("com.jmie.fieldplay.location", activity.getLocation());
 			return ReferenceFragment.newInstance(referenceArgs, activity);
 		}
@@ -48,5 +51,7 @@ public class RouteFullDetailsTabsAdapter extends FragmentPagerAdapter{
 		// TODO Auto-generated method stub
 		return 3;
 	}
-
+	public void setDefaultRefSelect(int i){
+		defaultRefSelect = i;
+	}
 }

@@ -3,10 +3,13 @@ package com.jmie.fieldplay.location;
 
 
 import com.jmie.fieldplay.R;
+import com.jmie.fieldplay.route.ReferenceLinker;
+import com.jmie.fieldplay.route.Route;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 
 public class LocationDescriptionFragment extends Fragment{
 	public static String TAG = "Description Fragment";
+	private Route route;
 	private String locationName;
 	private String locationDescription;
 	public static LocationDescriptionFragment newInstance(Bundle b){
@@ -29,6 +33,7 @@ public class LocationDescriptionFragment extends Fragment{
 	@Override
 	public void onCreate(Bundle savedinstance){
 		super.onCreate(savedinstance);
+		route = this.getArguments().getParcelable("com.jmie.fieldplay.route");
 		locationName = this.getArguments().getString("com.jmie.fieldplay.locationName");
 		locationDescription = this.getArguments().getString("com.jmie.fieldplay.locationDescription");
 	}
@@ -40,9 +45,14 @@ public class LocationDescriptionFragment extends Fragment{
 		
 
 		TextView name = (TextView)rootView.findViewById(R.id.location_name);
+		
+		ReferenceLinker refLinker = new ReferenceLinker(this.getActivity(), route, locationDescription);
+		
 		TextView description = (TextView)rootView.findViewById(R.id.location_description);
-		description.setText(locationDescription);
-		description.setMovementMethod(new ScrollingMovementMethod());
+		description.setText(refLinker.getSpannableString());
+		description.setClickable(true);
+		description.setMovementMethod(LinkMovementMethod.getInstance());
+
 		name.setText(locationName);
 		Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "Roboto-Medium.ttf");
 		name.setTypeface(font);

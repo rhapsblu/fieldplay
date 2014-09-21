@@ -40,7 +40,7 @@ public class ImageViewGridFragment extends Fragment {
     private GridViewImageAdapter adapter;
     private GridView gridView;
     private int columnWidth;
-    
+    private ArrayList<String> descriptionList;
 
     private RouteData routeData;
     
@@ -53,11 +53,13 @@ public class ImageViewGridFragment extends Fragment {
     public void onCreate(Bundle savedinstance){
     	super.onCreate(savedinstance);
 		routeData =  this.getArguments().getParcelable("com.jmie.fieldplay.routeData");
-        pathList = new ArrayList<String>();
 		
-		ArrayList<FPPicture> pictures = this.getArguments().getParcelableArrayList("com.jmie.fieldplay.locations");
+        pathList = new ArrayList<String>();
+		descriptionList = new ArrayList<String>();
+		ArrayList<FPPicture>pictures = this.getArguments().getParcelableArrayList("com.jmie.fieldplay.locations");
 		for(FPPicture pic : pictures){
 			pathList.add(getActivity().getExternalFilesDir(StorageManager.getImagePath(this.getActivity(), routeData, pic.getResource())).getPath());
+			descriptionList.add(pic.getDescription());
 		}
 
     }
@@ -129,6 +131,7 @@ public class ImageViewGridFragment extends Fragment {
           Intent i = new Intent(getActivity(), FullScreenViewActivity.class);
           i.putExtra("com.jmie.fieldplay.position", position);
           i.putStringArrayListExtra("com.jmie.fieldplay.filepaths", pathList);
+          i.putStringArrayListExtra("com.jmie.fieldplay.descriptionlist", descriptionList);
           
           getActivity().startActivity(i);
       }

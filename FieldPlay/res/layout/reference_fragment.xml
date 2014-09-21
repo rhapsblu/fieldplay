@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
      
-    <ListView android:layout_width="fill_parent"
+    <ListView android:layout_width="match_parent"
         android:id="@+id/referencelist"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:layout_centerInParent="true"/>
 

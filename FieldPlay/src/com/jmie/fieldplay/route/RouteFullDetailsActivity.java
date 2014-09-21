@@ -37,6 +37,7 @@ public class RouteFullDetailsActivity extends FragmentActivity implements TabLis
 		Bundle b = getIntent().getExtras();
 
 		route = (Route)b.getParcelable("com.jmie.fieldplay.route");
+
 		Log.d(TAG, "Route name: " +route.getName());		
 		
 		setContentView(R.layout.activity_route_full_detail);
@@ -56,7 +57,10 @@ public class RouteFullDetailsActivity extends FragmentActivity implements TabLis
 		for(String t_name : tabs){
 			actionBar.addTab(actionBar.newTab().setText(t_name).setTabListener(this));
 		}
-
+		if(b.containsKey("com.jmie.fieldplay.reference")){
+			mAdapter.setDefaultRefSelect(b.getInt("com.jmie.fieldplay.reference"));
+			getActionBar().setSelectedNavigationItem(2);
+		}
 	}	
 
 	@Override

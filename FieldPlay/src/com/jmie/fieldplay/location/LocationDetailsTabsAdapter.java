@@ -27,6 +27,7 @@ public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 		switch(index){
 		case 0:
 			Bundle detailArgs = new Bundle();
+			detailArgs.putParcelable("com.jmie.fieldplay.route", activity.getRoute());
 			detailArgs.putString("com.jmie.fieldplay.locationName", activity.getLocation().getName());
 			detailArgs.putString("com.jmie.fieldplay.locationDescription", activity.getLocation().getDescription());
 			return LocationDescriptionFragment.newInstance(detailArgs);

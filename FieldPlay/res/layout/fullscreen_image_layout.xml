@@ -22,5 +22,16 @@
         android:background="@drawable/button_background"
         android:textColor="#ffffff"
         android:text="Close" />
+     <TextView
+        android:id="@+id/photo_description"
+        android:layout_width="match_parent"
+    	android:layout_height="30dp"
+    	android:textColor="#ffffff"
+    	android:textColorLink="#F0FC00"
+    	android:background="@color/black"
+    	android:layout_alignParentBottom="true"
+    	android:layout_alignParentLeft="true"
+    	
+        />
  
 </RelativeLayout>

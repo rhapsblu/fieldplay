@@ -26,9 +26,9 @@ public class FullScreenViewActivity extends Activity{
 		Intent i = getIntent();
 		int position = i.getIntExtra("com.jmie.fieldplay.position", 0);
 		ArrayList<String> paths = i.getStringArrayListExtra("com.jmie.fieldplay.filepaths");
-
+		ArrayList<String> descriptions = i.getStringArrayListExtra("com.jmie.fieldplay.descriptionlist");
 		adapter = new FullScreenImageAdapter(FullScreenViewActivity.this,
-				paths);
+				paths, descriptions);
 
 		viewPager.setAdapter(adapter);
 
