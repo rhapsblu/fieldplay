@@ -10,7 +10,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 public class RouteDBHandler extends SQLiteOpenHelper{
 	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "routeDB.db";
@@ -23,7 +23,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 	public static final String COLUMN_DOWNLOADPROGRESS = "downloadprogress";
 	public static final String COLUMN_UNZIPPROGRESS = "unzipprogress";
 	public static final String COLUMN_MANAGERID = "managerid";
-	public String TAG = "RouteDB Handler";
+
 	
 	public RouteDBHandler(Context context, String name, CursorFactory factory, int version){
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -145,7 +145,7 @@ public class RouteDBHandler extends SQLiteOpenHelper{
 				res.moveToNext();
 	      }
 	      res.close();
-	      Log.d(TAG, "Retrieved list of size: " + array_list.size());
+
 	   return array_list;
 	}
 }

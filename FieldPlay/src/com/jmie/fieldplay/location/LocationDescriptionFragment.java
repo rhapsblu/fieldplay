@@ -10,8 +10,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import android.widget.TextView;
 
 
 public class LocationDescriptionFragment extends Fragment{
-	public static String TAG = "Description Fragment";
 	private Route route;
 	private String locationName;
 	private String locationDescription;

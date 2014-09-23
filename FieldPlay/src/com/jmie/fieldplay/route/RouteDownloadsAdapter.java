@@ -2,7 +2,7 @@ package com.jmie.fieldplay.route;
 
 
 import java.io.File;
-import java.util.List;
+
 
 import com.jmie.fieldplay.R;
 
@@ -11,12 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 public class RouteDownloadsAdapter extends BaseAdapter{
 	private LayoutInflater inflater;
-	private String TAG = "Routes Adapter";
+
 	private File[] routeFiles;
 	
 	public RouteDownloadsAdapter (Context c, File[] routeFiles){

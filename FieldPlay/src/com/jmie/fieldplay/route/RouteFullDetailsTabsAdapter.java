@@ -3,7 +3,7 @@ package com.jmie.fieldplay.route;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jmie.fieldplay.route.FPPicture;
+
 
 
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class RouteFullDetailsTabsAdapter extends FragmentPagerAdapter{
 	private RouteFullDetailsActivity activity;
-	public static String TAG = "Tab adapter";
+
 	
 	private int defaultRefSelect = 0;
 	public List<Fragment> fragments = new ArrayList<Fragment>();

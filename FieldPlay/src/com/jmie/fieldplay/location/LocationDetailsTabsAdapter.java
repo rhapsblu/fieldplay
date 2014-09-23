@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class LocationDetailsTabsAdapter extends FragmentPagerAdapter{
 	private LocationDetailsActivity activity;
-	public static String TAG = "Tab adapter";
 	public List<Fragment> fragments = new ArrayList<Fragment>();
 	public LocationDetailsTabsAdapter(FragmentManager fm, LocationDetailsActivity activity) {
 		super(fm);

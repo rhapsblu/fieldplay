@@ -29,7 +29,7 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
 		 this.loader = loader;
 		 routeDB = new RouteDBHandler(loader);
 		 this.routeData = routeDB.refreshData(routeData);
-		 Log.d(TAG, "unzip constructor "+ this.routeData.get_id());
+
 	 }
 
        @Override
@@ -62,7 +62,7 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
        }
 
        protected void onProgressUpdate(Integer progress){
-    	   Log.d(TAG, "unzip progress update "+ routeData.get_id());
+
     	   routeData = routeDB.refreshData(routeData);
     	   routeData.set_unzipProgress(progress);
     	   routeDB.updateRoute(routeData);
@@ -72,7 +72,7 @@ public class UnZipTask extends AsyncTask<File, Integer, Boolean> {
 			    	loader.updateAdapter();
 			    }
 			} );
-    	   Log.d(TAG, "Unzip Progress: " + progress);
+
        }
        @Override
        protected void onPostExecute(Boolean result) {

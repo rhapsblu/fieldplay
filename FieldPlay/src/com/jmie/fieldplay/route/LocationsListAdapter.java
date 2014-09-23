@@ -3,14 +3,14 @@ package com.jmie.fieldplay.route;
 import java.util.List;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.route.FPAudio;
+
 
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 public class LocationsListAdapter extends BaseAdapter{

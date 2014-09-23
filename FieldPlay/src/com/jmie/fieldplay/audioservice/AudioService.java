@@ -47,11 +47,10 @@ public class AudioService extends Service {
 	private Route route;
 	private ArrayList<FPGeofence> geoFenceList;
 	private Map<String, InterestLocation> fenceIdToLocation;
-	private String TAG = "AudioService";
 	private MediaQueuePlayer player;
 	private boolean muted = false;
 	private String replayID;
-
+	private String TAG = "FP Audio Service";
 	private final class ServiceHandler extends Handler 
 									   implements AudioManager.OnAudioFocusChangeListener{
 		public ServiceHandler (Looper looper){
@@ -123,7 +122,7 @@ public class AudioService extends Service {
 			startForeground(1, builder.build());
 		}
 		else if(intent.getAction()=="com.jmie.fieldplay.play_location"){
-			Log.d(TAG, "recieved fence notification: " + intent.getStringExtra("com.jmie.fieldplay.fence_ids"));
+//			Log.d(TAG, "recieved fence notification: " + intent.getStringExtra("com.jmie.fieldplay.fence_ids"));
 			//String transitionType = intent.getStringExtra("com.jmie.fieldplay.transition_type");
 			String[] ids = TextUtils.split(intent.getStringExtra("com.jmie.fieldplay.fence_ids"), GeofenceUtils.GEOFENCE_ID_DELIMITER.toString());
 			for(String id: ids){
@@ -149,7 +148,7 @@ public class AudioService extends Service {
 		else if(intent.getAction()=="com.jmie.fieldplay.mute_audio"){
 			muted = !muted;
 			player.mute(muted);
-			Log.d(TAG, "Audio mute: " + muted);
+//			Log.d(TAG, "Audio mute: " + muted);
 			Intent muteIntent = new Intent(this, AudioService.class);
 			muteIntent.setAction("com.jmie.fieldplay.mute_audio");
 			PendingIntent mutePending = PendingIntent.getService(this, 0, muteIntent, 0);
@@ -230,17 +229,17 @@ public class AudioService extends Service {
 		List<String> pathList = new ArrayList<String>();
 		while(iterator.hasNext()){
 			FPAudio fpAudio = iterator.next();
-			Log.d(TAG, "Audio priority is " + fpAudio.getPriority());
+//			Log.d(TAG, "Audio priority is " + fpAudio.getPriority());
 
 			if(geoFenceID.startsWith("!")&&(fpAudio.getPriority()>=getResources().getInteger(R.integer.alert_priority_threshold)))continue;
 			if(!geoFenceID.startsWith("!")&&(fpAudio.getPriority()<getResources().getInteger(R.integer.alert_priority_threshold)))continue;
 			String localPath = StorageManager.getAudioPath(this, route.getRouteData(), fpAudio.getFilePath());
-			Log.d(TAG, "Path to add is " + localPath);
+//			Log.d(TAG, "Path to add is " + localPath);
 			pathList.add(localPath);
 		}
 		
 		player.addAudio(pathList);
-		Log.d(TAG, "Audio added, Starting player");
+//		Log.d(TAG, "Audio added, Starting player");
 		player.startPlayer();
 	}
 

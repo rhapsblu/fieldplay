@@ -1,7 +1,6 @@
 package com.jmie.fieldplay.location;
 
 import com.jmie.fieldplay.R;
-import com.jmie.fieldplay.route.ReferenceLinker;
  
 import java.util.ArrayList;
  
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
  

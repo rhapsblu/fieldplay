@@ -4,40 +4,25 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 import com.jmie.fieldplay.R;
 
-import com.jmie.fieldplay.map.FPMapActivity;
-import com.jmie.fieldplay.storage.RouteDBHandler;
-import com.jmie.fieldplay.storage.StorageManager;
-import com.jmie.fieldplay.storage.UnZipTask;
-import com.jmie.fieldplay.zxing.integration.android.IntentIntegrator;
-import com.jmie.fieldplay.zxing.integration.android.IntentResult;
 
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.Intent;
-import android.database.Cursor;
+
 import android.graphics.Color;
-import android.util.Log;
-import android.util.Patterns;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Toast;
+
 
 import android.widget.ListView;
 
@@ -48,7 +33,7 @@ public class DownloadsViewerActivity extends Activity
 	static final int PICK_DOWNLOAD_REQUEST = 0;
 
 	private RouteDownloadsAdapter downloadsAdapter;
-	static final String TAG = "Route Load Activity";
+
 
 	private File selectedRoutePath;
 	private ListView lv;

@@ -57,7 +57,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+
 
 import android.os.Build;
 import android.os.Bundle;
@@ -96,7 +96,6 @@ public class FPMapActivity extends
     private TileOverlay tileOverlay;
 	private List<Circle> circleList;
 	private Route route;
-	public static String TAG = "FP Mapp";
 	private CameraPosition savedCamera;
 
     /*Geofence vars*/
@@ -217,11 +216,11 @@ public class FPMapActivity extends
     }
 
     private void setUpMap(){
-    	Log.d(TAG, "Setting up map");
+
         // Add lots of markers to the map.
         addMarkersToMap();
         generateGeofenceLines(mMap);
-        //addRouteLineToMap();
+
         // Set listeners for marker events.  See the bottom of this class for their behavior.
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCameraChangeListener(this);
@@ -244,11 +243,11 @@ public class FPMapActivity extends
                     } else {
                       mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
-                    Log.d(TAG, "Moving camera to bounds");
+
                     
                     
                     if(savedCamera==null){
-                    	Log.d(TAG, "Saved camera is null");
+
                     	mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
                     }
                     else
@@ -293,17 +292,7 @@ public class FPMapActivity extends
     	}
 
     }
-//    @Deprecated
-//    private void addRouteLineToMap(){
-//    	//Log.d(TAG, "Adding route lines to map");
-//    	PolylineOptions routeLine = new PolylineOptions();
-//    	for(FPLocation location: route.getLocationList()){
-//    		if(!(location instanceof BinocularLocation))
-//    			routeLine.add(new LatLng(location.getLatitude(), location.getLongitude()));
-//    	}
-//    
-//    	mMap.addPolyline(routeLine);
-//    }
+
     private void generateGeofenceLines(GoogleMap map){
     	for(FPLocation location: route.getLocationList()){
     		if(location instanceof StopLocation){
@@ -341,7 +330,7 @@ public class FPMapActivity extends
     private void toggleCircles(boolean on){
     	for(Circle c: circleList){
     		c.setVisible(on);
-    		Log.d(TAG, "Turning on circle: " + c.isVisible());
+
 
     	}
     }
@@ -582,7 +571,7 @@ public class FPMapActivity extends
          * know what type of request was in progress.
          */
         if (!servicesConnected()) {
-        	Log.d(TAG, "services not connected");
+
             return;
         }
         int id = 0;
@@ -595,9 +584,9 @@ public class FPMapActivity extends
         	if(content!=null)mCurrentGeofences.add(content);
         	if(alert!=null) mCurrentGeofences.add(alert);
         }
-        for(FPGeofence fpGeofence:currentFPGeofences){
-        	Log.d(TAG, "FP geofence: " + fpGeofence.getInterestLocation().getName());
-        }
+//        for(FPGeofence fpGeofence:currentFPGeofences){
+//        	Log.d(TAG, "FP geofence: " + fpGeofence.getInterestLocation().getName());
+//        }
 
         // Start the request. Fail if there's already a request in progress
         try {
@@ -646,7 +635,7 @@ public class FPMapActivity extends
                     TextUtils.equals(action, GeofenceUtils.ACTION_GEOFENCES_ADDED)
                     ||
                     TextUtils.equals(action, GeofenceUtils.ACTION_GEOFENCES_REMOVED)) {
-            	Log.d(TAG, action);
+
                 handleGeofenceStatus(context, intent);
 
             // Intent contains information about a geofence transition
@@ -733,7 +722,7 @@ public class FPMapActivity extends
     }
 	@Override
 	public void onCameraChange(CameraPosition cameraPosition) {
-		Log.d(TAG, "saving map camera");
+
 		savedCamera = cameraPosition;
 	}
     

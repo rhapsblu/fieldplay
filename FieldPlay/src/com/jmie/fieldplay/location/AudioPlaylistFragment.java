@@ -17,7 +17,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,7 +35,6 @@ public class AudioPlaylistFragment extends Fragment {
 	private List<FPAudio> audioList;
 	private ListView lv;
 	private AudioPlaylistAdapter playlistAdapter;
-	private String TAG = "Playlist Fragment";
 	
 	private SimpleAudioPlayer audioPlayer;
 	private ImageButton playButton;
@@ -97,7 +95,6 @@ public class AudioPlaylistFragment extends Fragment {
 	            //				TextView clickedView = (TextView) view;
 	            FPAudio audio = playlistAdapter.getItem(position);
 	            audioPlayer.setPlayer(StorageManager.getAudioPath(getActivity(), routeData, audio.getFilePath()));
-	            Log.d(TAG, "Item clicked " + position );
 	
 			}
 		});

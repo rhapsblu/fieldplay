@@ -30,7 +30,7 @@ public class XMLManager {
 		
 	}
     public Route parse(InputStream in) throws XmlPullParserException, IOException {
-    	Log.d(TAG, "Starting route parse ");
+
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -42,7 +42,7 @@ public class XMLManager {
         }
     }
     public String parseNameOnly(InputStream in) throws XmlPullParserException, IOException{
-    	Log.d(TAG, "Starting route parse ");
+
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -54,7 +54,7 @@ public class XMLManager {
         }
     }
     public String parseDescriptionOnly(InputStream in) throws XmlPullParserException, IOException{
-    	Log.d(TAG, "Starting route parse ");
+
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -66,7 +66,7 @@ public class XMLManager {
         }
     }
     public String[] parseNameAndDescription(InputStream in) throws XmlPullParserException, IOException{
-    	Log.d(TAG, "Starting route parse ");
+
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -306,7 +306,7 @@ public class XMLManager {
         	location = new BinocularLocation(latitude, longitude, elevation, locationName, description);
         	for(FPPicture picture: imageList) location.addImage(picture);
         }
-
+        Log.d(TAG, location.getName());
 
         return location;
     }

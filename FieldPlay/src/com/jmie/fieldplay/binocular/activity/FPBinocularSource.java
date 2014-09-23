@@ -27,7 +27,6 @@ public class FPBinocularSource extends DataSource{
 			while(iterator.hasNext()){
 				String binocPointName = iterator.next();
 				FPLocation binocPoint = r.getLocationByName(binocPointName);
-				Log.d(TAG, "Adding marker " + binocPoint.getName());
 				Marker m = new Marker(binocPoint.getName(), 
 									  binocPoint.getDescription(),
 						              binocPoint.getLatitude(), 

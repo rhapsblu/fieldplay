@@ -12,7 +12,6 @@ public class SimpleAudioPlayer
 										   MediaPlayer.OnCompletionListener{
 
 	private MediaPlayer mp;
-	public static String TAG = "SimpleAudioPlayer";
 	private boolean loaded = false;
 	private boolean paused = true;
 	private AudioPlaylistFragment fragment;

@@ -51,7 +51,7 @@ public class GeofenceRequester
 
     // Stores the current instantiation of the location client
     private LocationClient mLocationClient;
-    private String TAG = "GeofenceRequester";
+
     /*
      * Flag that indicates whether an add or remove request is underway. Check this
      * flag before attempting to start a new request.

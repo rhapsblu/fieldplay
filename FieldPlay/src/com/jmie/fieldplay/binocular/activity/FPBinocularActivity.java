@@ -33,14 +33,12 @@ public class FPBinocularActivity extends AugmentedReality {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        Log.d(TAG, "create");
+
 		Bundle b = getIntent().getExtras();
 		
 		//routeStorageName = routeAndLocation[0];
 		route = b.getParcelable("com.jmie.fieldplay.route");
 		String locationName = b.getString("com.jmie.fieldplay.locationName");
-		Log.d(TAG,  "Route= " + route.getName());
-		Log.d(TAG, "Location= " + locationName);
 		//Log.d(TAG, route.debugPrintMap());
 		location = route.getLocationByName(locationName);
 
@@ -78,7 +76,6 @@ public class FPBinocularActivity extends AugmentedReality {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "start");
     }
     @Override
     public void onResume(){

@@ -23,7 +23,6 @@ public class MediaQueuePlayer implements
 	private MediaPlayer mediaPlayer;
 	private Context context;
 	private AudioBundle currentBundle;
-	private String TAG = "MediaQueuePlayer";
 	private boolean mute = false;
 	
 	public MediaQueuePlayer(Context c){
@@ -33,12 +32,11 @@ public class MediaQueuePlayer implements
 	public void addAudio(List<String> audioPaths){
 		AudioBundle audioBundle = new AudioBundle(audioPaths);
 		bundleQueue.add(audioBundle);
-		Log.d(TAG, "added " + audioPaths.size() + " files currently have " + bundleQueue.size() + " bundles");
 	}
 	public void startPlayer(){
 		
 		if(mediaPlayer != null) {
-			Log.d(TAG, "MediaPlayer already active");
+//			Log.d(TAG, "MediaPlayer already active");
 			return;
 		}
 		if(!hasNextAudio()){
@@ -46,16 +44,14 @@ public class MediaQueuePlayer implements
 			return;
 		}
 		mediaPlayer = new MediaPlayer();
-		Log.d(TAG, "Media Player obtained");
 		if(mute)mediaPlayer.setVolume(0, 0);
 		mediaPlayer.setWakeMode(context.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 		mediaPlayer.setOnCompletionListener(this);
 		mediaPlayer.setOnErrorListener(this);
 		mediaPlayer.setOnPreparedListener(this);
 		try {
-			Log.d(TAG, "Preparing audio");
 			String audioPath = getNextAudio();
-			Log.d(TAG, "Prepping path: " + audioPath);
+//			Log.d(TAG, "Prepping path: " + audioPath);
 			mediaPlayer.setDataSource(audioPath);
 			mediaPlayer.prepareAsync();
 		} catch (IllegalArgumentException e) {
@@ -130,7 +126,7 @@ public class MediaQueuePlayer implements
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		Log.d(TAG, "Playing audio");
+//		Log.d(TAG, "Playing audio");
 		mediaPlayer.start();
 		
 	}
@@ -148,7 +144,7 @@ public class MediaQueuePlayer implements
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
-		Log.d(TAG, "Media Player released");
+//		Log.d(TAG, "Media Player released");
 	}
 	private String getNextAudio(){
 		if((currentBundle==null)&&bundleQueue.isEmpty())return null;

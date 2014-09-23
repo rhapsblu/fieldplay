@@ -16,13 +16,12 @@ import android.graphics.Point;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
+
 import android.view.ViewGroup;
 
 import android.widget.AdapterView;
@@ -34,7 +33,7 @@ public class ImageViewGridFragment extends Fragment {
  
 	public static final int GRID_PADDING = 8;
 	public static final int NUM_OF_COLUMNS = 3;
-	public static String TAG = "Image Grid Fragment";
+
 
     private ArrayList<String> pathList;
     private GridViewImageAdapter adapter;
@@ -125,7 +124,7 @@ public class ImageViewGridFragment extends Fragment {
 
       @Override
       public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-      	Log.d(TAG, "View Clicked");
+
           // on selecting grid view image
           // launch full screen activity
           Intent i = new Intent(getActivity(), FullScreenViewActivity.class);

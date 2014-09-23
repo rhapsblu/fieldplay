@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class RoutesAdapter extends BaseAdapter{
 	private LayoutInflater inflater;
-	private String TAG = "Routes Adapter";
+
 	private RouteLoaderActivity loader;
 	
 	public RoutesAdapter (RouteLoaderActivity loader){

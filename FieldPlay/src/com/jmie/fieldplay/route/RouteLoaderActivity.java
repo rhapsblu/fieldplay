@@ -40,7 +40,7 @@ public class RouteLoaderActivity extends Activity
 	static final int PICK_DOWNLOAD_REQUEST = 0;
 
 	private RoutesAdapter routesAdapter;
-	static final String TAG = "Route Load Activity";
+
 
 	private RouteData selectedRouteData;
 	private ListView lv;
@@ -48,7 +48,7 @@ public class RouteLoaderActivity extends Activity
 	private List<RouteData> routeDataList;
 
 	private RouteDBHandler routeDB;
-	
+	private String TAG = "FP Route Load";
 	
 	
 	@Override
@@ -122,7 +122,6 @@ public class RouteLoaderActivity extends Activity
 		return routeDataList;
 	}
 	public void updateAdapter() {
-    	Log.d(TAG, "Update Called");
 		routeDataList.clear();
 		routeDataList =  routeDB.getAllRoutes();
 		routesAdapter.notifyDataSetChanged();
@@ -199,7 +198,6 @@ public class RouteLoaderActivity extends Activity
 		Uri uri = Uri.parse(location);
 		DownloadManager.Request request = new DownloadManager.Request(uri);
 		routeData.set_managerID(downloadManager.enqueue(request));
-		Log.d(TAG, "Starting download of " + location);
 		routeDB.addRoute(routeData);
 		new DownloadProgressUpdateTask(downloadManager).execute(routeData, null, null);
 		updateAdapter();
@@ -215,7 +213,7 @@ public class RouteLoaderActivity extends Activity
 		}
 		@Override
 		protected Void doInBackground(RouteData ... locations) {
-			Log.d(TAG, "Starting download monitor");
+
 			while(true){
 				RouteData routeData = locations[0];
 				DownloadManager.Query query = new DownloadManager.Query();
@@ -238,7 +236,7 @@ public class RouteLoaderActivity extends Activity
 							routeData.set_routeName(fileLocation);
 							routeData.set_downloadProgress(100);
 							routeDB.updateRoute(routeData);
-							Log.d(TAG, "Download done");
+
 							runOnUiThread(new Runnable() {
 							    @Override
 							    public void run() {
@@ -281,7 +279,7 @@ public class RouteLoaderActivity extends Activity
 						int progress = (byteSoFar*100)/totalBytes;
 						routeData.set_downloadProgress(progress);
 						routeDB.updateRoute(routeData);
-						Log.d(TAG, "Downloading Progress: " + progress + "% ("+ byteSoFar+ "/"+ totalBytes+")");
+
 						runOnUiThread(new Runnable() {
 						    @Override
 						    public void run() {

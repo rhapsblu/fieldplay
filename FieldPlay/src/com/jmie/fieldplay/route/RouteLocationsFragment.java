@@ -14,7 +14,7 @@ import android.content.Intent;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ public class RouteLocationsFragment extends Fragment {
 	private List<FPLocation> locationList;
 	private ListView lv;
 	private LocationsListAdapter locationsListAdapter;
-	private String TAG = "Playlist Fragment";
+
 	
 	private Context c;
 
@@ -72,7 +72,7 @@ public class RouteLocationsFragment extends Fragment {
 					long id) {
 	            FPLocation location = locationsListAdapter.getItem(position);
 	
-	            Log.d(TAG, "Item clicked " + position );
+
 				Intent i = new Intent(RouteLocationsFragment.this.getActivity(), LocationDetailsActivity.class);
 				i.putExtra("com.jmie.fieldplay.route", route);
 				i.putExtra("com.jmie.fieldplay.location", location.getName());

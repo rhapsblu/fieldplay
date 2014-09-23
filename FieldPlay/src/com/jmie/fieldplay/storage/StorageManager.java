@@ -29,7 +29,7 @@ import com.jmie.fieldplay.route.RouteData;
 
 
 public class StorageManager {
-	static final String TAG = "Storage Manager";
+	public static final String TAG = "FP Storage Manager";
 	public static final String PREFS_NAME = "FPPrefsFile";
 	public static final String ROUTES_DIR= "routes/";
 	public static final String IMAGES_DIR= "images/";
@@ -41,7 +41,7 @@ public class StorageManager {
 	public static final String ROUTE_CACHE="route_cache";
 
 	public static Route buildRoute(Context c, RouteData routeData){
-		Log.d(TAG, "Building route " + routeData.get_routeName());
+
 		Route route = null;
 		String routeXMLPath = ROUTES_DIR + routeData.get_routeFile()+"/"+ROUTE_XML;
 		String state = Environment.getExternalStorageState();
@@ -81,7 +81,7 @@ public class StorageManager {
 		else {
 			Log.e(TAG, "External media not available ");
 		}
-		Log.d(TAG, "Deleted route " + routeName);
+
 	}
 	private static void deleteRecursive(File fileOrDirectory) {
 	    if (fileOrDirectory.isDirectory())
@@ -91,20 +91,17 @@ public class StorageManager {
 	    fileOrDirectory.delete();
 	}
 	public static void populateDBFromXML(Context c, RouteData routeData, String fileName){
-		Log.d(TAG, "Route name retrival " + routeData.get_routeName());
+
 		String[] nameAndDescription = new String[2];
 
 		String routeXMLPath = ROUTES_DIR+ "/" + fileName+"/"+ROUTE_XML;
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {	
-			Log.d(TAG, "Media Mounted");
 			InputStream inputStream;
 			try {
-				Log.d(TAG, "Accessing " + routeXMLPath);
 				File inputFile = c.getExternalFilesDir(routeXMLPath);
 				inputStream = new FileInputStream(inputFile);
 	            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-	            Log.d(TAG, "Starting name parse of " + inputFile.getName());
 	            XMLManager xmlManager = new XMLManager();
 	            nameAndDescription = xmlManager.parseNameAndDescription(bufferedInputStream);
 	            inputStream.close();

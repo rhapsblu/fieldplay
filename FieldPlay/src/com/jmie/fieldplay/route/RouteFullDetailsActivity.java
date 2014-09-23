@@ -15,7 +15,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+
 
 
 
@@ -28,7 +28,7 @@ public class RouteFullDetailsActivity extends FragmentActivity implements TabLis
 	private ViewPager viewPager;
 	private RouteFullDetailsTabsAdapter mAdapter;
 	private ActionBar actionBar;
-	public static String TAG = "RouteDetails";
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class RouteFullDetailsActivity extends FragmentActivity implements TabLis
 
 		route = (Route)b.getParcelable("com.jmie.fieldplay.route");
 
-		Log.d(TAG, "Route name: " +route.getName());		
+		
 		
 		setContentView(R.layout.activity_route_full_detail);
 		mAdapter = new RouteFullDetailsTabsAdapter(getSupportFragmentManager(), this);

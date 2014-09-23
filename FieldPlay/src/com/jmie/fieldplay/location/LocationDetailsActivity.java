@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,7 +36,7 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 	private LocationDetailsTabsAdapter mAdapter;
 	private ActionBar actionBar;
 	private ArrayList<String> imagePathList = new ArrayList<String>();
-	public static String TAG = "LocationDetails";
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +45,9 @@ public class LocationDetailsActivity extends FragmentActivity implements TabList
 		Bundle b = getIntent().getExtras();
 
 		route = (Route)b.getParcelable("com.jmie.fieldplay.route");
-		Log.d(TAG, "Route name: " +route.getName());
+
 		String location_id = b.getString("com.jmie.fieldplay.location");
-		Log.d(TAG, "location= " + location_id);
+
 		location = route.getLocationByName(location_id);
 		
 		
